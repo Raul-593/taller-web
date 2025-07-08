@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Registro de Mantenimiento</title>
+</head>
+<body>
+  <h2>Formulario Taller</h2>
+  <form id="form">
+    <input name="cliente" placeholder="Cliente" required><br>
+    <input name="telefono" placeholder="Teléfono"><br>
+    <input name="bicicleta" placeholder="Bicicleta (marca/modelo)"><br>
+    <input name="servicio" placeholder="Servicio realizado"><br>
+    <input name="costo" placeholder="Costo" type="number"><br>
+    <textarea name="observaciones" placeholder="Observaciones"></textarea><br>
+    <button type="submit">Guardar</button>
+  </form>
+
+  <p id="respuesta"></p>
+
+  <script>
+    const form = document.getElementById("form");
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+
+      const data = Object.fromEntries(new FormData(form).entries());
+
+      fetch("AQUÍ_VA_LA_URL_DEL_WEBAPP", {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json" }
+      })
+      .then(res => res.text())
+      .then(msg => {
+        document.getElementById("respuesta").innerText = "Guardado con éxito!";
+        form.reset();
+      })
+      .catch(err => alert("Error al guardar"));
+    });
+  </script>
+</body>
+</html>
