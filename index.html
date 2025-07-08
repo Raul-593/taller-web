@@ -1,21 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+  <meta charset="UTF-8">
   <title>Registro de Mantenimiento</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>Formulario Taller</h2>
-  <form id="form">
-    <input name="cliente" placeholder="Cliente" required><br>
-    <input name="telefono" placeholder="Teléfono"><br>
-    <input name="bicicleta" placeholder="Bicicleta (marca/modelo)"><br>
-    <input name="servicio" placeholder="Servicio realizado"><br>
-    <input name="costo" placeholder="Costo" type="number"><br>
-    <textarea name="observaciones" placeholder="Observaciones"></textarea><br>
-    <button type="submit">Guardar</button>
-  </form>
-
-  <p id="respuesta"></p>
+  <div class="container">
+    <h2>Registro de Mantenimiento</h2>
+    <form id="form">
+      <input name="cliente" placeholder="Cliente" required>
+      <input name="direccion" placeholder="Dirección">
+      <input name="telefono" placeholder="Teléfono">
+      <input name="bicicleta" placeholder="Bicicleta (marca/modelo)">
+      <input name="servicio" placeholder="Servicio realizado">
+      <input name="costo" placeholder="Costo" type="number" step="0.01">
+      <textarea name="observaciones" placeholder="Observaciones"></textarea>
+      <button type="submit">Guardar</button>
+    </form>
+    <p id="respuesta"></p>
+  </div>
 
   <script>
     const form = document.getElementById("form");
@@ -24,7 +28,7 @@
 
       const data = Object.fromEntries(new FormData(form).entries());
 
-      fetch("AQUÍ_VA_LA_URL_DEL_WEBAPP", {
+      fetch("https://script.google.com/macros/s/AKfycbyB3OL3Qbbg0KciqR5kYespaGpX5T461PljFyQ7Jytlc16NfvBlsX8f7JsUt4rgkYSujA/exec", {
         method: "POST",
         body: JSON.stringify(data),
         headers: { "Content-Type": "application/json" }
@@ -36,6 +40,47 @@
       })
       .catch(err => alert("Error al guardar"));
     });
+    
+    function doPost(e) {
+  var spreadsheetId = '1nICw4Xc0W2DX0rkzJwJsfaGqMn6IL2OYlBBd-nJlgaE'; // Reemplaza con el ID de tu Google Sheet
+  var sheetName = 'DB'; // Reemplaza con el nombre de tu hoja
+  var sheet = SpreadsheetApp.openById(spreadsheetId).getSheetByName(sheetName);
+
+  if (e.postData && e.postData.type === 'application/json') {
+    try {
+      // Analiza los datos JSON enviados desde el cliente
+      var data = JSON.parse(e.postData.contents);
+
+      // Extrae los valores en el orden deseado para tu hoja
+      var rowData = [
+        data.cliente,
+        data.direccion,
+        data.telefono,
+        data.bicicleta,
+        data.servicio,
+        data.costo,
+        data.observaciones
+      ];
+
+      // Agrega la fila a la hoja de cálculo
+      sheet.appendRow(rowData);
+
+      // Devuelve una respuesta exitosa al cliente
+      return ContentService.createTextOutput("Datos guardados con éxito!")
+             .setMimeType(ContentService.MimeType.TEXT);
+
+    } catch (error) {
+      // Manejo de errores si el JSON no es válido o hay un problema al escribir en la hoja
+      return ContentService.createTextOutput("Error al procesar los datos: " + error.message)
+             .setMimeType(ContentService.MimeType.TEXT);
+    }
+  } else {
+    // Si no es una solicitud JSON o no tiene datos
+    return ContentService.createTextOutput("No se recibieron datos JSON válidos.")
+           .setMimeType(ContentService.MimeType.TEXT);
+  }
+}
   </script>
 </body>
 </html>
+
