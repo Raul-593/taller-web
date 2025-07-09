@@ -26,19 +26,21 @@
     form.addEventListener("submit", e => {
       e.preventDefault();
 
-      const data = Object.fromEntries(new FormData(form).entries());
+      const formData = new FormData(form);
 
-      fetch("https://script.google.com/macros/s/AKfycbyB3OL3Qbbg0KciqR5kYespaGpX5T461PljFyQ7Jytlc16NfvBlsX8f7JsUt4rgkYSujA/exec", {
+      fetch("https://script.google.com/macros/s/AKfycbYB3OL3Qbbg0KciqR5kYespaGpX5T461Pj1fyQ7JytLc16NfvB1sX8f73sUt4rgkYSujA/exec", {
         method: "POST",
-        body: JSON.stringify(data),
-        headers: { "Content-Type": "application/json" }
-      })
+        body: formData
+    })
       .then(res => res.text())
       .then(msg => {
         document.getElementById("respuesta").innerText = "Guardado con éxito!";
         form.reset();
       })
-      .catch(err => alert("Error al guardar"));
+      .catch(err => {
+        console.error(err);
+        alert("Error al guardar los datos.");
+      });
     });
   </script>
 </body>
