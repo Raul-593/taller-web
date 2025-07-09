@@ -40,46 +40,6 @@
       })
       .catch(err => alert("Error al guardar"));
     });
-    
-    function doPost(e) {
-  var spreadsheetId = '1nICw4Xc0W2DX0rkzJwJsfaGqMn6IL2OYlBBd-nJlgaE'; // Reemplaza con el ID de tu Google Sheet
-  var sheetName = 'DB'; // Reemplaza con el nombre de tu hoja
-  var sheet = SpreadsheetApp.openById(spreadsheetId).getSheetByName(sheetName);
-
-  if (e.postData && e.postData.type === 'application/json') {
-    try {
-      // Analiza los datos JSON enviados desde el cliente
-      var data = JSON.parse(e.postData.contents);
-
-      // Extrae los valores en el orden deseado para tu hoja
-      var rowData = [
-        data.cliente,
-        data.direccion,
-        data.telefono,
-        data.bicicleta,
-        data.servicio,
-        data.costo,
-        data.observaciones
-      ];
-
-      // Agrega la fila a la hoja de cálculo
-      sheet.appendRow(rowData);
-
-      // Devuelve una respuesta exitosa al cliente
-      return ContentService.createTextOutput("Datos guardados con éxito!")
-             .setMimeType(ContentService.MimeType.TEXT);
-
-    } catch (error) {
-      // Manejo de errores si el JSON no es válido o hay un problema al escribir en la hoja
-      return ContentService.createTextOutput("Error al procesar los datos: " + error.message)
-             .setMimeType(ContentService.MimeType.TEXT);
-    }
-  } else {
-    // Si no es una solicitud JSON o no tiene datos
-    return ContentService.createTextOutput("No se recibieron datos JSON válidos.")
-           .setMimeType(ContentService.MimeType.TEXT);
-  }
-}
   </script>
 </body>
 </html>
