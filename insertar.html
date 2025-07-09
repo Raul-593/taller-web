@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ingresar Mantenimiento</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h2>Ingresar Mantenimiento</h2>
+    <form id="form">
+      <input name="cliente" placeholder="Cliente" required />
+      <input name="direccion" placeholder="Dirección" />
+      <input name="telefono" placeholder="Teléfono" />
+      <input name="bicicleta" placeholder="Bicicleta (marca/modelo)" />
+      <input name="servicio" placeholder="Servicio realizado" />
+      <input name="costo" placeholder="Costo" type="number" step="0.01" />
+      <textarea name="observacion" placeholder="Observacion"></textarea>
+      <button type="submit">Guardar</button>
+    </form>
+    <p id="respuesta"></p>
+    <a href="index.html">← Volver al inicio</a>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script src="insertar.js"></script>
+</body>
+</html>
