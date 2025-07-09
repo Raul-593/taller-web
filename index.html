@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
   <div class="container">
     <h2>Registro de Mantenimiento</h2>
     <form id="form">
@@ -21,28 +22,106 @@
     <p id="respuesta"></p>
   </div>
 
+  <div class="table-container">
+    <h2>Historial de Servicios</h2>
+    <table id="tabla">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Cliente</th>
+          <th>Dirección</th>
+          <th>Teléfono</th>
+          <th>Bicicleta</th>
+          <th>Servicio</th>
+          <th>Costo</th>
+          <th>Observaciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Los datos se cargarán aquí -->
+      </tbody>
+    </table>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+  <script>
+    const SUPABASE_URL = 'https://tsixuqbkyfrxqrhnjmor.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRzaXh1cWJreWZyeHFyaG5qbW9yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIwOTI5OTksImV4cCI6MjA2NzY2ODk5OX0.VeoM1Z1oWy9CLiNjRODKQPT_QGjPd6xoWRGazwf2aRw';
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  </script>
+
   <script>
     const form = document.getElementById("form");
-    form.addEventListener("submit", e => {
-      e.preventDefault();
+    const tabla = document.getElementById("tabla").querySelector("tbody");
 
-      const formData = new FormData(form);
-
-      fetch("https://script.google.com/macros/s/AKfycbYB3OL3Qbbg0KciqR5kYespaGpX5T461Pj1fyQ7JytLc16NfvB1sX8f73sUt4rgkYSujA/exec", {
-        method: "POST",
-        body: formData
-    })
-      .then(res => res.text())
-      .then(msg => {
-        document.getElementById("respuesta").innerText = "Guardado con éxito!";
-        form.reset();
-      })
-      .catch(err => {
-        console.error(err);
-        alert("Error al guardar los datos.");
+    // Función simulada (por ahora) para cargar datos
+    function cargarDatos() {
+      const datos = JSON.parse(localStorage.getItem("mantenimientos") || "[]");
+      tabla.innerHTML = "";
+      datos.forEach(item => {
+        const fila = document.createElement("tr");
+        fila.innerHTML = `
+          <td>${item.fecha}</td>
+          <td>${item.cliente}</td>
+          <td>${item.direccion}</td>
+          <td>${item.telefono}</td>
+          <td>${item.bicicleta}</td>
+          <td>${item.servicio}</td>
+          <td>${item.costo}</td>
+          <td>${item.observaciones}</td>
+        `;
+        tabla.appendChild(fila);
       });
+    }
+    form.addEventListener("submit", async e => {
+    e.preventDefault();
+
+    const data = Object.fromEntries(new FormData(form).entries());
+    data.fecha = new Date().toISOString(); // formato ISO para PostgreSQL
+
+    const { error } = await supabase
+      .from("mantenimientos")
+      .insert([data]);
+    
+      if (error) {
+      console.error("Error al guardar:", error);
+      alert("Error al guardar los datos.");
+    } else {
+      document.getElementById("respuesta").innerText = "Guardado con éxito!";
+      form.reset();
+      cargarDatos();
+      }
     });
-  </script>
+
+
+  // Cargar los datos al iniciar
+  async function cargarDatos() {
+  const { data, error } = await supabase
+    .from("mantenimientos")
+    .select("*")
+    .order("fecha", { ascending: false });
+
+  if (error) {
+    console.error("Error al cargar datos:", error);
+    return;
+  }
+
+  tabla.innerHTML = "";
+  data.forEach(item => {
+    const fila = document.createElement("tr");
+    fila.innerHTML = `
+      <td>${new Date(item.fecha).toLocaleString()}</td>
+      <td>${item.cliente}</td>
+      <td>${item.direccion}</td>
+      <td>${item.telefono}</td>
+      <td>${item.bicicleta}</td>
+      <td>${item.servicio}</td>
+      <td>${item.costo}</td>
+      <td>${item.observaciones}</td>
+    `;
+    tabla.appendChild(fila);
+  });
+}
+
+</script>
 </body>
 </html>
-
