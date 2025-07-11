@@ -18,28 +18,29 @@ async function cargarDatos() {
   }
 
   tabla.innerHTML = "";
+
   data.forEach((item) => {
     const fila = document.createElement("tr");
+
     fila.innerHTML = `
-      <td>${new Date(item.fecha).toLocaleString()}</td>
-      <td>${item.cliente || ""}</td>
-      <td>${item.direccion || ""}</td>
-      <td>${item.telefono || ""}</td>
-      <td>${item.bicicleta || ""}</td>
-      <td>${item.servicio || ""}</td>
-      <td>${item.costo || ""}</td>
-      <td>${item.observacion || ""}</td>
+      <td data-label="Fecha">${new Date(item.fecha).toLocaleString()}</td>
+      <td data-label="Cliente">${item.cliente || ""}</td>
+      <td data-label="Dirección">${item.direccion || ""}</td>
+      <td data-label="Teléfono">${item.telefono || ""}</td>
+      <td data-label="Bicicleta">${item.bicicleta || ""}</td>
+      <td data-label="Servicio">${item.servicio || ""}</td>
+      <td data-label="Costo">$${item.costo || "0"}</td>
+      <td data-label="Observacion">${item.observacion || ""}</td>
     `;
 
-    // 🔗 Agrega el evento para redirigir
     fila.style.cursor = "pointer";
     fila.addEventListener("click", () => {
-        window.location.href = `detalle.html?id=${item.id}`;
+      window.location.href = `detalle.html?id=${item.id}`;
     });
 
     tabla.appendChild(fila);
   });
 }
 
-// Cargar los datos al abrir la página
 cargarDatos();
+

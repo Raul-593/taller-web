@@ -3,9 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <title>Ver Registros</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/navBar.css">
 </head>
 <body>
+  <nav class="navbar">
+  <div class="navbar-title">🚲 Bienvenido al Taller</div>
+  <ul class="navbar-links">
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="insertar.html">Agregar</a></li>
+    <li><a href="ver.html">Ver</a></li>
+  </ul>
+  </nav>
+
   <div class="container">
     <h2>Historial de Mantenimientos</h2>
     <div class="table-container">
@@ -25,10 +35,11 @@
         <tbody></tbody>
       </table>
     </div>
-    <a href="index.html">← Volver al inicio</a>
+    <a class="boton" href="index.html">← Volver al inicio</a>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="ver.js"></script>
+  <script src="js/ver.js"></script>
+  <script src="js/script.js"></script>
 </body>
 </html>

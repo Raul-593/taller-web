@@ -1,60 +1,26 @@
-<!--<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <title>Registro de Mantenimiento</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-
-  <div class="container">
-    <h2>Registro de Mantenimiento</h2>
-    <form id="form">
-      <input name="cliente" placeholder="Cliente" required />
-      <input name="direccion" placeholder="Dirección" />
-      <input name="telefono" placeholder="Teléfono" />
-      <input name="bicicleta" placeholder="Bicicleta (marca/modelo)" />
-      <input name="servicio" placeholder="Servicio realizado" />
-      <input name="costo" placeholder="Costo" type="number" step="0.01" />
-      <textarea name="observacion" placeholder="Observacion"></textarea>
-      <button type="submit">Guardar</button>
-    </form>
-    <p id="respuesta"></p>
-  </div>
-
-  <div class="table-container">
-    <h2>Historial de Servicios</h2>
-    <table id="tabla">
-      <thead>
-        <tr>
-          <th>Fecha</th>
-          <th>Cliente</th>
-          <th>Dirección</th>
-          <th>Teléfono</th>
-          <th>Bicicleta</th>
-          <th>Servicio</th>
-          <th>Costo</th>
-          <th>Observacion</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div> -->
-
-  <!-- SDK de Supabase -->
-  <!--<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-  <script src="script_supabase.js"></script>
-</body>
-</html>-->
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Inicio - Taller de Bicicletas</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/navBar.css">
 </head>
 <body>
+    <nav class="navbar">
+      <div class="navbar-header">
+        <div class="navbar-title">🚲 Bienvenido al Taller</div>
+        <button class="menu-toggle" id="menuToggle"><img src="image/treslineas.png"></button>
+      </div>
+      
+      <ul class="navbar-links" id="navbarLinks">
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="insertar.html">Agregar</a></li>
+        <li><a href="ver.html">Ver</a></li>
+      </ul>
+    </nav>
+
   <div class="container">
     <h2>Bienvenido al Taller</h2>
     <p>¿Qué deseas hacer?</p>
@@ -63,5 +29,6 @@
       <a href="ver.html" class="boton">Ver registros</a>
     </div>
   </div>
+  <script src="js/script.js"></script>
 </body>
 </html>
