@@ -8,7 +8,22 @@
   <link rel="stylesheet" href="css/navBar.css">
 </head>
 <body>
-  <div id="navbar-container"></div>
+  <nav>
+    <ul class="sidebar">
+      <li onclick=closeSidebar() class="fistChlid"><a href="#"><img src="image/close_24dp_FFFFFF_FILL0_wght400_GRAD0_opsz24.png"></a></li>
+      <li><a href="index.html">Inicio</a></li>
+      <li><a href="insertar.html">Agregar</a></li>
+      <li><a href="ver.html">Ver</a></li>
+    </ul>
+
+    <ul>
+      <li><a href="index.html">593 Cycling Studio</a></li>
+      <li class="hideOnMobile"><a href="index.html">Inicio</a></li>
+      <li class="hideOnMobile"><a href="insertar.html">Agregar</a></li>
+      <li class="hideOnMobile"><a href="ver.html">Ver</a></li>
+      <li class="menu-btn" onclick=showSidebar()><a href="#"><img src="image/menu_24dp_FFFFFF_FILL0_wght400_GRAD0_opsz24.png"></a></li>
+    </ul>
+  </nav>
 
   <div class="container">
     <h2>Bienvenido al Taller</h2>
@@ -20,6 +35,5 @@
   </div>
   <script src="js/script.js"></script>
   <script src="js/sidebar.js"></script>
-  <script src="js/navbarLoader.js"></script>
 </body>
 </html>
