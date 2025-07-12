@@ -1,48 +1,37 @@
-/* ====== ESTILO GENERAL ====== */
-body {
-  font-family: Arial, sans-serif;
-  background-color: #f3f4f6;
+*{
   margin: 0;
   padding: 0;
+}
+
+body{
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container{
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-}
-
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.opciones {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-  max-width: 300px;
-}
-
-.container {
   background-color: white;
-  margin: 20px;
-  padding: 20px;
+  padding: 30px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
   width: 100%;
-  max-width: 600px;
+  text-align: center;
+  margin: auto;
+  margin-top: 30px;
 }
 
-h2 {
+h2{
   text-align: center;
   color: #2c3e50;
   margin-bottom: 20px;
 }
 
-input,
-textarea,
-button {
+input, textarea, button{
   width: 100%;
   padding: 12px;
   margin-bottom: 12px;
@@ -52,17 +41,17 @@ button {
   box-sizing: border-box;
 }
 
-button {
-  background-color: #45d0a2;
+button{
+  background-color: #4CAF50;
   color: white;
   font-weight: bold;
   border: none;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background 0,3 ease;
 }
 
-button:hover {
-  background-color: #39ab85;
+button:hover{
+  background-color: #45a049;
 }
 
 a.boton {
@@ -83,8 +72,19 @@ a.boton:hover {
 
 #respuesta {
   text-align: center;
-  color: rgb(15, 201, 155);
+  color: green;
   font-weight: bold;
+}
+
+
+.opciones{
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  width: 100%;
+  max-width: 300px;
+  text-align: center;
+  align-items: center;
 }
 
 /* ====== TABLA ====== */
@@ -170,18 +170,16 @@ th {
 
 .detalle-box {
   background-color: #fefefe;
-  padding: 10px 5px;
+  padding: 15px 20px;
   border-radius: 10px;
   border: 1px solid #e0e0e0;
   margin-top: 20px;
-  width: 90%;
-  box-shadow: 0 2px 8px rbg(0,0,0,0.08);
 }
 
 .detalle-box p {
   margin: 10px 0;
   line-height: 1.6;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 @media (max-width: 480px) {
