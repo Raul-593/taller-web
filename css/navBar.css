@@ -35,7 +35,7 @@ nav li:first-child{
 .sidebar{
   position: fixed;
   top: 0;
-  right: 0;
+  left: 0;
   height: 100vh;
   width: 250px;
   z-index: 999;
@@ -69,7 +69,7 @@ nav li:first-child{
   }
 }
 
-@media(max-width: 400px){
+@media(max-width: 500px){
   .sidebar{
     width: 100%;
   }
