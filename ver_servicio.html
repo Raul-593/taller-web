@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mantenimientos</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/navBar.css">
+</head>
+<body>
+    <nav>
+        <ul class="sidebar">
+            <li onclick=closeSidebar() class="fistChlid"><a href="#"><img src="image/close_24dp_FFFFFF_FILL0_wght400_GRAD0_opsz24.png"></a></li>
+            <li class="hideOnMobile"><a href="registro_cliente.html" >Nuevo Cliente</a></li>
+        </ul>
+        <ul>
+            <li onclick=showSidebar()><a href="#">593 Cycling Studio</a></li>    
+            <a href="registro_cliente.html" class="boton">Nuevo Cliente</a>
+        </ul>
+    </nav>
+    
+    <div class="busqueda-conteiner">
+    <input type="text" id="busqueda" placeholder="Buscar por Numero de Serie" />
+    </div>
+    
+    <div class="container-informacion">
+        <h2>593 Cycling Studio</h2>
+        <div class="table-container">
+            <table id="tabla">
+                <thead>
+                    <tr>
+                        <th>Numero de Serie</th>
+                        <th>Marca</th>
+                        <th>Modelo</th>
+                        <th>Servicio</th>
+                        <th>Costo</th>
+                        <th>Observacion</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        
+        <div class="btn_nav">
+            <a class="boton" href="index.html">Volver a Clientes</a>
+        </div>
+    </div>
+
+    <script type="module" src="js/ver_mantenimiento.js"></script>
+</body>
+</html>

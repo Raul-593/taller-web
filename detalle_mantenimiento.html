@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Detalle del Mantenimiento</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/navBar.css">
+</head>
+<body>
+  <nav>
+        <ul class="sidebar">
+            <li onclick=closeSidebar() class="fistChlid"><a href="#"><img src="image/close_24dp_FFFFFF_FILL0_wght400_GRAD0_opsz24.png"></a></li>
+            <li class="hideOnMobile"><a href="registro_cliente.html" >Nuevo Cliente</a></li>
+        </ul>
+        <ul>
+            <li onclick=showSidebar()><a href="#">593 Cycling Studio</a></li>    
+            <a href="registro_cliente.html" class="boton">Nuevo Cliente</a>
+        </ul>
+    </nav>
+
+  <div class="container">
+    <h2>Detalle del Mantenimiento</h2>
+    <div id="detalle-mantenimiento"></div>
+
+    <!-- Botones Accion-->
+    <button id="btn-editar" >Editar</button>
+    <button id="btn-eliminar" class="btn-accion btn-elimar">Eliminar</button>
+    <a href="index.html" class="boton">Volver</a>
+  </div>
+
+  <!--Ventana para editar-->
+  <div id="modal-editar" class="modal hidden">
+    <div class="modal-content">
+      <span class="close-button" id="cerrar-modal">&times;</span>
+      <h3>Editar Mantenimiento</h3>
+      <form id="form-editar">
+        <input type="date" name="service_date" required />
+        <input type="text" name="description" required placeholder="Descripción" />
+        <input type="number" name="cost" required placeholder="Costo" step="0.01" />
+        <input type="text" name="observation" placeholder="Observación" />
+        <button type="submit">Guardar Cambios</button>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="js/detalle_mantenimiento.js"></script>
+</body>
+</html>

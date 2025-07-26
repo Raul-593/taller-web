@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingresar Mantenimiento</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/navBar.css">
+</head>
+<body>
+ <nav>
+        <ul class="sidebar">
+            <li onclick=closeSidebar() class="fistChlid"><a href="#"><img src="image/close_24dp_FFFFFF_FILL0_wght400_GRAD0_opsz24.png"></a></li>
+            <li class="hideOnMobile"><a href="registro_cliente.html" >Nuevo Cliente</a></li>
+        </ul>
+        <ul>
+            <li onclick=showSidebar()><a href="#">593 Cycling Studio</a></li>    
+            <a href="registro_cliente.html" class="boton">Nuevo Cliente</a>
+        </ul>
+  </nav>
+  
+  <div class="container">
+    <h2>Ingresar Nuevo Cliente</h2>
+    <form id="form">
+      <input name="name" placeholder="Cliente" required >
+      <input name="phone" placeholder="Teléfono">
+      <input name="address" placeholder="Direccion" >
+      <input name="brand" placeholder="Bicicleta (Marca)">
+      <input name="model" placeholder="Bicicleta (Modelo)">
+      <input name="serial_numer" placeholder="Numero de Serie">
+      
+      <button type="submit">Guardar</a></button>
+    </form>
+    <p id="respuesta"></p>
+    <a href="index.html" class="boton">Volver a Registros</a>
+  </div>
+
+  <script type="module" src="js/conexionBaseDatos.js"></script>
+  <script type="module" src="js/registro_cliente.js"></script>
+  
+</body>
+</html>

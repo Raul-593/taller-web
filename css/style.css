@@ -25,6 +25,20 @@ body{
   margin-top: 30px;
 }
 
+.container-ingreso{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 30px;
+  margin: auto;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.01);
+  max-width: 500px;
+  width: 100%;
+}
+
 h2{
   text-align: center;
   color: #2c3e50;
@@ -42,7 +56,7 @@ input, textarea, button{
 }
 
 button{
-  background-color: #4CAF50;
+  background-color: #50a5df;
   color: white;
   font-weight: bold;
   border: none;
@@ -51,7 +65,18 @@ button{
 }
 
 button:hover{
-  background-color: #45a049;
+  background-color: #2980b9;
+}
+
+.btn_guardar{
+  text-decoration: none;
+  color: white;
+}
+
+.btn_nav{
+  display: flex;
+  margin: 10px;
+  padding: auto;
 }
 
 a.boton {
@@ -60,7 +85,8 @@ a.boton {
   color: white;
   text-align: center;
   padding: 12px;
-  margin: 10px 0;
+  margin: 10px;
+  margin-right: 20px;
   border-radius: 6px;
   text-decoration: none;
   font-weight: bold;
@@ -242,4 +268,105 @@ button.danger {
 
 button.danger:hover {
   background-color: #c0392b;
+}
+
+/* Venta Emergente */
+.modal{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 999;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+}
+
+.modal.hidden{
+  display: none;
+}
+
+.modal-content{
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.close-button{
+  float: right;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/*Botones de accion - Eliminar y Editar*/
+.btn-accion {
+  padding: 8px 14px;
+  margin: 5px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-editar {
+  background-color: #007bff;
+  color: white;
+}
+.btn-eliminar {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* Contenedor de los toasts */
+#toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+
+/* Estilo base del toast */
+.toast {
+  min-width: 250px;
+  margin-top: 10px;
+  padding: 12px 18px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: white;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+/* Éxito */
+.toast.success {
+  background-color: #4CAF50;
+}
+
+/* Error */
+.toast.error {
+  background-color: #f44336;
+}
+
+/* Animaciones */
+@keyframes fadein {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeout {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
 }

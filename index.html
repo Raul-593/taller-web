@@ -2,35 +2,45 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Inicio - Taller de Bicicletas</title>
+  <title>Clientes</title>
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/navBar.css">
+  
 </head>
 <body>
   <nav>
     <ul class="sidebar">
-      <li onclick=closeSidebar() class="fistChlid"><a href="#"><img src="image/close_24dp_FFFFFF_FILL0_wght400_GRAD0_opsz24.png"></a></li>
-      <li><a href="index.html">Inicio</a></li>
-      <li><a href="insertar.html">Agregar</a></li>
-      <li><a href="ver.html">Ver</a></li>
+        <li onclick=closeSidebar() class="fistChlid"><a href="#"><img src="image/close_24dp_FFFFFF_FILL0_wght400_GRAD0_opsz24.png"></a></li>
+        <li class="hideOnMobile"><a href="registro_cliente.html" >Nuevo Cliente</a></li>
     </ul>
-
     <ul>
-      <li onclick=showSidebar()><a href="#">593 Cycling Studio</a></li>
-      <li class="hideOnMobile"><a href="index.html">Inicio</a></li>
-      <li class="hideOnMobile"><a href="insertar.html">Agregar</a></li>
-      <li class="hideOnMobile"><a href="ver.html">Ver</a></li>
-    </nav>
+        <li onclick=showSidebar()><a href="#">593 Cycling Studio</a></li>    
+        <a href="registro_cliente.html" class="boton">Nuevo Cliente</a>
+    </ul>
+  </nav>
 
-  <div class="container">
-    <h2>Bienvenido al Taller</h2>
-    <p>¿Qué deseas hacer?</p>
-    <div class="opciones">
-      <a href="insertar.html" class="boton">Ingresar mantenimiento</a>
-      <a href="ver.html" class="boton">Ver registros</a>
+  <div class="busqueda-conteiner">
+    <input type="text" id="busqueda" placeholder="Buscar por Numero de Serie" />
+  </div>
+
+  <div class="container-informacion">
+    <h2>Clientes</h2>
+    <div class="table-container">
+      <table id="tabla">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Dirección</th>
+            <th>Teléfono</th>
+            <th>Bicicleta</th>
+            <th>Numero de Serie</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
   </div>
-  <script src="js/sidebar.js"></script>
+
+  <script type="module" src="js/ver_clientes.js"></script>
 </body>
 </html>
