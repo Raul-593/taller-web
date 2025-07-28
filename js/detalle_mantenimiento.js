@@ -1,10 +1,10 @@
-import { supabaseClient } from './conexionBaseDatos.js';
+import { supabaseClient, getCurrentUserRole } from './conexionBaseDatos.js';
+import { requireAuth } from './auth/autorizacion.js';
 
-//Variable para Detalle
+// Variables generales
 const params = new URLSearchParams(window.location.search);
 const mantenimientoId = params.get('id');
 const contenedor = document.getElementById('detalle-mantenimiento');
-//Variable para CRUD
 const btnEditar = document.getElementById('btn-editar');
 const btnEliminar = document.getElementById('btn-eliminar');
 const modal = document.getElementById('modal-editar');
@@ -13,13 +13,20 @@ const formEditar = document.getElementById('form-editar');
 
 let mantenimientoActual = null;
 
-//Detalle de Mantenimiento
+//Protege la vista si no tiene usuario
+(async () => {
+  await requireAuth();
+})();
+
+// Validar ID
 if (!mantenimientoId) {
   contenedor.innerHTML = '<p>ID no proporcionado.</p>';
 } else {
   cargarMantenimiento(mantenimientoId);
+  verificarPermisos(); // Verifica el rol del usuario al cargar
 }
 
+// Obtener detalle del mantenimiento
 async function cargarMantenimiento(id) {
   const { data, error } = await supabaseClient
     .from('maintenance_records')
@@ -42,7 +49,22 @@ async function cargarMantenimiento(id) {
   `;
 }
 
-// Abrir Ventana Emergente Editar
+// Verifica el rol del usuario
+async function verificarPermisos() {
+  const role = await getCurrentUserRole();
+
+  if (role === 'superadmin') {
+    // Mostrar ambos botones
+    btnEditar.style.display = 'inline-block';
+    btnEliminar.style.display = 'inline-block';
+  } else {
+    // Solo permitir editar
+    btnEditar.style.display = 'inline-block';
+    btnEliminar.style.display = 'none';
+  }
+}
+
+// Abrir ventana de edición
 btnEditar.addEventListener('click', () => {
   if (!mantenimientoActual) return;
 
@@ -54,7 +76,7 @@ btnEditar.addEventListener('click', () => {
   modal.classList.remove('hidden');
 });
 
-// Cerrar Ventana Emergente
+// Cerrar modal
 cerrarModal.addEventListener('click', () => {
   modal.classList.add('hidden');
 });
@@ -87,7 +109,7 @@ formEditar.addEventListener('submit', async (e) => {
   cargarMantenimiento(mantenimientoId);
 });
 
-// Eliminar mantenimiento
+// Eliminar mantenimiento (solo si es superadmin)
 btnEliminar.addEventListener('click', async () => {
   const confirmar = confirm('¿Estás seguro de eliminar este mantenimiento?');
   if (!confirmar) return;
@@ -104,5 +126,5 @@ btnEliminar.addEventListener('click', async () => {
   }
 
   alert('Mantenimiento eliminado');
-  window.location.href = 'index.html';
+  window.location.href = 'index.html'; // Puedes cambiar esto si deseas volver a detalle_cliente.html
 });

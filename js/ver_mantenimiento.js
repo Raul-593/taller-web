@@ -1,8 +1,14 @@
 import { supabaseClient } from './conexionBaseDatos.js';
+import { requireAuth } from './auth/autorizacion.js';
 
 const tabla = document.querySelector('#tabla');
 const tbody = tabla.querySelector('tbody');
 const inputBusqueda = document.getElementById('busqueda');
+
+//Protege la vista si no tiene usuario
+(async () => {
+  await requireAuth();
+})();
 
 // Función para obtener mantenimientos con clientes
 async function cargarMantenimientos(filtro = '') {

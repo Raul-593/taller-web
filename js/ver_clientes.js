@@ -1,7 +1,13 @@
-import { supabaseClient } from './conexionBaseDatos.js'; 
+import { supabaseClient } from './conexionBaseDatos.js';
+import { requireAuth } from './auth/autorizacion.js';
 
 const tbody = document.querySelector('#tabla tbody');
 const inputBusqueda = document.getElementById('busqueda');
+
+//Protege la vista si no tiene usuario
+(async () => {
+  await requireAuth();
+})();
 
 // Función para obtener y mostrar clientes + bicicletas
 async function cargarClientes(filtroSerial = '') {
@@ -39,13 +45,13 @@ async function cargarClientes(filtroSerial = '') {
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td>
+      <td data-label="Cliente">
       <a href="detalle_cliente.html?id=${cliente.id}">${cliente.name}</a>
       </td>
-      <td>${cliente?.address || '-'}</td>
-      <td>${cliente?.phone || '-'}</td>
-      <td>${row.brand} ${row.model}</td>
-      <td>${row.serial_number}</td>
+      <td data-label="Dirección">${cliente?.address || '-'}</td>
+      <td data-label="Teléfono">${cliente?.phone || '-'}</td>
+      <td data-label="Bicicleta">${row.brand} ${row.model}</td>
+      <td data-label="Número de Serie">${row.serial_number}</td>
     `;
     tbody.appendChild(tr);
   });

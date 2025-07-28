@@ -1,7 +1,13 @@
 import { supabaseClient } from './conexionBaseDatos.js'; 
+import { requireAuth } from './auth/autorizacion.js';
 
 const form = document.getElementById('form');
 const respuesta = document.getElementById('respuesta');
+
+//Protege la vista si no tiene usuario
+(async () => {
+  await requireAuth();
+})();
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();

@@ -11,10 +11,6 @@ nav ul{
   align-items: center;
 }
 
-nav li{
-  height: 50px;
-}
-
 nav a{
   height: 100%;
   padding: 0 30px;
@@ -28,49 +24,16 @@ nav a:hover{
   background-color: rgb(214, 210, 210);
 }
 
-nav li:first-child{
-  margin-right: auto;
+.boton{
+  width: auto;
+  height: auto;
+  padding: 15px;
+  margin: 10px;
+  display: inline-block;
+  line-height: 1;
 }
 
-.sidebar{
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  width: 250px;
-  z-index: 999;
-  background-color: rgba(255, 255, 255, 0.055);
-  backdrop-filter: blur(10px);
-  box-shadow: -10px 0 10px rgba(0, 0, 0, 0.2);
-  display: none;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-}
-
-.sidebar li{
-  width: 100%;
-}
-
-.sidebar a{
-  width: 100%;
-}
-
-.menu-btn{
-  display: none;
-}
-
-@media(max-width: 760px){
-  .hideOnMobile{
-    display: none;
-  }
-  .menu-btn{
-    display: block;
-  }
-}
-
-@media(max-width: 500px){
-  .sidebar{
-    width: 100%;
-  }
+.titulo{
+  display: flex;
+  flex-direction: end;
 }

@@ -1,4 +1,5 @@
 import { supabaseClient } from './conexionBaseDatos.js';
+import { requireAuth } from './auth/autorizacion.js';
 
 const params = new URLSearchParams(window.location.search);
 const clienteId = params.get('id');
@@ -17,6 +18,11 @@ const modalBici = document.getElementById('modal-bicicleta');
 const formBici = document.getElementById('form-bicicleta');
 const cerrarModalBici = document.getElementById('cerrar-modal-bici');
 const btnNuevaBicicleta = document.getElementById('btn-nueva-bicicleta');
+
+//Protege la vista si no tiene usuario
+(async () => {
+  await requireAuth();
+})();
 
 // Toast
 function mostrarToast(mensaje, tipo = 'success') {
@@ -110,10 +116,10 @@ async function cargarDetalle(id) {
           <tbody>
             ${bici.maintenance_records.map(m => `
               <tr>
-                <td>${m.service_date}</td>
-                <td><a href="detalle_mantenimiento.html?id=${m.id}">${m.description}</a></td>
-                <td>${m.cost}</td>
-                <td>${m.observation}</td>
+                <td data-label="Fecha">${m.service_date}</td>
+                <td data-label="Descripción"><a href="detalle_mantenimiento.html?id=${m.id}">${m.description}</a></td>
+                <td data-label="Costo">${m.cost}</td>
+                <td data-label="Observaciones">${m.observation}</td>
               </tr>`).join('')}
           </tbody>
         </table>
@@ -121,7 +127,7 @@ async function cargarDetalle(id) {
 
     div.innerHTML = `
       <h4>Bicicleta: ${bici.brand} ${bici.model} - ${bici.serial_number}</h4>
-      <button class="btn-nuevo-mantenimiento" data-bici-id="${bici.id}">Nuevo Mantenimiento</button>
+      <button class="boton" data-bici-id="${bici.id}">Nuevo Mantenimiento</button>
       ${mantenimientoHTML}
     `;
 
@@ -129,7 +135,7 @@ async function cargarDetalle(id) {
   });
 
   // Botones "Nuevo Mantenimiento"
-  document.querySelectorAll('.btn-nuevo-mantenimiento').forEach(btn => {
+  document.querySelectorAll('.boton').forEach(btn => {
     btn.addEventListener('click', () => {
       const biciId = btn.dataset.biciId;
       formModal.reset();

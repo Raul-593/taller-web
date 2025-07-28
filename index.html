@@ -9,18 +9,15 @@
 </head>
 <body>
   <nav>
-    <ul class="sidebar">
-        <li onclick=closeSidebar() class="fistChlid"><a href="#"><img src="image/close_24dp_FFFFFF_FILL0_wght400_GRAD0_opsz24.png"></a></li>
-        <li class="hideOnMobile"><a href="registro_cliente.html" >Nuevo Cliente</a></li>
-    </ul>
     <ul>
-        <li onclick=showSidebar()><a href="#">593 Cycling Studio</a></li>    
-        <a href="registro_cliente.html" class="boton">Nuevo Cliente</a>
+      <a href="index.html" class="titutlo">593 Cycling Studio</a>    
+      <a href="registro_cliente.html" class="boton">Nuevo Cliente</a>
     </ul>
   </nav>
 
+  <button id="logout">Cerrar Sesion</button>
   <div class="busqueda-conteiner">
-    <input type="text" id="busqueda" placeholder="Buscar por Numero de Serie" />
+    <input type="text" id="busqueda" placeholder="Buscar por Número de Serie" />
   </div>
 
   <div class="container-informacion">
@@ -33,7 +30,7 @@
             <th>Dirección</th>
             <th>Teléfono</th>
             <th>Bicicleta</th>
-            <th>Numero de Serie</th>
+            <th>Número de Serie</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -42,5 +39,6 @@
   </div>
 
   <script type="module" src="js/ver_clientes.js"></script>
+  <script type="module" src="js/auth/logout.js"></script>
 </body>
 </html>

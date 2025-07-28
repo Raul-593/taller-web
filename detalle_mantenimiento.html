@@ -8,16 +8,14 @@
 </head>
 <body>
   <nav>
-        <ul class="sidebar">
-            <li onclick=closeSidebar() class="fistChlid"><a href="#"><img src="image/close_24dp_FFFFFF_FILL0_wght400_GRAD0_opsz24.png"></a></li>
-            <li class="hideOnMobile"><a href="registro_cliente.html" >Nuevo Cliente</a></li>
-        </ul>
-        <ul>
-            <li onclick=showSidebar()><a href="#">593 Cycling Studio</a></li>    
-            <a href="registro_cliente.html" class="boton">Nuevo Cliente</a>
-        </ul>
-    </nav>
+    <ul>
+      <a href="index.html">593 Cycling Studio</a>    
+      <a href="registro_cliente.html" class="boton">Nuevo Cliente</a>
+      <button id="btn-nueva-bicicleta">Agregar Bicicleta</button>
+    </ul>
+  </nav>
 
+  <button id="logout">Cerrar Sesion</button>
   <div class="container">
     <h2>Detalle del Mantenimiento</h2>
     <div id="detalle-mantenimiento"></div>
@@ -44,5 +42,6 @@
   </div>
 
   <script type="module" src="js/detalle_mantenimiento.js"></script>
+  <script type="module" src="js/auth/logout.js"></script>
 </body>
 </html>
