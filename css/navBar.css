@@ -33,6 +33,16 @@ nav a:hover{
   line-height: 1;
 }
 
+.btn-incio{
+  width: auto;
+  height: auto;
+  padding: 15px;
+  margin: 10px;
+  display: inline-block;
+  line-height: 1;
+}
+
+
 .titulo{
   display: flex;
   flex-direction: end;

@@ -12,13 +12,8 @@ const inputBusqueda = document.getElementById('busqueda');
 // Función para obtener y mostrar clientes + bicicletas
 async function cargarClientes(filtroSerial = '') {
   const { data, error } = await supabaseClient
-    .from('bicycles')
+    .from('customers')
     .select(`
-      id,
-      brand,
-      model,
-      serial_number,
-      customers (
         id,
         name,
         phone,
@@ -36,12 +31,12 @@ async function cargarClientes(filtroSerial = '') {
 
   // Filtrar por número de serie si hay filtro
   const resultados = filtroSerial
-    ? data.filter(item => item.serial_number.toLowerCase().includes(filtroSerial.toLowerCase()))
+    ? data.filter(cliente => cliente.name.toLowerCase().includes(filtroSerial.toLowerCase()))
     : data;
 
   // Insertar filas
   resultados.forEach(row => {
-    const cliente = row.customers;
+    const cliente = row;
 
     const tr = document.createElement('tr');
     tr.innerHTML = `
@@ -50,8 +45,6 @@ async function cargarClientes(filtroSerial = '') {
       </td>
       <td data-label="Dirección">${cliente?.address || '-'}</td>
       <td data-label="Teléfono">${cliente?.phone || '-'}</td>
-      <td data-label="Bicicleta">${row.brand} ${row.model}</td>
-      <td data-label="Número de Serie">${row.serial_number}</td>
     `;
     tbody.appendChild(tr);
   });

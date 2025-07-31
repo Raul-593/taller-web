@@ -5,18 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ingresar Mantenimiento</title>
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/navBar.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 </head>
 <body>
-    <nav>
-        <ul>
-            <a href="index.html">593 Cycling Studio</a>    
-            <a href="registro_cliente.html" class="boton">Nuevo Cliente</a>
-            <button id="btn-nueva-bicicleta">Agregar Bicicleta</button>
-        </ul>
+    <div class="container-menu">
+    <div class="logo-toggle">
+      <a href="index.html"><img src="image/logoCyclingStudio.svg" alt="Logo" /></a>
+      <span class="material-symbols-outlined menu-toggle" id="menuToggle">menu</span>
+    </div>
+    <nav class="menu-submenu" id="menu">
+      <ul>
+        <li><a id="logout">Cerrar Sesión</a></li>
+      </ul>
     </nav>
-
-    <button id="logout">Cerrar Sesion</button>
+  </div>
+  
     
     <div class="container">
         <h2>Ingresar Nuevo Mantenimiento</h2>
@@ -27,16 +31,15 @@
             <input name="description" placeholder="Servicio Realizado">
             <input name="cost" placeholder="Costo" type="number" step="0.01" />
             <textarea name="observation" placeholder="Observacion"></textarea>
-            <button type="submit">Guardar</button>
+            <button type="submit" class="btn-incio">Guardar</button>
         </form>
         <p id="respuesta"></p>
         
-        <a href="ver_servicio.html" class="boton">Ver Registros</a>
+        <a href="ver_servicio.html" class="btn-incio">Ver Registros</a>
     </div>
     
     <script type="module" src="js/conexionBaseDatos.js"></script>
-    <script type="module" src="js/registro_mantenimiento.js"></script>
-    <script type="module" src="js/registro_cliente.js"></script>
+    <script type="module" src="js/registro/registro_mantenimiento.js"></script>
     <script type="module" src="js/auth/logout.js"></script>
 </body>
 </html>

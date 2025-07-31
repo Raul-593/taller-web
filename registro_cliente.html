@@ -5,18 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ingresar Mantenimiento</title>
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/navBar.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 </head>
 <body>
-  <nav>
-    <ul>
-      <a href="index.html">593 Cycling Studio</a>    
-      <a href="registro_cliente.html" class="boton">Nuevo Cliente</a>
-      <button id="btn-nueva-bicicleta">Agregar Bicicleta</button>
-    </ul>
-  </nav>
+  <div class="container-menu">
+    <div class="logo-toggle">
+      <a href="index.html"><img src="image/logoCyclingStudio.svg" alt="Logo" /></a>
+      <span class="material-symbols-outlined menu-toggle" id="menuToggle">menu</span>
+    </div>
+    <nav class="menu-submenu" id="menu">
+      <ul>
+        <li><a id="logout">Cerrar Sesión</a></li>
+      </ul>
+    </nav>
+  </div>
+  
 
-  <button id="logout">Cerrar Sesion</button>
   <div class="container">
     <h2>Ingresar Nuevo Cliente</h2>
     <form id="form">
@@ -27,14 +32,14 @@
       <input name="model" placeholder="Bicicleta (Modelo)">
       <input name="serial_numer" placeholder="Numero de Serie">
       
-      <button type="submit">Guardar</a></button>
+      <button type="submit" class="btn-incio">Guardar</a></button>
     </form>
     <p id="respuesta"></p>
-    <a href="index.html" class="boton">Volver a Registros</a>
+    <a href="index.html" class="btn-incio">Volver a Registros</a>
   </div>
 
   <script type="module" src="js/conexionBaseDatos.js"></script>
-  <script type="module" src="js/registro_cliente.js"></script>
+  <script type="module" src="js/registro/registro_cliente.js"></script>
   <script type="module" src="js/auth/logout.js"></script>
 </body>
 </html>

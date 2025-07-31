@@ -9,6 +9,7 @@ body{
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/*Contenedor principal*/
 .container{
   display: flex;
   flex-direction: column;
@@ -39,12 +40,7 @@ body{
   width: 100%;
 }
 
-h2{
-  text-align: center;
-  color: #2c3e50;
-  margin-bottom: 20px;
-}
-
+/*Ingreso de Texto y Botones*/
 input, textarea, button{
   width: 100%;
   padding: 12px;
@@ -55,31 +51,7 @@ input, textarea, button{
   box-sizing: border-box;
 }
 
-button{
-  background-color: #50a5df;
-  color: white;
-  font-weight: bold;
-  border: none;
-  cursor: pointer;
-  transition: background 0,3 ease;
-}
-
-button:hover{
-  background-color: #2980b9;
-}
-
-.btn_guardar{
-  text-decoration: none;
-  color: white;
-}
-
-.btn_nav{
-  display: flex;
-  margin: 10px;
-  padding: auto;
-}
-
-a.boton {
+.btn-incio{
   display: block;
   background-color: #3498db;
   color: white;
@@ -91,8 +63,7 @@ a.boton {
   text-decoration: none;
   font-weight: bold;
 }
-
-a.boton:hover {
+.btn-incio:hover{
   background-color: #2980b9;
 }
 
@@ -112,130 +83,7 @@ a.boton:hover {
   align-items: center;
 }
 
-/* ====== TABLA ====== */
-#busqueda {
-  width: 100%;
-  max-width: 400px;
-  padding: 10px;
-  margin: 15px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
-.busqueda-conteiner{
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-}
-
-.container-informacion{
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: white;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  max-width: 95%;
-  width: 100%;
-  text-align: center;
-  margin: auto;
-  margin-top: 30px;
-}
-.table-container {
-  overflow-x: auto;
-  width: 100%;
-}
-
-table {
-  border-collapse: collapse;
-  width: 100%;
-  font-size: 14px;
-}
-
-th,
-td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-th {
-  background-color: #f0f0f0;
-}
-
-/* ====== RESPONSIVE DESIGN ====== */
-@media (max-width: 700px) {
-  th,
-  td {
-    font-size: 13px;
-    padding: 6px;
-  }
-
-  .container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    max-width: 500px;
-    width: 100%;
-    text-align: center;
-    margin: auto;
-    margin-top: 30px;
-  }
-
-  input,
-  textarea,
-  button {
-    font-size: 15px;
-    padding: 10px;
-  }
-}
-
-/* Tabla Detalle Cliente */
-@media (max-width: 400px) {
-  table thead {
-    display: none;
-  }
-
-  table,
-  table tbody,
-  table tr,
-  table td {
-    display: block;
-    width: 100%;
-  }
-
-  table tr {
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 10px;
-    background: white;
-  }
-
-  table td {
-    text-align: right;
-    padding-left: 50%;
-    position: relative;
-  }
-
-  table td::before {
-    content: attr(data-label);
-    position: absolute;
-    left: 10px;
-    width: 45%;
-    font-weight: bold;
-    text-align: left;
-  }
-}
-
+/*Otras tablas*/
 .detalle-box {
   background-color: #fefefe;
   padding: 15px 20px;
@@ -250,7 +98,7 @@ th {
   font-size: 16px;
 }
 
-@media (max-width: 800px) {
+@media (max-width: 650px) {
   .detalle-box p {
     font-size: 15px;
   }

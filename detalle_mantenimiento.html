@@ -2,28 +2,32 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Detalle del Mantenimiento</title>
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/navBar.css">
+  <link rel="stylesheet" href="css/tablas.css">
+  <link rel="stylesheet" href="css/nav.css">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 </head>
 <body>
-  <nav>
-    <ul>
-      <a href="index.html">593 Cycling Studio</a>    
-      <a href="registro_cliente.html" class="boton">Nuevo Cliente</a>
-      <button id="btn-nueva-bicicleta">Agregar Bicicleta</button>
-    </ul>
-  </nav>
+  <div class="container-menu">
+    <div class="logo-toggle">
+      <a href="index.html"><img src="image/logoCyclingStudio.svg" alt="Logo" /></a>
+      <span class="material-symbols-outlined menu-toggle" id="menuToggle">menu</span>
+    </div>
+    <nav class="menu-submenu" id="menu">
+      <ul>
+        <li><a id="btn-editar">Editar</a></li>
+        <li><a id="btn-eliminar">Eliminar</a></li>
+        <li><a id="logout">Cerrar Sesión</a></li>
+      </ul>
+    </nav>
+  </div>
 
-  <button id="logout">Cerrar Sesion</button>
   <div class="container">
-    <h2>Detalle del Mantenimiento</h2>
+    <h2 id="titulo-bicicleta">Detalle del Mantenimiento</h2>
     <div id="detalle-mantenimiento"></div>
-
-    <!-- Botones Accion-->
-    <button id="btn-editar" >Editar</button>
-    <button id="btn-eliminar" class="btn-accion btn-elimar">Eliminar</button>
-    <a href="index.html" class="boton">Volver</a>
+    <a href="index.html" class="btn-incio">Volver</a>
   </div>
 
   <!--Ventana para editar-->
@@ -41,7 +45,8 @@
     </div>
   </div>
 
-  <script type="module" src="js/detalle_mantenimiento.js"></script>
+  <script type="module" src="js/detelle/detalle_mantenimiento.js"></script>
   <script type="module" src="js/auth/logout.js"></script>
+  <script type="module" src="js/menu/mostrar_ocultar_menu.js"></script>
 </body>
 </html>

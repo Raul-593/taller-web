@@ -1,5 +1,5 @@
-import { supabaseClient } from './conexionBaseDatos.js';
-import { requireAuth } from './auth/autorizacion.js';
+import { supabaseClient } from '../conexionBaseDatos.js';
+import { requireAuth } from '../auth/autorizacion.js';
 
 const params = new URLSearchParams(window.location.search);
 const clienteId = params.get('id');
@@ -18,6 +18,10 @@ const modalBici = document.getElementById('modal-bicicleta');
 const formBici = document.getElementById('form-bicicleta');
 const cerrarModalBici = document.getElementById('cerrar-modal-bici');
 const btnNuevaBicicleta = document.getElementById('btn-nueva-bicicleta');
+
+//Nuevo Mantenimiento
+const btnNuevoMantenimiento = document.getElementById('btn-nuevo-mantenimiento');
+const selectBicicleta = document.getElementById('select-bicicleta');
 
 //Protege la vista si no tiene usuario
 (async () => {
@@ -67,7 +71,7 @@ async function cargarDetalle(id) {
   }
 
   clienteNombre.textContent = cliente.name;
-  clienteInfo.textContent = `Dirección: ${cliente.address} | Teléfono: ${cliente.phone}`;
+  clienteInfo.textContent = `${cliente.address} |  ${cliente.phone}`;
 
   const { data: bicicletas, error: errorBici } = await supabaseClient
     .from('bicycles')
@@ -126,24 +130,39 @@ async function cargarDetalle(id) {
       `;
 
     div.innerHTML = `
-      <h4>Bicicleta: ${bici.brand} ${bici.model} - ${bici.serial_number}</h4>
-      <button class="boton" data-bici-id="${bici.id}">Nuevo Mantenimiento</button>
+      <h4> <br> ${bici.brand} | ${bici.model} | ${bici.serial_number}</h4>
       ${mantenimientoHTML}
     `;
 
     contenedor.appendChild(div);
   });
-
-  // Botones "Nuevo Mantenimiento"
-  document.querySelectorAll('.boton').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const biciId = btn.dataset.biciId;
-      formModal.reset();
-      formModal.bicycle_id.value = biciId;
-      modal.classList.remove('hidden');
-    });
-  });
 }
+
+//Nuevo mantenimiento
+btnNuevoMantenimiento.addEventListener('click', async () => {
+  formModal.reset();
+  selectBicicleta.innerHTML = '<option value="" disabled selected>Selecciona una bicicleta</option>';
+
+  const { data: bicicletas, error } = await supabaseClient
+    .from('bicycles')
+    .select('id, serial_number')
+    .eq('customer_id', clienteId);
+
+  if (error || !bicicletas.length) {
+    mostrarToast('No hay bicicletas para este cliente', 'error');
+    return;
+  }
+
+  bicicletas.forEach(bici => {
+    const option = document.createElement('option');
+    option.value = bici.id;
+    option.textContent = `ID: ${bici.id} | N. Serie: ${bici.serial_number}`;
+    selectBicicleta.appendChild(option);
+  });
+
+  modal.classList.remove('hidden');
+});
+
 
 // Cerrar modales
 cerrarModal.addEventListener('click', () => modal.classList.add('hidden'));
@@ -178,7 +197,7 @@ formModal.addEventListener('submit', async (e) => {
   cargarDetalle(clienteId);
 });
 
-// Mostrar modal nueva bicicleta
+// Mostrar modal Nueva bicicleta
 btnNuevaBicicleta.addEventListener('click', () => {
   formBici.reset();
   modalBici.classList.remove('hidden');
@@ -209,5 +228,5 @@ formBici.addEventListener('submit', async (e) => {
 
   mostrarToast('Bicicleta guardada correctamente', 'success');
   modalBici.classList.add('hidden');
-  cargarDetalle(clienteId);
+  await cargarDetalle(clienteId);
 });

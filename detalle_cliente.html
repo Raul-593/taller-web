@@ -4,19 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle Cliente</title>
-    <link rel="stylesheet" href="css/navBar.css">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/tablas.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 </head>
 <body>
-    <nav>
-        <ul>
-            <a href="index.html">593 Cycling Studio</a>    
-            <a href="registro_cliente.html" class="boton">Nuevo Cliente</a>
-            <button id="btn-nueva-bicicleta" class="boton">Agregar Bicicleta</button>
-        </ul>
-    </nav>
+    <div class="container-menu">
+        <div class="logo-toggle">
+            <a href="index.html"><img src="image/logoCyclingStudio.svg" alt="Logo" /></a>
+            <span class="material-symbols-outlined menu-toggle" id="menuToggle">menu</span>
+        </div>
+        <nav class="menu-submenu" id="menu">
+            <ul>
+                <li><a id="btn-nuevo-mantenimiento">Nuevo Mantenimiento</a></li>
+                <li><a id="btn-nueva-bicicleta">Agregar Bicicleta</a></li>
+                <li><a id="logout">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+  </div>
     
-    <button id="logout">Cerrar Sesion</button>
 
     <!-- ventana emergente-->
     <div id="modal-mantenimiento" class="modal hidden">
@@ -24,7 +31,10 @@
             <span class="close-button" id="cerrar-modal">&times;</span>
             <h3>Nuevo Mantenimientos</h3>
             <form id="form-modal">
-                <input type="hidden" name="bicycle_id">
+                <select name="bicycle_id" id="select-bicicleta" required>
+                    <option value="" disabled selected>Selecciona una bicicleta</option>
+                </select>
+
                 <input type="date" name="service_date" required placeholder="Fecha">
                 <input type="text" name="description"  required placeholder="Descripción">
                 <input type="number" name="cost" required placeholder="Costo" step="0.01">
@@ -54,13 +64,14 @@
         <h2 id="cliente-nombre">Cliente</h2>
         <p id="cliente-info"></p>
 
-        <h3>Bicicleta y Mantenimientos</h3>
+        
         <div id="container-bicicletas"></div>
         
-        <a href="index.html" class="boton">Volver</a>
+        <a href="index.html" class="btn-incio">Volver</a>
     </div>
 
-    <script type="module" src="js/detalle_cliente.js"></script>
+    <script type="module" src="js/detelle/detalle_cliente.js"></script>
     <script type="module" src="js/auth/logout.js"></script>
+    <script type="module" src="js/menu/mostrar_ocultar_menu.js"></script>
 </body>
 </html>

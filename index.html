@@ -2,43 +2,50 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Clientes</title>
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/navBar.css">
-  
+  <link rel="stylesheet" href="css/tablas.css">
+  <link rel="stylesheet" href="css/nav.css">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 </head>
+
 <body>
-  <nav>
-    <ul>
-      <a href="index.html" class="titutlo">593 Cycling Studio</a>    
-      <a href="registro_cliente.html" class="boton">Nuevo Cliente</a>
-    </ul>
-  </nav>
-
-  <button id="logout">Cerrar Sesion</button>
-  <div class="busqueda-conteiner">
-    <input type="text" id="busqueda" placeholder="Buscar por Número de Serie" />
-  </div>
-
-  <div class="container-informacion">
-    <h2>Clientes</h2>
-    <div class="table-container">
-      <table id="tabla">
-        <thead>
-          <tr>
-            <th>Cliente</th>
-            <th>Dirección</th>
-            <th>Teléfono</th>
-            <th>Bicicleta</th>
-            <th>Número de Serie</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+  <div class="container-menu">
+    <div class="logo-toggle">
+      <a href="index.html"><img src="image/logoCyclingStudio.svg" alt="Logo" /></a>
+      <span class="material-symbols-outlined menu-toggle" id="menuToggle">menu</span>
     </div>
+    <nav class="menu-submenu" id="menu">
+      <ul>
+        <li><a href="registro_cliente.html">Nuevo Cliente</a></li>
+        <li><a id="logout">Cerrar Sesión</a></li>
+      </ul>
+    </nav>
   </div>
+  
+    <div class="busqueda-conteiner">
+      <input type="text" id="busqueda" placeholder="Buscar por Cliente" />
+    </div>
+
+    <div class="container-informacion">
+        <h2>Clientes</h2>
+        <div class="table-container">
+            <table id="tabla">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Dirección</th>
+                        <th>Teléfono</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
 
   <script type="module" src="js/ver_clientes.js"></script>
+  <script type="module" src="js/menu/mostrar_ocultar_menu.js"></script>
   <script type="module" src="js/auth/logout.js"></script>
 </body>
 </html>

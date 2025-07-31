@@ -1,5 +1,5 @@
-import { supabaseClient } from './conexionBaseDatos.js';
-import { requireAuth } from './auth/autorizacion.js';
+import { supabaseClient } from '../conexionBaseDatos.js';
+import { requireAuth } from '../auth/autorizacion.js';
 
 const form = document.getElementById('form');
 const respuesta = document.getElementById('respuesta');

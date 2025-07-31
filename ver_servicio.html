@@ -4,18 +4,23 @@
   <meta charset="UTF-8" />
   <title>Mantenimientos</title>
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/navBar.css">
+  <link rel="stylesheet" href="css/nav.css">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 </head>
 <body>
-    <nav>
-        <ul>
-            <a href="index.html">593 Cycling Studio</a>    
-            <a href="registro_cliente.html" class="boton">Nuevo Cliente</a>
-            <button id="btn-nueva-bicicleta">Agregar Bicicleta</button>
-        </ul>
+    <div class="container-menu">
+    <div class="logo-toggle">
+      <a href="index.html"><img src="image/logoCyclingStudio.svg" alt="Logo" /></a>
+      <span class="material-symbols-outlined menu-toggle" id="menuToggle">menu</span>
+    </div>
+    <nav class="menu-submenu" id="menu">
+      <ul>
+        <li><a href="registro_cliente.html">Nuevo Cliente</a></li>
+        <li><a id="logout">Cerrar Sesión</a></li>
+      </ul>
     </nav>
-    
-    <button id="logout">Cerrar Sesion</button>
+  </div>
+  
     <div class="busqueda-conteiner">
     <input type="text" id="busqueda" placeholder="Buscar por Numero de Serie" />
     </div>
@@ -39,7 +44,7 @@
         </div>
         
         <div class="btn_nav">
-            <a class="boton" href="index.html">Volver a Clientes</a>
+            <a class="btn-incio" href="index.html">Volver a Clientes</a>
         </div>
     </div>
 

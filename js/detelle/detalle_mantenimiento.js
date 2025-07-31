@@ -1,5 +1,5 @@
-import { supabaseClient, getCurrentUserRole } from './conexionBaseDatos.js';
-import { requireAuth } from './auth/autorizacion.js';
+import { supabaseClient, getCurrentUserRole } from '../conexionBaseDatos.js';
+import { requireAuth } from '../auth/autorizacion.js';
 
 // Variables generales
 const params = new URLSearchParams(window.location.search);
@@ -41,12 +41,42 @@ async function cargarMantenimiento(id) {
 
   mantenimientoActual = data;
 
-  contenedor.innerHTML = `
-    <p><strong>Fecha:</strong> ${data.service_date}</p>
-    <p><strong>Descripción:</strong> ${data.description}</p>
-    <p><strong>Costo:</strong> $${data.cost}</p>
-    <p><strong>Observación:</strong> ${data.observation || 'Sin observaciones'}</p>
-  `;
+  // Obtener datos de la bicicleta asociada
+const { data: bicicleta, error: errorBici } = await supabaseClient
+  .from('bicycles')
+  .select('brand, model, serial_number')
+  .eq('id', data.bicycle_id)
+  .single();
+
+if (!bicicleta || errorBici) {
+  document.getElementById('titulo-bicicleta').textContent = 'Detalle del Mantenimiento';
+} else {
+  document.getElementById('titulo-bicicleta').textContent =
+    `${bicicleta.brand} | ${bicicleta.model} | N.Serie: ${bicicleta.serial_number}`;
+}
+
+contenedor.innerHTML = `
+  <table>
+    <tr>
+      <th>Fecha del servicio</th>
+      <td>${data.service_date}</td>
+    </tr>
+    <tr>
+      <th>Descripción</th>
+      <td>${data.description}</td>
+    </tr>
+    <tr>
+      <th>Costo</th>
+      <td>$${data.cost}</td>
+    </tr>
+    <tr>
+      <th>Observación</th>
+      <td>${data.observation || 'Sin observaciones'}</td>
+    </tr>
+  </table>
+`;
+
+
 }
 
 // Verifica el rol del usuario

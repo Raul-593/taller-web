@@ -1,0 +1,125 @@
+/* Estilo General */
+*{
+  margin: 0;
+  padding: 0;
+}
+
+body{
+  min-height: 100vh;
+  background-color: #f3f3f3;
+}
+
+/*Estilo de Busqueda*/
+#busqueda {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
+  margin: 15px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.busqueda-conteiner{
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+/*============Tabla================================= */
+.container-informacion{
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 8px 20px rgba(196, 162, 162, 0.1);
+  border-radius: 12px;
+  background: #eee;
+  padding: 30px;
+}
+
+/* Estilos generales para la tabla */
+.tabla-container{
+    overflow-x: auto;
+    width: 100%;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Encabezado */
+h2{
+  text-align: center;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+thead tr {
+  background-color: #c0baba;
+}
+
+thead th {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
+  border-bottom: 2px solid #ccc;
+}
+
+/* Cuerpo de la tabla */
+tbody tr {
+  background-color: #f5f5f5;
+}
+
+tbody td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Hover para filas */
+tbody tr:hover {
+  background-color: #ddd;
+}
+
+tbody a{
+    color: black;
+    text-decoration: underline;
+}
+
+
+/* Responsive horizontal scroll en móviles */
+@media screen and (max-width: 650px) {
+
+  table, thead, tbody, th, td, tr {
+    display: block;
+    min-width: unset;
+  }
+
+  thead {
+    display: none; /* Oculta el encabezado */
+  }
+
+  tbody tr {
+    margin-bottom: 15px;
+    background-color: #f5f5f5;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  tbody td {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 10px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  tbody td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    color: #555;
+  }
+}
