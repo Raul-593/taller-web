@@ -48,12 +48,17 @@ const { data: bicicleta, error: errorBici } = await supabaseClient
   .eq('id', data.bicycle_id)
   .single();
 
-if (!bicicleta || errorBici) {
-  document.getElementById('titulo-bicicleta').textContent = 'Detalle del Mantenimiento';
-} else {
+if (bicicleta && !errorBici) {
+  mantenimientoActual.brand = bicicleta.brand;
+  mantenimientoActual.model = bicicleta.model;
+  mantenimientoActual.serial_number = bicicleta.serial_number;
+
   document.getElementById('titulo-bicicleta').textContent =
-    `${bicicleta.brand} | ${bicicleta.model} | N.Serie: ${bicicleta.serial_number}`;
-}
+      `${bicicleta.brand} | ${bicicleta.model} | N.Serie: ${bicicleta.serial_number}`;
+  } else {
+    document.getElementById('titulo-bicicleta').textContent = 'Detalle del Mantenimiento';
+  }
+
 
 contenedor.innerHTML = `
   <table>
@@ -76,6 +81,8 @@ contenedor.innerHTML = `
   </table>
 `;
 
+// Boton de descarga PDF
+document.getElementById('btn-descargar-pdf').disabled = false;
 
 }
 
@@ -158,3 +165,24 @@ btnEliminar.addEventListener('click', async () => {
   alert('Mantenimiento eliminado');
   window.location.href = 'index.html'; // Puedes cambiar esto si deseas volver a detalle_cliente.html
 });
+
+// IMPORTAR GENERAR PDF
+import { generarPDFMantenimiento } from '../pdf/generar_pdf.js';
+
+document.getElementById('btn-descargar-pdf').addEventListener('click', async () => {
+  if (
+    !mantenimientoActual ||
+    !mantenimientoActual.brand ||
+    !mantenimientoActual.model ||
+    !mantenimientoActual.serial_number
+  ){
+    alert('Los datos de la bicicleta aun no están cargados');
+    return;
+  }
+
+  generarPDFMantenimiento(mantenimientoActual);
+});
+
+
+
+
