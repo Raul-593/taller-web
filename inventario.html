@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clientes</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/tablas.css" />
+    <link rel="stylesheet" href="css/nav.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+  </head>
+
+  <body>
+    <div class="container-menu">
+      <div class="logo-toggle">
+        <a href="index.html"><img src="image/logoCyclingStudio.svg" alt="Logo"/></a>
+        <span class="material-symbols-outlined menu-toggle" id="menuToggle">menu</span>
+      </div>
+
+      <nav class="menu-submenu" id="menu">
+        <ul>
+          <li><a href="registro_cliente.html">Nuevo Cliente</a></li>
+          <li><a id="logout">Cerrar Sesión</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Inventario-->
+    <h2>Inventario de Repuestos</h2>
+
+    <table id="tabla-inventario">
+      <thead>
+        <tr>
+          <th>Repuesto</th>
+          <th>Categoría</th>
+          <th>Stock</th>
+          <th>PVP</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <button type="submit" class="btn-incio">Guardar</button>
+
+    <script type="module" src="js/inventario.js"></script>
+    <script type="module" src="js/menu/mostrar_ocultar_menu.js"></script>
+    <script type="module" src="js/auth/logout.js"></script>
+  </body>
+</html>
