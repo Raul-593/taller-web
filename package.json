@@ -35,7 +35,7 @@
     "eslint-config-next": "^15.2.1",
     "shadcn": "^2.3.0",
     "supabase": "^2.84.10",
-    "tailwindcss": "^4",
+    "tailwindcss": "^4.2.2",
     "typescript": "^5"
   }
 }

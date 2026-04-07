@@ -57,7 +57,7 @@ export function EditarMantenimientoDialog({ mantenimiento, onMantenimientoActual
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        if (!bicycle_id || !serviceDate || !description || !cost) {
+        if (!serviceDate || !description || !cost) {
             toast.error("Llenar todos los campos")
             return
         }
@@ -75,7 +75,7 @@ export function EditarMantenimientoDialog({ mantenimiento, onMantenimientoActual
             bicycle_id: bicycle_id
         })
         .eq("id", mantenimiento.id)
-        .select("id, service_date, delivery_date, description, observation, cost, status, bicycle_id")
+        .select()
         .single()
 
         if(error) {
