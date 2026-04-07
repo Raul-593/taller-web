@@ -1,9 +1,0 @@
-{
-  "rewrites": [
-    { "source": "/", "destination": "/index.html" },
-    { "source": "/registro", "destination": "/registro_cliente.html" },
-    { "source": "/clientes", "destination": "/detalle_cliente.html" },
-    { "source": "/mantenimientos", "destination": "/detalle_mantenimiento.html" },
-    { "source": "/login", "destination": "/login.html" }
-  ]
-}
