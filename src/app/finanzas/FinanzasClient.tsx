@@ -2,12 +2,13 @@
 
 import { useState, useMemo, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/componentes/ui/cards"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/componentes/ui/table"
 import { AgregarIngreso } from "@/componentes/finanzas/AgregarIngreso"
 import { AgregarGasto } from "@/componentes/finanzas/AgregarGasto"
 
-export function FinanzasClient({ sales: initialSales, purchases: initialPurchases }: { sales: any[], purchases: any[] }) {
+export function FinanzasClient({ sales: initialSales, purchases: initialPurchases, currentMonth, currentYear }: { sales: any[], purchases: any[], currentMonth?: string, currentYear?: string }) {
     const router = useRouter()
     
     const [sales, setSales] = useState(initialSales || [])
@@ -19,10 +20,48 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
         setPurchases(initialPurchases || [])
     }, [initialSales, initialPurchases])
 
+    const handleFilterChange = (type: 'month' | 'year', value: string) => {
+        const params = new URLSearchParams(window.location.search)
+        if (type === 'year') {
+            params.set('year', value)
+            if (!params.has('month')) params.set('month', currentMonth || 'all')
+        } else {
+            params.set('month', value)
+            if (!params.has('year')) params.set('year', currentYear || new Date().getFullYear().toString())
+        }
+        router.push(`/finanzas?${params.toString()}`)
+    }
+
+    const months = [
+        { value: 'all', label: 'Todo el año' },
+        { value: '1', label: 'Enero' },
+        { value: '2', label: 'Febrero' },
+        { value: '3', label: 'Marzo' },
+        { value: '4', label: 'Abril' },
+        { value: '5', label: 'Mayo' },
+        { value: '6', label: 'Junio' },
+        { value: '7', label: 'Julio' },
+        { value: '8', label: 'Agosto' },
+        { value: '9', label: 'Septiembre' },
+        { value: '10', label: 'Octubre' },
+        { value: '11', label: 'Noviembre' },
+        { value: '12', label: 'Diciembre' },
+    ]
+
+    const years = Array.from({length: 10}, (_, i) => (new Date().getFullYear() + i).toString()) // 7 años adelante
+
     // Cálculos dinámicos de finanzas
     const totalSales = useMemo(() => sales.reduce((acc, current) => acc + (Number(current.total) || 0), 0), [sales])
     const totalPurchases = useMemo(() => purchases.reduce((acc, current) => acc + (Number(current.total) || 0), 0), [purchases])
     const netBalance = totalSales - totalPurchases
+
+    const chartData = useMemo(() => [
+        {
+            name: 'Resumen Mensual',
+            Ingresos: totalSales,
+            Gastos: totalPurchases
+        }
+    ], [totalSales, totalPurchases])
 
     const formattedIncome = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(totalSales)
     const formattedExpenses = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(totalPurchases)
@@ -33,7 +72,22 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
             <div className="flex items-start justify-between">
                 <div>
                     <h1 className="text-2xl font-bold tracking-tight"> 593 Cycling Studio </h1>
-                    <p className="text-muted-foreground mt-1"> Mes Actual </p>
+                    <div className="flex gap-2 items-center mt-2">
+                        <select 
+                            value={currentMonth || 'all'}
+                            onChange={(e) => handleFilterChange('month', e.target.value)}
+                            className="bg-background border border-border rounded-md px-3 py-1 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/30"
+                        >
+                            {months.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
+                        </select>
+                        <select 
+                            value={currentYear || new Date().getFullYear().toString()}
+                            onChange={(e) => handleFilterChange('year', e.target.value)}
+                            className="bg-background border border-border rounded-md px-3 py-1 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/30"
+                        >
+                            {years.map(y => <option key={y} value={y}>{y}</option>)}
+                        </select>
+                    </div>
                 </div>
                 <div className="flex gap-2">
                     <AgregarIngreso onIngresoAgregado={() => router.refresh()} />
@@ -84,11 +138,26 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
                     <Card className="md:col-span-2 flex flex-col justify-center">
                         <CardHeader>
                             <div className="space-y-1">
-                                <CardTitle> Ingreso vs Gastado</CardTitle>
+                                <CardTitle> Ingreso vs Gasto</CardTitle>
                             </div>
                         </CardHeader>
-                        <CardContent>
-                            GRAFICO DE CON LA INFORMACION DE INGRESOS Y GASTOS QUE ESTA EN LA PAGINA DE FINANZAS
+                        <CardContent className="h-[300px] w-full pt-4">
+                            {totalSales === 0 && totalPurchases === 0 ? (
+                                <div className="h-full flex items-center justify-center text-muted-foreground">
+                                    No hay datos para el periodo seleccionado.
+                                </div>
+                            ) : (
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                        <XAxis dataKey="name" />
+                                        <YAxis tickFormatter={(value) => `$${value}`} />
+                                        <Legend />
+                                        <Bar dataKey="Ingresos" fill="#22c55e" radius={[4, 4, 0, 0]} maxBarSize={150} />
+                                        <Bar dataKey="Gastos" fill="#ef4444" radius={[4, 4, 0, 0]} maxBarSize={150} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            )}
                         </CardContent>
                     </Card>
                     <Card className="md:col-span-1 flex flex-col justify-center">
@@ -165,7 +234,7 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead>Fecha</TableHead>
-                                        <TableHead>Proveedor / ID</TableHead>
+                                        <TableHead>Proveedor</TableHead>
                                         <TableHead>Descripción</TableHead>
                                         <TableHead>Subtotal</TableHead>
                                         <TableHead>Total</TableHead>

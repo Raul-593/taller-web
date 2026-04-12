@@ -1,8 +1,8 @@
-import { Button } from "@/componentes/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/componentes/ui/cards"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/componentes/ui/cards"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/componentes/ui/table"
-import { DollarSign } from "lucide-react"
 import { createClient } from "@/utils/supabase/server"
+import { DashboardChartClient } from "./DashboardChartClient"
+
 
 type Mantenimiento = {
     id: string
@@ -103,15 +103,15 @@ export default async function Dashboard() {
         </p>
       </div>
       <div className="grid gap-4 md:grid-cols-4">
-        {/* --- Ingresos Del Mes  --- */}
+        {/* --- Ingresos Del Año  --- */}
         <Card className="flex flex-col justify-center">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <div className="space-y-1">
               <CardTitle className="text-base font-semibold">
-                Ingreso Del Mes
+                Ingreso Del Año
               </CardTitle>
               <CardDescription>
-                Ingresos totales del mes
+                Ingresos totales del año
               </CardDescription>
             </div>
           </CardHeader>
@@ -121,15 +121,15 @@ export default async function Dashboard() {
             </div>
           </CardContent>
         </Card>
-        {/* --- Gastos Del Mes  --- */}
+        {/* --- Gastos Del Año  --- */}
         <Card className="flex flex-col justify-center">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <div className="space-y-1">
               <CardTitle className="text-base font-semibold">
-                Gastos Del Mes
+                Gastos Del Año
               </CardTitle>
               <CardDescription>
-                Gastos totales del mes
+                Gastos totales del año
               </CardDescription>
             </div>
           </CardHeader>
@@ -147,7 +147,7 @@ export default async function Dashboard() {
                 Saldo Neto
               </CardTitle>
               <CardDescription>
-                Saldo total del mes
+                Saldo total del año
               </CardDescription>
             </div>
           </CardHeader>
@@ -177,17 +177,19 @@ export default async function Dashboard() {
         </Card>
       </div>
       <div className="grid gap-4 grid-cols-1 md:grid-cols-5">
+        
         {/* --- Grafico de Barras --- */}
         <Card className="md:col-span-3 flex flex-col justify-center">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <div className="space-y-1">
-              <CardTitle> Ingreso vs Gastado</CardTitle>
+              <CardTitle> Ingreso vs Gasto</CardTitle>
             </div>
           </CardHeader>
-          <CardContent >
-            GRAFICO DE CON LA INFORMACION DE INGRESOS Y GASTOS QUE ESTA EN LA PAGINA DE FINANZAS
+          <CardContent>
+            <DashboardChartClient totalSales={totalSales} totalPurchases={totalPurches} />
           </CardContent>
         </Card>
+        
         {/* GRAFICO PIE */}
         <Card className="md:col-span-2 flex flex-col justify-center">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -200,6 +202,8 @@ export default async function Dashboard() {
           </CardContent>
         </Card>
       </div>
+      
+      {/* --- Actividades Pendientes --- */}
       <div className="grid gap-4 grid-cols-1 md:grid-cols-5">
         <Card className="md:col-span-5 flex flex-col justify-center">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

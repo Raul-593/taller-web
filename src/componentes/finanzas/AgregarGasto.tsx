@@ -125,7 +125,7 @@ export function AgregarGasto({ onGastoAgregado, trigger }: Props) {
 
         setIsSubmitting(true)
 
-        // 1. Manejar creación de productos nuevos si existen
+        // Manejar creación de productos nuevos si existen
         const itemsWithIds = await Promise.all(items.map(async (item) => {
             if (item.productName && !item.product_id) {
                 // Crear producto nuevo
@@ -149,7 +149,7 @@ export function AgregarGasto({ onGastoAgregado, trigger }: Props) {
             return item
         }))
 
-        // 2. Insertar la compra
+        // Insertar la compra
         const { data: purchase, error: purchasError } = await supabase
             .from("purchases")
             .insert([{

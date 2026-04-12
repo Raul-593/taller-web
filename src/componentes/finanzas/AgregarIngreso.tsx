@@ -109,7 +109,7 @@ export function AgregarIngreso({ onIngresoAgregado, trigger }: Props) {
 
         setIsSubmitting(true)
 
-        // 1. Insertar la venta
+        // Insertar la venta
         const { data: sale, error: saleError } = await supabase
             .from("sales")
             .insert([{
@@ -133,7 +133,7 @@ export function AgregarIngreso({ onIngresoAgregado, trigger }: Props) {
             return
         }
 
-        // 2. Insertar los ítems si existen
+        // Insertar los ítems si existen
         if (items.length > 0) {
             const itemsToInsert = items
                 .filter((item: any) => item.product_id)
