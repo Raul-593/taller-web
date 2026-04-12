@@ -1,10 +1,12 @@
 import { login } from './actions'
-import { Button } from '@/componentes/ui/button'
 import { Input } from '@/componentes/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/componentes/ui/cards'
 import { Label } from '@/componentes/ui/label'
+import { SubmitButton } from '@/componentes/ui/submit_button'
 
-export default function LoginPage() {
+export default async function LoginPage(props: { searchParams: Promise<{ error?: string }> }) {
+    const searchParams = await props.searchParams;
+    const error = searchParams.error;
     return (
         <div className="flex h-screen w-full items-center justify-center px-4">
             <Card className="mx-auto max-w-sm">
@@ -15,6 +17,11 @@ export default function LoginPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
+                    {error && (
+                        <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-600 border border-red-200">
+                            {error}
+                        </div>
+                    )}
                     <form>
                         <div className="grid gap-4">
                             <div className="grid gap-2">
@@ -33,9 +40,7 @@ export default function LoginPage() {
                                 </div>
                                 <Input id="password" name="password" type="password" required />
                             </div>
-                            <Button formAction={login} className="w-full">
-                                Iniciar Sesión
-                            </Button>
+                            <SubmitButton formAction={login} />
                         </div>
                     </form>
                 </CardContent>

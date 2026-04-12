@@ -16,7 +16,8 @@ export default async function Finanzas() {
     total, 
     payment_method, 
     status, 
-    observacion
+    observacion,
+    customers (name)
   `)
   .order('created_at', { ascending: false })
 

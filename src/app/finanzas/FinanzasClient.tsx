@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/componentes/ui/table"
 import { AgregarIngreso } from "@/componentes/finanzas/AgregarIngreso"
 import { AgregarGasto } from "@/componentes/finanzas/AgregarGasto"
-import { Toaster } from "sonner"
 
 export function FinanzasClient({ sales: initialSales, purchases: initialPurchases }: { sales: any[], purchases: any[] }) {
     const router = useRouter()
@@ -31,7 +30,6 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
 
     return (
         <div className="flex flex-col gap-6">
-            <Toaster richColors position="top-right" />
             <div className="flex items-start justify-between">
                 <div>
                     <h1 className="text-2xl font-bold tracking-tight"> 593 Cycling Studio </h1>
@@ -121,6 +119,7 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead>Fecha</TableHead>
+                                        <TableHead>Cliente</TableHead>
                                         <TableHead>Tipo de Venta</TableHead>
                                         <TableHead>Subtotal</TableHead>
                                         <TableHead>Descuento</TableHead>
@@ -134,6 +133,7 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
                                     {sales.map((venta: any) => (
                                         <TableRow key={venta.id}>
                                             <TableCell>{venta.sales_date || '-'}</TableCell>
+                                            <TableCell className="font-medium capitalize">{venta.customers?.name || '-'}</TableCell>
                                             <TableCell className="font-medium capitalize">{venta.sales_type}</TableCell>
                                             <TableCell>${venta.sub_total}</TableCell>
                                             <TableCell>${venta.discount}</TableCell>
