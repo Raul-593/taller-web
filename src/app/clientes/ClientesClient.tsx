@@ -7,11 +7,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Toaster } from "sonner"
 import { AgregarClienteDialog } from "@/componentes/clientes/AgregarClienteDialog"
 import { EditarClienteDialog } from "@/componentes/clientes/EditarClienteDialog"
+import { Input } from "@/componentes/ui/input"
+import { Search } from "lucide-react"
 
 
 export function ClientesClient({ clientes: initial }: { clientes: any[] }) {
   const router = useRouter()
   const [clientes, setClientes] = useState(initial)
+  const [searchTerm, setSearchTerm] = useState("")
 
   useEffect(() => {
     setClientes(initial)
@@ -28,10 +31,24 @@ export function ClientesClient({ clientes: initial }: { clientes: any[] }) {
         <AgregarClienteDialog onClienteAgregado={() => router.refresh()} />
       </div>
 
-      <Card className="md:col-span-4">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base font-semibold">Clientes</CardTitle>
-          <CardDescription>Clientes registrados</CardDescription>
+      <Card className="md:col-span-4 overflow-hidden">
+        <CardHeader className="pb-4 flex flex-col sm:flex-row sm:items-center justify-start gap-6">
+          {/* Titulo y descripcion */}
+          <div className="flex flex-col gap-1">
+            <CardTitle className="text-xl font-bold">Clientes</CardTitle>
+            <CardDescription>Gestiona y busca tus clientes registrados</CardDescription>
+          </div>
+
+          {/* Filtrar por cliente */}
+          <div className="relative w-full sm:w-80 sm:ml-auto">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar cliente por nombre..."
+              className="pl-9 bg-muted/50 focus-visible:bg-background transition-colors"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
         </CardHeader>
         <CardContent>
           {clientes.length === 0 ? (
@@ -47,8 +64,10 @@ export function ClientesClient({ clientes: initial }: { clientes: any[] }) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {clientes.map(c => (
-                  <TableRow key={c.id}>
+                {clientes
+                  .filter(c => c.name.toLowerCase().includes(searchTerm.toLowerCase()))
+                  .map(c => (
+                  <TableRow key={c.id} className="hover:bg-muted/50 transition-colors">
                     <TableCell className="font-medium">{c.name}</TableCell>
                     <TableCell>{c.phone || '—'}</TableCell>
                     <TableCell>{c.address || '—'}</TableCell>

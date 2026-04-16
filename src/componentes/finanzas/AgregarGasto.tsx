@@ -248,82 +248,95 @@ export function AgregarGasto({ onGastoAgregado, trigger }: Props) {
                 </div>
 
                 {/* Sección de Ítems */}
-                <div className="col-span-2 border-t pt-4 mt-2">
-                    <div className="flex items-center justify-between mb-2">
-                        <Label className="font-bold text-zinc-900">Productos / Repuestos</Label>
-                        <Button type="button" onClick={addItem} size="sm" variant="outline" className="h-8">
-                            + Agregar Producto
+                <div className="col-span-2 border rounded-lg overflow-hidden bg-white shadow-sm mt-2">
+                    <div className="bg-zinc-100/80 px-4 py-2 border-b flex items-center justify-between">
+                        <Label className="font-bold text-zinc-800 text-sm">Productos / Repuestos</Label>
+                        <Button type="button" onClick={addItem} size="sm" variant="outline" className="h-7 text-[10px] bg-white">
+                            + AGREGAR ITEM
                         </Button>
                     </div>
                     
-                    <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2">
-                        {items.length === 0 && (
-                            <p className="text-xs text-muted-foreground italic">No hay productos agregados.</p>
-                        )}
-                        {items.map((item, index) => (
-                            <div key={index} className="grid grid-cols-[1fr,60px,100px,80px,30px] gap-2 items-end bg-zinc-50 p-2 rounded-md border">
-                                <div className="grid gap-1">
-                                    <Label className="text-[10px] uppercase text-zinc-500">Buscador / Nuevo</Label>
-                                    <input 
-                                        list="products-list"
-                                        value={item.productName}
-                                        onChange={e => updateItem(index, "productName", e.target.value)}
-                                        placeholder="Buscar o escribir nombre..."
-                                        className="w-full bg-white border border-border rounded px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-primary h-7"
-                                    />
-                                    <datalist id="products-list">
-                                        {products.map(p => (
-                                            <option key={p.id} value={p.name} />
-                                        ))}
-                                    </datalist>
-                                </div>
-                                <div className="grid gap-1">
-                                    <Label className="text-[10px] uppercase text-zinc-500">Cant.</Label>
-                                    <Input 
-                                        type="number" 
-                                        value={item.quantity} 
-                                        onChange={e => updateItem(index, "quantity", e.target.value)}
-                                        className="h-7 text-xs px-2"
-                                    />
-                                </div>
-                                <div className="grid gap-1">
-                                    <Label className="text-[10px] uppercase text-zinc-500">Costo Unit.</Label>
-                                    <Input 
-                                        type="number" 
-                                        step="0.01"
-                                        value={item.unit_price} 
-                                        onChange={e => updateItem(index, "unit_price", e.target.value)}
-                                        className="h-7 text-xs px-2"
-                                    />
-                                </div>
-                                <div className="grid gap-1">
-                                    <Label className="text-[10px] uppercase text-zinc-500">Total</Label>
-                                    <div className="h-7 text-xs flex items-center font-bold">
-                                        ${item.total.toFixed(2)}
-                                    </div>
-                                </div>
-                                <Button 
-                                    type="button" 
-                                    variant="ghost" 
-                                    size="sm" 
-                                    onClick={() => removeItem(index)}
-                                    className="h-7 w-7 p-0 text-red-500 hover:text-red-700 hover:bg-red-50"
-                                >
-                                    <Trash2 className="h-4 w-4" />
+                    <div className="p-4 space-y-3 min-h-[100px]">
+                        {items.length === 0 ? (
+                            <div className="text-center py-6 border-2 border-dashed rounded-md bg-zinc-50/50">
+                                <p className="text-xs text-muted-foreground">No hay productos agregados.</p>
+                                <Button type="button" variant="link" size="sm" onClick={addItem} className="text-xs">
+                                    Haz clic aquí para agregar uno
                                 </Button>
                             </div>
-                        ))}
+                        ) : (
+                            <div className="space-y-3">
+                                {/* Header */}
+                                <div className="hidden sm:grid grid-cols-[1fr,70px,100px,80px,36px] gap-3 px-2">
+                                    <Label className="text-[10px] uppercase font-bold text-zinc-400">Producto / Concepto</Label>
+                                    <Label className="text-[10px] uppercase font-bold text-zinc-400 text-center">Cant.</Label>
+                                    <Label className="text-[10px] uppercase font-bold text-zinc-400">Costo Unit.</Label>
+                                    <Label className="text-[10px] uppercase font-bold text-zinc-400">Total</Label>
+                                    <div></div>
+                                </div>
+
+                                {items.map((item, index) => (
+                                    <div key={index} className="grid grid-cols-[1fr,70px,100px,80px,30px] gap-2 items-center bg-zinc-50/50 p-2 rounded-lg border border-zinc-100 group hover:border-zinc-300 transition-colors">
+                                        <div className="w-full">
+                                            <input 
+                                                list="products-list"
+                                                value={item.productName}
+                                                onChange={e => updateItem(index, "productName", e.target.value)}
+                                                placeholder="Buscar o escribir nombre..."
+                                                className="w-full bg-white border border-border rounded-md px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-zinc-400 h-8"
+                                            />
+                                            <datalist id="products-list">
+                                                {products.map(p => (
+                                                    <option key={p.id} value={p.name} />
+                                                ))}
+                                            </datalist>
+                                        </div>
+                                        <div>
+                                            <Input 
+                                                type="number" 
+                                                value={item.quantity} 
+                                                onChange={e => updateItem(index, "quantity", e.target.value)}
+                                                className="h-8 text-xs px-2 text-center"
+                                            />
+                                        </div>
+                                        <div>
+                                            <Input 
+                                                type="number" 
+                                                step="0.01"
+                                                value={item.unit_price} 
+                                                onChange={e => updateItem(index, "unit_price", e.target.value)}
+                                                className="h-8 text-xs px-2"
+                                            />
+                                        </div>
+                                        <div className="text-xs font-bold text-zinc-700 px-1">
+                                            ${item.total.toFixed(2)}
+                                        </div>
+                                        <Button 
+                                            type="button" 
+                                            variant="ghost" 
+                                            size="sm" 
+                                            onClick={() => removeItem(index)}
+                                            className="h-8 w-8 p-0 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-full"
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
 
-                <div className="grid gap-2">
-                    <Label htmlFor="subTotal">Sub Total</Label>
-                    <Input id="subTotal" type="number" value={subTotal} readOnly className="bg-zinc-50" />
-                </div>
-
-                <div className="grid gap-2">
-                    <Label htmlFor="total" className="font-bold">Total a Pagar *</Label>
-                    <Input id="total" type="number" value={total} readOnly className="bg-zinc-100 font-bold" />
+                {/* Resumen Final */}
+                <div className="col-span-2 grid sm:grid-cols-2 gap-6 bg-zinc-900 text-white p-5 rounded-xl mt-2">
+                    <div className="flex flex-col gap-1">
+                        <Label className="text-zinc-400 text-[10px] uppercase tracking-wider">Sub Total Acumulado</Label>
+                        <div className="text-lg font-medium">${parseFloat(subTotal).toFixed(2)}</div>
+                    </div>
+                    <div className="flex flex-col gap-1 sm:items-end">
+                        <Label className="text-orange-400 text-[10px] uppercase tracking-wider font-bold">Total a Pagar</Label>
+                        <div className="text-2xl font-black text-orange-400">${parseFloat(total).toFixed(2)}</div>
+                    </div>
                 </div>
 
                 <div className="grid gap-2">
@@ -352,9 +365,9 @@ export function AgregarGasto({ onGastoAgregado, trigger }: Props) {
                     </select>
                 </div>
 
-                <div className="grid gap-2 col-span-2">
+                <div className="grid gap-2">
                     <Label htmlFor="observacion">Observación</Label>
-                    <Input id="observacion" value={observacion} onChange={e => setObservacion(e.target.value)} placeholder="Detalles de la compra..." />
+                    <Input id="observacion" value={observacion} onChange={e => setObservacion(e.target.value)} placeholder="Ej. Lote de llantas..." />
                 </div>
             </div>
         </FormDialog>

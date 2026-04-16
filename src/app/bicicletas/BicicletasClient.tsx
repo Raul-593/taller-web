@@ -6,6 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Toaster } from "sonner"
 import { EditarBicicletaDialog } from "@/componentes/bicicleta/EditarBicicleta"
 import { AgregarBicicleta } from "@/componentes/bicicleta/AgregarBicicleta"
+import { Input } from "@/componentes/ui/input"
+import { Search } from "lucide-react"
 
 type Bicicleta = {
   id: string
@@ -19,19 +21,16 @@ type Bicicleta = {
 export function BicicletasClient({ bicicletas }: { bicicletas: Bicicleta[] }) {
   const router = useRouter()
 
-  const clientes = useMemo(() => {
-    const nombres = bicicletas.map(b => b.customers?.name || "Sin cliente")
-    return Array.from(new Set(nombres)).sort()
-  }, [bicicletas])
-
-  const [filtro, setFiltro] = useState("Todas")
-
-  const filtradas = useMemo(() =>
-    filtro === "Todas"
-      ? bicicletas
-      : bicicletas.filter(b => (b.customers?.name || "Sin cliente") === filtro),
-    [bicicletas, filtro]
-  )
+  const [searchTerm, setSearchTerm] = useState("")
+ 
+   const filtradas = useMemo(() =>
+     bicicletas.filter(b => 
+       (b.customers?.name || "Sin cliente")
+         .toLowerCase()
+         .includes(searchTerm.toLowerCase())
+     ),
+     [bicicletas, searchTerm]
+   )
 
   return (
     <div className="flex flex-col gap-6">
@@ -43,43 +42,20 @@ export function BicicletasClient({ bicicletas }: { bicicletas: Bicicleta[] }) {
           <h1 className="text-2xl font-bold tracking-tight">593 Cycling Studio</h1>
           <p className="text-muted-foreground mt-1">
             {filtradas.length} bicicleta{filtradas.length !== 1 ? "s" : ""}
-            {filtro !== "Todas" ? ` de ${filtro}` : " registradas"}
+            {searchTerm ? ` encontradas para "${searchTerm}"` : " registradas"}
           </p>
         </div>
         {/* Botones */}
-        <div className="flex items-center gap-4">
-          {/* Dropdown */}
-          <div className="relative">
-            <select
-              value={filtro}
-              onChange={e => setFiltro(e.target.value)}
-              className="
-                appearance-none cursor-pointer
-                bg-background border border-border rounded-lg
-                pl-4 pr-10 py-2.5
-                text-sm font-medium text-foreground
-                shadow-sm
-                focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary
-                hover:border-foreground/30
-                transition-colors duration-150
-                min-w-[200px]
-              "
-            >
-              <option value="Todas">Todos los clientes ({bicicletas.length})</option>
-              <optgroup label="Clientes">
-                {clientes.map(cliente => (
-                  <option key={cliente} value={cliente}>
-                    {cliente} ({bicicletas.filter(b => (b.customers?.name || "Sin cliente") === cliente).length})
-                  </option>
-                ))}
-              </optgroup>
-            </select>        
-            {/* Icono flecha */}
-            <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-muted-foreground">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
+        <div className="flex items-center gap-4 w-full sm:w-auto">
+          {/* Buscador */}
+          <div className="relative w-full sm:w-72">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar por cliente..."
+              className="pl-9 bg-muted/50 focus-visible:bg-background transition-colors"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
 
           {/* Agregar Bicicleta */}

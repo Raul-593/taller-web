@@ -2,6 +2,7 @@
 
 import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/componentes/ui/dialog"
 import { Button } from "@/componentes/ui/button"
+import { cn } from "@/lib/utils"
 
 type Props = {
     title: string
@@ -26,17 +27,21 @@ export function FormDialog({ title, description, trigger, isOpen, onOpenChange, 
                     </Button>
                 )}
             </DialogTrigger>
-            <DialogContent className={className}>
-                <DialogHeader>
+            <DialogContent className={cn("max-h-[96vh] p-0 flex flex-col overflow-hidden gap-0", className)}>
+                <DialogHeader className="p-6 pb-4 border-b flex-none">
                     <DialogTitle>{title}</DialogTitle>
                     {description && <DialogDescription>{description}</DialogDescription>}
                 </DialogHeader>
-                <form onSubmit={onSubmit}>
-                    <div className="grid gap-4 py-4">
-                        {children}
+                
+                <form onSubmit={onSubmit} className="flex-1 flex flex-col overflow-hidden">
+                    <div className="flex-1 overflow-y-auto p-6 pt-4">
+                        <div className="grid gap-4">
+                            {children}
+                        </div>
                     </div>
-                    <DialogFooter>
-                        <Button variant="outline" onClick={() => onOpenChange(false)}>
+                    
+                    <DialogFooter className="p-6 py-4 border-t flex-none bg-zinc-50/30">
+                        <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>
                             Cancelar
                         </Button>
                         <Button type="submit" disabled={isSubmitting} className="bg-zinc-900 text-white hover:bg-zinc-800">
