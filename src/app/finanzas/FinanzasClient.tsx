@@ -71,8 +71,15 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
     const years = Array.from({length: 10}, (_, i) => (new Date().getFullYear() + i).toString()) // 7 años adelante
 
     // Cálculos dinámicos de finanzas
-    const totalSales = useMemo(() => sales.reduce((acc, current) => acc + (Number(current.total) || 0), 0), [sales])
-    const totalPurchases = useMemo(() => purchases.reduce((acc, current) => acc + (Number(current.total) || 0), 0), [purchases])
+    const totalSales = useMemo(() => 
+        sales
+            .filter(venta => venta.status === 'completado')
+            .reduce((acc, current) => acc + (Number(current.total) || 0), 0)
+    , [sales])
+    const totalPurchases = useMemo(() => 
+        purchases
+            .filter(compra => compra.status === 'completado')
+            .reduce((acc, current) => acc + (Number(current.total) || 0), 0), [purchases])
     const netBalance = totalSales - totalPurchases
 
     const chartData = useMemo(() => [

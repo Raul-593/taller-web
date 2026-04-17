@@ -5,22 +5,22 @@ import { DashboardChartClient } from "./DashboardChartClient"
 
 
 type Mantenimiento = {
-    id: string
-    service_date: string
-    description: string 
-    observation: string
-    cost: string
-    status: string
-    bicycles: {
-        brand: string
-        model: string
-        customers: { name: string } | null
-    }
+  id: string
+  service_date: string
+  description: string
+  observation: string
+  cost: string
+  status: string
+  bicycles: {
+    brand: string
+    model: string
+    customers: { name: string } | null
+  }
 }
 
 export default async function Dashboard() {
   const supabase = await createClient()
-  
+
   // Ventas
   const { data: sale, error: saleError } = await supabase
     .from('sales')
@@ -37,7 +37,7 @@ export default async function Dashboard() {
 
   if (saleError) { console.error('Error al obtener ventas:', saleError) }
 
-  const totalSales = sale?.reduce((acc, current) => acc + (Number(current.total) || 0), 0) || 0
+  const totalSales = sale?.filter(venta => venta.status === 'completado').reduce((acc, current) => acc + (Number(current.total) || 0), 0) || 0
   const formattedIncome = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -58,7 +58,7 @@ export default async function Dashboard() {
     `)
 
   if (purchasesError) { console.error('Error al obtener compras:', purchasesError) }
-  const totalPurches = purchases?.reduce((acc, current) => acc + (Number(current.total) || 0), 0) || 0
+  const totalPurches = purchases?.filter(compra => compra.status === 'completado').reduce((acc, current) => acc + (Number(current.total) || 0), 0) || 0
   const formattedExpenses = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -92,7 +92,7 @@ export default async function Dashboard() {
     (m) => m.status === 'en_proceso' || m.status === 'recibido'
   ) || []
   const totalActivities = pendingActivities.length
-  
+
 
   return (
     <div className="flex flex-col gap-6">
@@ -177,7 +177,7 @@ export default async function Dashboard() {
         </Card>
       </div>
       <div className="grid gap-4 grid-cols-1 md:grid-cols-5">
-        
+
         {/* --- Grafico de Barras --- */}
         <Card className="md:col-span-3 flex flex-col justify-center">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -189,7 +189,7 @@ export default async function Dashboard() {
             <DashboardChartClient totalSales={totalSales} totalPurchases={totalPurches} />
           </CardContent>
         </Card>
-        
+
         {/* GRAFICO PIE */}
         <Card className="md:col-span-2 flex flex-col justify-center">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -202,7 +202,7 @@ export default async function Dashboard() {
           </CardContent>
         </Card>
       </div>
-      
+
       {/* --- Actividades Pendientes --- */}
       <div className="grid gap-4 grid-cols-1 md:grid-cols-5">
         <Card className="md:col-span-5 flex flex-col justify-center">
@@ -213,34 +213,34 @@ export default async function Dashboard() {
           </CardHeader>
           <CardContent className="overflow-x-auto max-h-[400px] overflow-y-auto">
             {pendingActivities.length === 0 ? (
-                <p className="text-muted-foreground text-sm mt-2">No hay mantenimientos pendientes.</p>
+              <p className="text-muted-foreground text-sm mt-2">No hay mantenimientos pendientes.</p>
             ) : (
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Fecha</TableHead>
-                            <TableHead>Cliente</TableHead>
-                            <TableHead>Bicicleta</TableHead>
-                            <TableHead>Costo</TableHead>
-                            <TableHead>Estado</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {pendingActivities.map((m) => (
-                            <TableRow key={m.id}>
-                                <TableCell>{m.service_date}</TableCell>
-                                <TableCell>{(m.bicycles as any)?.customers?.name || '-'}</TableCell>
-                                <TableCell>{(m.bicycles as any)?.brand} {(m.bicycles as any)?.model}</TableCell>
-                                <TableCell className="font-medium">${m.cost}</TableCell>
-                                <TableCell>
-                                    <span className={`text-xs font-medium px-2 py-1 rounded-full ${m.status === 'en_proceso' ? 'bg-yellow-100 text-yellow-700' : 'bg-blue-100 text-blue-700'}`}>
-                                        {m.status === 'en_proceso' ? 'En Proceso' : 'Recibido'}
-                                    </span>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Fecha</TableHead>
+                    <TableHead>Cliente</TableHead>
+                    <TableHead>Bicicleta</TableHead>
+                    <TableHead>Costo</TableHead>
+                    <TableHead>Estado</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {pendingActivities.map((m) => (
+                    <TableRow key={m.id}>
+                      <TableCell>{m.service_date}</TableCell>
+                      <TableCell>{(m.bicycles as any)?.customers?.name || '-'}</TableCell>
+                      <TableCell>{(m.bicycles as any)?.brand} {(m.bicycles as any)?.model}</TableCell>
+                      <TableCell className="font-medium">${m.cost}</TableCell>
+                      <TableCell>
+                        <span className={`text-xs font-medium px-2 py-1 rounded-full ${m.status === 'en_proceso' ? 'bg-yellow-100 text-yellow-700' : 'bg-blue-100 text-blue-700'}`}>
+                          {m.status === 'en_proceso' ? 'En Proceso' : 'Recibido'}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             )}
           </CardContent>
         </Card>
