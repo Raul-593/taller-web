@@ -1,7 +1,18 @@
-export default function Repuestos() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950 p-4">
-      Esta pagina esta en construccion
-    </div>
-  )
+import { createClient } from "@/utils/supabase/server"
+import { RepuestosClient } from "./RepuestosCliente"
+
+export default async function Repuestos(){
+  const supabase = await createClient()
+
+  // Obtener Datos
+  const { data: repuestos, error: respuestosError } = await supabase
+    .from('products')
+    .select('id, name, description, category, stock, price, cost')
+    .order('name', { ascending: true})
+  
+  if (respuestosError){
+    console.error('Error al obtener repuestos:', respuestosError)
+  }
+
+  return <RepuestosClient repuestos={repuestos ?? []} />
 }

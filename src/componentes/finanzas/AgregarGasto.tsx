@@ -275,6 +275,7 @@ export function AgregarGasto({ onGastoAgregado, trigger }: Props) {
                                     <div></div>
                                 </div>
 
+                                {/* Productos */}
                                 {items.map((item, index) => (
                                     <div key={index} className="grid grid-cols-[1fr,70px,100px,80px,30px] gap-2 items-center bg-zinc-50/50 p-2 rounded-lg border border-zinc-100 group hover:border-zinc-300 transition-colors">
                                         <div className="w-full">
@@ -296,7 +297,7 @@ export function AgregarGasto({ onGastoAgregado, trigger }: Props) {
                                                 type="number" 
                                                 value={item.quantity} 
                                                 onChange={e => updateItem(index, "quantity", e.target.value)}
-                                                className="h-8 text-xs px-2 text-center"
+                                                className="h-8 text-xs px-2 text-left"
                                             />
                                         </div>
                                         <div>
@@ -365,7 +366,7 @@ export function AgregarGasto({ onGastoAgregado, trigger }: Props) {
                     </select>
                 </div>
 
-                <div className="grid gap-2">
+                <div className="grid gap-2 col-span-2">
                     <Label htmlFor="observacion">Observación</Label>
                     <Input id="observacion" value={observacion} onChange={e => setObservacion(e.target.value)} placeholder="Ej. Lote de llantas..." />
                 </div>

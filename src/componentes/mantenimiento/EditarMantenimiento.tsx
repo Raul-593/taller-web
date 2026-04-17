@@ -14,7 +14,7 @@ type Props = {
     trigger?: React.ReactNode
 }
 
-export function EditarMantenimientoDialog({ mantenimiento, onMantenimientoActualizado, trigger}: Props) {
+export function EditarMantenimientoDialog({ mantenimiento, onMantenimientoActualizado, trigger }: Props) {
     const supabase = createClient()
     const [isOpen, setIsOpen] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -31,6 +31,7 @@ export function EditarMantenimientoDialog({ mantenimiento, onMantenimientoActual
     const [cost, setCost] = useState("")
     const [estado, setEstado] = useState("")
 
+    // Mostrar datos del mantenimiento cuando se abre el modal
     useEffect(() => {
         if (isOpen) {
             setClienteId(mantenimiento.customer_id)
@@ -44,6 +45,7 @@ export function EditarMantenimientoDialog({ mantenimiento, onMantenimientoActual
         }
     }, [isOpen, mantenimiento])
 
+    // Limpiar formulario
     function reset() {
         setBicycle_id(null)
         setClienteId(null)
@@ -55,6 +57,7 @@ export function EditarMantenimientoDialog({ mantenimiento, onMantenimientoActual
         setEstado("")
     }
 
+    // Actualizar mantenimiento
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         if (!serviceDate || !description || !cost) {
@@ -64,21 +67,21 @@ export function EditarMantenimientoDialog({ mantenimiento, onMantenimientoActual
         setIsSubmitting(true)
 
         const { data, error } = await supabase
-        .from("maintenance_records")
-        .update({
-            service_date: serviceDate.trim(),
-            delivery_date: deliveryDate.trim(),
-            description: description.trim(),
-            observation: observacion.trim(),
-            cost: cost,
-            status: estado,
-            bicycle_id: bicycle_id
-        })
-        .eq("id", mantenimiento.id)
-        .select()
-        .single()
+            .from("maintenance_records")
+            .update({
+                service_date: serviceDate.trim(),
+                delivery_date: deliveryDate.trim(),
+                description: description.trim(),
+                observation: observacion.trim(),
+                cost: cost,
+                status: estado,
+                bicycle_id: bicycle_id
+            })
+            .eq("id", mantenimiento.id)
+            .select()
+            .single()
 
-        if(error) {
+        if (error) {
             toast.error("Error al actualizar el cliente")
             console.error(error)
         } else if (data) {
@@ -116,27 +119,58 @@ export function EditarMantenimientoDialog({ mantenimiento, onMantenimientoActual
             </div>
             <div className="grid gap-2">
                 <Label htmlFor={`edit-service-date-${mantenimiento.id}`}>Fecha de Servicio</Label>
-                <Input id={`edit-service-date-${mantenimiento.id}`} value={serviceDate} onChange={e => setServiceDate(e.target.value)} placeholder="Ej. 2022-01-01" />
+                <Input 
+                    type="date"
+                    id={`edit-service-date-${mantenimiento.id}`} 
+                    value={serviceDate} 
+                    onChange={e => setServiceDate(e.target.value)} 
+                    placeholder="Ej. 2022-01-01" />
             </div>
             <div className="grid gap-2">
                 <Label htmlFor={`edit-delivery-date-${mantenimiento.id}`}>Fecha de Entrega</Label>
-                <Input id={`edit-delivery-date-${mantenimiento.id}`} value={deliveryDate} onChange={e => setDeliveryDate(e.target.value)} placeholder="Ej. 2022-01-01" />
+                <Input 
+                    type="date"
+                    id={`edit-delivery-date-${mantenimiento.id}`} 
+                    value={deliveryDate} 
+                    onChange={e => setDeliveryDate(e.target.value)} 
+                    placeholder="Ej. 2022-01-01" />
             </div>
             <div className="grid gap-2">
                 <Label htmlFor={`edit-description-${mantenimiento.id}`}>Descripción</Label>
-                <Input id={`edit-description-${mantenimiento.id}`} value={description} onChange={e => setDescription(e.target.value)} placeholder="Ej. Mantenimiento general" />
+                <Input 
+                    id={`edit-description-${mantenimiento.id}`} 
+                    value={description} 
+                    onChange={e => setDescription(e.target.value)} 
+                    placeholder="Ej. Mantenimiento general" />
             </div>
             <div className="grid gap-2">
                 <Label htmlFor={`edit-observation-${mantenimiento.id}`}>Observación</Label>
-                <Input id={`edit-observation-${mantenimiento.id}`} value={observacion} onChange={e => setObservacion(e.target.value)} placeholder="Ej. Mantenimiento general" />
+                <Input 
+                    id={`edit-observation-${mantenimiento.id}`} 
+                    value={observacion} 
+                    onChange={e => setObservacion(e.target.value)} 
+                    placeholder="Ej. Mantenimiento general" />
             </div>
             <div className="grid gap-2">
                 <Label htmlFor={`edit-cost-${mantenimiento.id}`}>Costo</Label>
-                <Input id={`edit-cost-${mantenimiento.id}`} value={cost} onChange={e => setCost(e.target.value)} placeholder="Ej. 100" />
+                <Input 
+                    id={`edit-cost-${mantenimiento.id}`} 
+                    value={cost} 
+                    onChange={e => setCost(e.target.value)} 
+                    placeholder="Ej. 100" />
             </div>
             <div className="grid gap-2">
                 <Label htmlFor={`edit-status-${mantenimiento.id}`}>Estado</Label>
-                <Input id={`edit-status-${mantenimiento.id}`} value={estado} onChange={e => setEstado(e.target.value)} placeholder="Ej. Pendiente" />
+                <select id={`edit-status-${mantenimiento.id}`}
+                    value={estado}
+                    onChange={e => setEstado(e.target.value)}
+                    className="w-full cursor-pointer text-sm">
+                        <option value="recibido">Recibido</option>
+                        <option value="en_proceso">En Proceso</option>
+                        <option value="completado">Completado</option>
+                        <option value="entregado">Entregado</option>
+                        <option value="cancelado">Cancelado</option>
+                </select>
             </div>
         </FormDialog>
     )

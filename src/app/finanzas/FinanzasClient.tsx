@@ -222,7 +222,7 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
                                         <TableHead>Total</TableHead>
                                         <TableHead>Método de Pago</TableHead>
                                         <TableHead>Estado</TableHead>
-                                        <TableHead>Observación</TableHead>
+                                        <TableHead className="w-64">Observación</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -238,7 +238,7 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
                                             <TableCell className="capitalize">
                                                 <StatusBadge status={venta.status} />
                                             </TableCell>
-                                            <TableCell>{venta.observacion || '-'}</TableCell>
+                                            <TableCell className="whitespace-normal w-64">{venta.observacion || '-'}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
@@ -264,12 +264,12 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
                                     <TableRow>
                                         <TableHead>Fecha</TableHead>
                                         <TableHead>Proveedor</TableHead>
-                                        <TableHead>Descripción</TableHead>
+                                        <TableHead className="w-64">Descripción</TableHead>
                                         <TableHead>Subtotal</TableHead>
                                         <TableHead>Total</TableHead>
                                         <TableHead>Método de Pago</TableHead>
                                         <TableHead>Estado</TableHead>
-                                        <TableHead>Observación</TableHead>
+                                        <TableHead className="w-64">Observación</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -277,14 +277,14 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
                                         <TableRow key={compra.id}>
                                             <TableCell>{compra.purchase_date}</TableCell>
                                             <TableCell>{compra.suppliers?.name || '-'}</TableCell>
-                                            <TableCell>{compra.description || '-'}</TableCell>
+                                            <TableCell className="whitespace-normal w-64">{compra.description || '-'}</TableCell>
                                             <TableCell>${compra.sub_total}</TableCell>
                                             <TableCell className="font-bold">${compra.total}</TableCell>
                                             <TableCell className="capitalize">{compra.payment_method}</TableCell>
                                             <TableCell className="capitalize">
                                                 <StatusBadge status={compra.status} />
                                             </TableCell>
-                                            <TableCell>{compra.observacion || '-'}</TableCell>
+                                            <TableCell className="whitespace-normal w-64">{compra.observacion || '-'}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
