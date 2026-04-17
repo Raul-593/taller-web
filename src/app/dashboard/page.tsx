@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/componentes/ui/cards"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/componentes/ui/cards"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/componentes/ui/table"
 import { createClient } from "@/utils/supabase/server"
 import { DashboardChartClient } from "./DashboardChartClient"
@@ -98,9 +98,6 @@ export default async function Dashboard() {
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight"> 593 Cycling Studio </h1>
-        <p className="text-muted-foreground mt-1">
-          Dia
-        </p>
       </div>
       <div className="grid gap-4 md:grid-cols-4">
         {/* --- Ingresos Del Año  --- */}
@@ -194,12 +191,15 @@ export default async function Dashboard() {
         <Card className="md:col-span-2 flex flex-col justify-center">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <div className="space-y-1">
-              <CardTitle> Diferentes Gastos</CardTitle>
+              <CardTitle> NO SE</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
-            GRAFICO PIE CON LA INFORMACION DE GASTOS QUE ESTA EN LA PAGINA DE FINANZAS
+            NO SE
           </CardContent>
+          <CardFooter>
+            NO SE
+          </CardFooter>
         </Card>
       </div>
 
