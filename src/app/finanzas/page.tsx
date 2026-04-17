@@ -43,7 +43,7 @@ export default async function Finanzas({ searchParams }: { searchParams: Promise
     `)
     .gte('sales_date', startDate)
     .lte('sales_date', endDate)
-    .order('created_at', { ascending: false })
+    .order('sales_date', { ascending: false })
 
   const { data: sale, error: saleError } = await salesQuery
 
@@ -68,7 +68,7 @@ export default async function Finanzas({ searchParams }: { searchParams: Promise
     `)
     .gte('purchase_date', startDate)
     .lte('purchase_date', endDate)
-    .order('created_at', { ascending: false })
+    .order('purchase_date', { ascending: false })
 
   const { data: purchases, error: purchasesError } = await purchasesQuery
 

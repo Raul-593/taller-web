@@ -10,6 +10,26 @@ import { AgregarGasto } from "@/componentes/finanzas/AgregarGasto"
 
 export function FinanzasClient({ sales: initialSales, purchases: initialPurchases, currentMonth, currentYear }: { sales: any[], purchases: any[], currentMonth?: string, currentYear?: string }) {
     const router = useRouter()
+
+    // Colores para el estado
+    const StatusBadge = ({ status }: { status: string }) => {
+        const s = status?.toLowerCase();
+        let classes = "bg-zinc-100 text-zinc-600 border-zinc-200";
+        
+        if (s === 'completado' || s === 'pagado') {
+            classes = "bg-green-100 text-green-700 border-green-200";
+        } else if (s === 'pendiente') {
+            classes = "bg-amber-100 text-amber-700 border-amber-200";
+        } else if (s === 'cancelado') {
+            classes = "bg-red-100 text-red-700 border-red-200";
+        }
+
+        return (
+            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-tighter ${classes}`}>
+                {status}
+            </span>
+        );
+    };
     
     const [sales, setSales] = useState(initialSales || [])
     const [purchases, setPurchases] = useState(initialPurchases || [])
@@ -208,7 +228,9 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
                                             <TableCell>${venta.discount}</TableCell>
                                             <TableCell className="font-bold">${venta.total}</TableCell>
                                             <TableCell className="capitalize">{venta.payment_method}</TableCell>
-                                            <TableCell className="capitalize">{venta.status}</TableCell>
+                                            <TableCell className="capitalize">
+                                                <StatusBadge status={venta.status} />
+                                            </TableCell>
                                             <TableCell>{venta.observacion || '-'}</TableCell>
                                         </TableRow>
                                     ))}
@@ -252,7 +274,9 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
                                             <TableCell>${compra.sub_total}</TableCell>
                                             <TableCell className="font-bold">${compra.total}</TableCell>
                                             <TableCell className="capitalize">{compra.payment_method}</TableCell>
-                                            <TableCell className="capitalize">{compra.status}</TableCell>
+                                            <TableCell className="capitalize">
+                                                <StatusBadge status={compra.status} />
+                                            </TableCell>
                                             <TableCell>{compra.observacion || '-'}</TableCell>
                                         </TableRow>
                                     ))}
