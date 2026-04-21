@@ -4,7 +4,6 @@ import { useState, useMemo, useEffect } from "react"
 import { createClient } from "@/utils/supabase/clients"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/componentes/ui/cards"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/componentes/ui/table"
-import { Toaster } from "sonner"
 import { useRouter } from "next/navigation"
 import { AgregarMantenimiento } from "@/componentes/mantenimiento/AgregarMantenimiento"
 import { EditarMantenimientoDialog } from "@/componentes/mantenimiento/EditarMantenimiento"
@@ -71,7 +70,6 @@ export function MantenimientoClient({ mantenimientos: initial }: { mantenimiento
 
     return (
         <div className="flex flex-col gap-6">
-            <Toaster richColors position="top-right" />
             {/* Header*/}
             <div className="flex items-start justify-between">
                 <div>

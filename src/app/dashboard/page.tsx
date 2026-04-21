@@ -1,8 +1,8 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/componentes/ui/cards"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/componentes/ui/table"
+import { Card, CardContent, CardHeader, CardTitle } from "@/componentes/ui/cards"
 import { createClient } from "@/utils/supabase/server"
 import { DashboardChartClient } from "./DashboardChartClient"
-
+import { DashboardFinanzas } from "./DashboardFinanzas"
+import { DashboardActividadesSummary, DashboardActividadesTable } from "./DashboardActividadesPendientes"
 
 type Mantenimiento = {
   id: string
@@ -18,11 +18,14 @@ type Mantenimiento = {
   }
 }
 
-export default async function Dashboard() {
+export default async function Dashboard({ searchParams }: { searchParams: Promise<{ month?: string, year?: string }> }) {
+  const { month: selectedMonth, year: selectedYear } = await searchParams
+  const year = selectedYear || new Date().getFullYear().toString()
+  const month = selectedMonth || (new Date().getMonth() + 1).toString()
   const supabase = await createClient()
 
-  // Ventas
-  const { data: sale, error: saleError } = await supabase
+  // Base Queries
+  let salesQuery = supabase
     .from('sales')
     .select(`
       id, 
@@ -32,19 +35,11 @@ export default async function Dashboard() {
       total, 
       payment_method, 
       status, 
-      observacion
+      observacion,
+      sales_date
     `)
 
-  if (saleError) { console.error('Error al obtener ventas:', saleError) }
-
-  const totalSales = sale?.filter(venta => venta.status === 'completado').reduce((acc, current) => acc + (Number(current.total) || 0), 0) || 0
-  const formattedIncome = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(totalSales)
-
-  // Compras
-  const { data: purchases, error: purchasesError } = await supabase
+  let purchasesQuery = supabase
     .from('purchases')
     .select(`
       id, 
@@ -57,20 +52,6 @@ export default async function Dashboard() {
       observacion
     `)
 
-  if (purchasesError) { console.error('Error al obtener compras:', purchasesError) }
-  const totalPurches = purchases?.filter(compra => compra.status === 'completado').reduce((acc, current) => acc + (Number(current.total) || 0), 0) || 0
-  const formattedExpenses = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(totalPurches)
-
-  const netBalance = totalSales - totalPurches
-  const formattedNetBalance = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(netBalance)
-
-  // Mantenimientos pendientes
   const { data: mantenimiento, error: mantenimientoError } = await supabase
     .from('maintenance_records')
     .select(`
@@ -86,6 +67,32 @@ export default async function Dashboard() {
       ) 
     `)
 
+
+  // Apply Date Filtering
+  if (month && month !== 'all') {
+    const startDate = `${year}-${month.padStart(2, '0')}-01`
+    const endDate = new Date(Number(year), Number(month), 0).toISOString().split('T')[0]
+    
+    salesQuery = salesQuery.gte('sales_date', `${startDate}T00:00:00`).lte('sales_date', `${endDate}T23:59:59`)
+    purchasesQuery = purchasesQuery.gte('purchase_date', `${startDate}T00:00:00`).lte('purchase_date', `${endDate}T23:59:59`)
+  } else {
+    salesQuery = salesQuery.gte('sales_date', `${year}-01-01T00:00:00`).lte('sales_date', `${year}-12-31T23:59:59`)
+    purchasesQuery = purchasesQuery.gte('purchase_date', `${year}-01-01T00:00:00`).lte('purchase_date', `${year}-12-31T23:59:59`)
+  }
+
+  // Fetch Data
+  const [{ data: sale, error: saleError }, { data: purchases, error: purchasesError }] = await Promise.all([
+    salesQuery,
+    purchasesQuery
+  ])
+
+  if (saleError) { console.error('Error al obtener ventas:', saleError) }
+  if (purchasesError) { console.error('Error al obtener compras:', purchasesError) }
+
+  const totalSales = sale?.filter(venta => venta.status === 'completado').reduce((acc, current) => acc + (Number(current.total) || 0), 0) || 0
+  const totalPurches = purchases?.filter(compra => compra.status === 'completado').reduce((acc, current) => acc + (Number(current.total) || 0), 0) || 0
+
+  // Mantenimientos pendientes
   if (mantenimientoError) { console.error('Error al obtener mantenimientos:', mantenimientoError) }
 
   const pendingActivities = (mantenimiento as unknown as Mantenimiento[])?.filter(
@@ -93,158 +100,40 @@ export default async function Dashboard() {
   ) || []
   const totalActivities = pendingActivities.length
 
-
   return (
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight"> 593 Cycling Studio </h1>
       </div>
+      
       <div className="grid gap-4 md:grid-cols-4">
-        {/* --- Ingresos Del Año  --- */}
-        <Card className="flex flex-col justify-center">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <div className="space-y-1">
-              <CardTitle className="text-base font-semibold">
-                Ingreso Del Año
-              </CardTitle>
-              <CardDescription>
-                Ingresos totales del año
-              </CardDescription>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div>
-              <span className="text-2xl text-green-500">{formattedIncome}</span>
-            </div>
-          </CardContent>
-        </Card>
-        {/* --- Gastos Del Año  --- */}
-        <Card className="flex flex-col justify-center">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <div className="space-y-1">
-              <CardTitle className="text-base font-semibold">
-                Gastos Del Año
-              </CardTitle>
-              <CardDescription>
-                Gastos totales del año
-              </CardDescription>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div>
-              <span className="text-2xl text-red-500">{formattedExpenses}</span>
-            </div>
-          </CardContent>
-        </Card>
-        {/* --- Saldo Neto --- */}
-        <Card className="flex flex-col justify-center">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <div className="space-y-1">
-              <CardTitle className="text-base font-semibold">
-                Saldo Neto
-              </CardTitle>
-              <CardDescription>
-                Saldo total del año
-              </CardDescription>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div>
-              <span className="text-2xl">{formattedNetBalance}</span>
-            </div>
-          </CardContent>
-        </Card>
-        {/* --- Actividades Pendientes --- */}
-        <Card className="flex flex-col justify-center">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <div className="space-y-1">
-              <CardTitle className="text-base font-semibold">
-                Actividades Pendientes
-              </CardTitle>
-              <CardDescription>
-                Actividades pendientes
-              </CardDescription>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div>
-              <span className="text-2xl">{totalActivities}</span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-5">
+        {/* --- Finanzas --- */}
+        <DashboardFinanzas sales={sale || []} purchases={purchases || []} currentMonth={month} currentYear={year} />
 
+        {/* --- Actividades Pendientes Summary --- */}
+        <DashboardActividadesSummary total={totalActivities} />
+      </div>
+
+
+      <div className="grid gap-4 grid-cols-1">
         {/* --- Grafico de Barras --- */}
-        <Card className="md:col-span-3 flex flex-col justify-center">
+        <Card className="flex flex-col justify-center">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <div className="space-y-1">
-              <CardTitle> Ingreso vs Gasto</CardTitle>
+              <CardTitle>Ingreso vs Gasto</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
-            <DashboardChartClient totalSales={totalSales} totalPurchases={totalPurches} />
-          </CardContent>
-        </Card>
-
-        {/* GRAFICO PIE */}
-        <Card className="md:col-span-2 flex flex-col justify-center">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <div className="space-y-1">
-              <CardTitle> NO SE</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent>
-            NO SE
-          </CardContent>
-          <CardFooter>
-            NO SE
-          </CardFooter>
-        </Card>
-      </div>
-
-      {/* --- Actividades Pendientes --- */}
-      <div className="grid gap-4 grid-cols-1 md:grid-cols-5">
-        <Card className="md:col-span-5 flex flex-col justify-center">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <div className="space-y-1">
-              <CardTitle> Actividades Pendientes</CardTitle>
-            </div>
-          </CardHeader>
-          <CardContent className="overflow-x-auto max-h-[400px] overflow-y-auto">
-            {pendingActivities.length === 0 ? (
-              <p className="text-muted-foreground text-sm mt-2">No hay mantenimientos pendientes.</p>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Fecha</TableHead>
-                    <TableHead>Cliente</TableHead>
-                    <TableHead>Bicicleta</TableHead>
-                    <TableHead>Costo</TableHead>
-                    <TableHead>Estado</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {pendingActivities.map((m) => (
-                    <TableRow key={m.id}>
-                      <TableCell>{m.service_date}</TableCell>
-                      <TableCell>{(m.bicycles as any)?.customers?.name || '-'}</TableCell>
-                      <TableCell>{(m.bicycles as any)?.brand} {(m.bicycles as any)?.model}</TableCell>
-                      <TableCell className="font-medium">${m.cost}</TableCell>
-                      <TableCell>
-                        <span className={`text-xs font-medium px-2 py-1 rounded-full ${m.status === 'en_proceso' ? 'bg-yellow-100 text-yellow-700' : 'bg-blue-100 text-blue-700'}`}>
-                          {m.status === 'en_proceso' ? 'En Proceso' : 'Recibido'}
-                        </span>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
+            <DashboardChartClient totalSales={totalSales} totalPurchases={totalPurches} month={month} year={year} />
           </CardContent>
         </Card>
       </div>
+
+      {/* --- Listado de Actividades Pendientes --- */}
+      <div className="grid gap-4 grid-cols-1">
+        <DashboardActividadesTable activities={pendingActivities} />
+      </div>
+
     </div>
   )
 }

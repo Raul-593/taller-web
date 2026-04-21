@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo, useEffect } from "react"
+import { createClient } from "@/utils/supabase/clients"
 import { useRouter } from "next/navigation"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/componentes/ui/cards"
@@ -8,31 +9,41 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { AgregarIngreso } from "@/componentes/finanzas/AgregarIngreso"
 import { AgregarGasto } from "@/componentes/finanzas/AgregarGasto"
 
+const ESTADOS = [
+    { value: 'completado', label: 'completado' },
+    { value: 'pendiente', label: 'pendiente' },
+    { value: 'cancelado', label: 'cancelado' }
+]
+
 export function FinanzasClient({ sales: initialSales, purchases: initialPurchases, currentMonth, currentYear }: { sales: any[], purchases: any[], currentMonth?: string, currentYear?: string }) {
     const router = useRouter()
 
     // Colores para el estado
-    const StatusBadge = ({ status }: { status: string }) => {
+    const getStatusClasses = (status: string) => {
         const s = status?.toLowerCase();
-        let classes = "bg-zinc-100 text-zinc-600 border-zinc-200";
-        
         if (s === 'completado' || s === 'pagado') {
-            classes = "bg-green-100 text-green-700 border-green-200";
+            return "bg-green-100 text-green-700 border-green-200";
         } else if (s === 'pendiente') {
-            classes = "bg-amber-100 text-amber-700 border-amber-200";
+            return "bg-amber-100 text-amber-700 border-amber-200";
         } else if (s === 'cancelado') {
-            classes = "bg-red-100 text-red-700 border-red-200";
+            return "bg-red-100 text-red-700 border-red-200";
         }
+        return "bg-zinc-100 text-zinc-600 border-zinc-200";
+    };
 
+    const StatusBadge = ({ status }: { status: string }) => {
         return (
-            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-tighter ${classes}`}>
+            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-tighter ${getStatusClasses(status)}`}>
                 {status}
             </span>
         );
     };
-    
+
+
     const [sales, setSales] = useState(initialSales || [])
     const [purchases, setPurchases] = useState(initialPurchases || [])
+    const [loadingId, setLoadingId] = useState<string | null>(null)
+    const supabase = createClient()
 
     // Sincronizar el estado cliente con el servidor ante un router.refresh()
     useEffect(() => {
@@ -68,15 +79,15 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
         { value: '12', label: 'Diciembre' },
     ]
 
-    const years = Array.from({length: 10}, (_, i) => (new Date().getFullYear() + i).toString()) // 7 años adelante
+    const years = Array.from({ length: 10 }, (_, i) => (new Date().getFullYear() + i).toString()) // 7 años adelante
 
     // Cálculos dinámicos de finanzas
-    const totalSales = useMemo(() => 
+    const totalSales = useMemo(() =>
         sales
             .filter(venta => venta.status === 'completado')
             .reduce((acc, current) => acc + (Number(current.total) || 0), 0)
-    , [sales])
-    const totalPurchases = useMemo(() => 
+        , [sales])
+    const totalPurchases = useMemo(() =>
         purchases
             .filter(compra => compra.status === 'completado')
             .reduce((acc, current) => acc + (Number(current.total) || 0), 0), [purchases])
@@ -94,20 +105,60 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
     const formattedExpenses = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(totalPurchases)
     const formattedNetBalance = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(netBalance)
 
+
+    async function cambiarEstadoSales(id: string, nuevosEstado: string) {
+        setLoadingId(id)
+
+        setSales(prev =>
+            prev.map(v => v.id === id ? { ...v, status: nuevosEstado } : v)
+        )
+
+        const { error } = await supabase
+            .from('sales')
+            .update({ status: nuevosEstado })
+            .eq('id', id)
+
+        if (error) {
+            console.error('Error al cambiar estado:', error)
+            setSales(initialSales)
+        }
+        setLoadingId(null)
+    }
+
+    async function cambiarEstadoPurchases(id: string, nuevosEstado: string) {
+        setLoadingId(id)
+
+        setPurchases(prev =>
+            prev.map(v => v.id === id ? { ...v, status: nuevosEstado } : v)
+        )
+
+        const { error } = await supabase
+            .from('purchases')
+            .update({ status: nuevosEstado })
+            .eq('id', id)
+
+        if (error) {
+            console.error('Error al cambiar estado:', error)
+            setPurchases(initialPurchases)
+        }
+        setLoadingId(null)
+    }
+
+
     return (
         <div className="flex flex-col gap-6">
             <div className="flex items-start justify-between">
                 <div>
                     <h1 className="text-2xl font-bold tracking-tight"> 593 Cycling Studio </h1>
                     <div className="flex gap-2 items-center mt-2">
-                        <select 
+                        <select
                             value={currentMonth || 'all'}
                             onChange={(e) => handleFilterChange('month', e.target.value)}
                             className="bg-background border border-border rounded-md px-3 py-1 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/30"
                         >
                             {months.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
                         </select>
-                        <select 
+                        <select
                             value={currentYear || new Date().getFullYear().toString()}
                             onChange={(e) => handleFilterChange('year', e.target.value)}
                             className="bg-background border border-border rounded-md px-3 py-1 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/30"
@@ -235,9 +286,24 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
                                             <TableCell>${venta.discount}</TableCell>
                                             <TableCell className="font-bold">${venta.total}</TableCell>
                                             <TableCell className="capitalize">{venta.payment_method}</TableCell>
-                                            <TableCell className="capitalize">
-                                                <StatusBadge status={venta.status} />
+                                            <TableCell className="capitalize" onClick={e => e.stopPropagation()}>
+                                                <select
+                                                    value={venta.status}
+                                                    onChange={(e) => cambiarEstadoSales(venta.id, e.target.value)}
+                                                    disabled={loadingId === venta.id}
+                                                    className={`
+                                                        px-2 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-tighter appearance-none cursor-pointer focus:outline-none transition-colors 
+                                                        ${getStatusClasses(venta.status)} ${loadingId === venta.id ? 'opacity-50' : ''}
+                                                    `}
+                                                >
+                                                    {ESTADOS.map(estado => (
+                                                        <option key={estado.value} value={estado.value} className="bg-white text-zinc-900 capitalize">
+                                                            {estado.label}
+                                                        </option>
+                                                    ))}
+                                                </select>
                                             </TableCell>
+
                                             <TableCell className="whitespace-normal w-64">{venta.observacion || '-'}</TableCell>
                                         </TableRow>
                                     ))}
@@ -281,9 +347,24 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
                                             <TableCell>${compra.sub_total}</TableCell>
                                             <TableCell className="font-bold">${compra.total}</TableCell>
                                             <TableCell className="capitalize">{compra.payment_method}</TableCell>
-                                            <TableCell className="capitalize">
-                                                <StatusBadge status={compra.status} />
+                                            <TableCell className="capitalize" onClick={e => e.stopPropagation()}>
+                                                <select
+                                                    value={compra.status}
+                                                    onChange={(e) => cambiarEstadoPurchases(compra.id, e.target.value)}
+                                                    disabled={loadingId === compra.id}
+                                                    className={`
+                                                        px-2 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-tighter appearance-none cursor-pointer focus:outline-none transition-colors 
+                                                        ${getStatusClasses(compra.status)} ${loadingId === compra.id ? 'opacity-50' : ''}
+                                                    `}
+                                                >
+                                                    {ESTADOS.map(estado => (
+                                                        <option key={estado.value} value={estado.value} className="bg-white text-zinc-900 capitalize">
+                                                            {estado.label}
+                                                        </option>
+                                                    ))}
+                                                </select>
                                             </TableCell>
+
                                             <TableCell className="whitespace-normal w-64">{compra.observacion || '-'}</TableCell>
                                         </TableRow>
                                     ))}
