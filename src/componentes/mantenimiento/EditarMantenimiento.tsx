@@ -20,9 +20,7 @@ export function EditarMantenimientoDialog({ mantenimiento, onMantenimientoActual
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     //Datos del Mantenimiento
-    const [bicicletas, setBicicletas] = useState<{ id: string, brand: string, model: string, customer_id: string }[]>([])
     const [bicycle_id, setBicycle_id] = useState<string | null>(null)
-    const [cliente, setCliente] = useState<{ id: string, name: string }[]>([])
     const [clienteId, setClienteId] = useState<string | null>(null)
     const [serviceDate, setServiceDate] = useState("")
     const [deliveryDate, setDeliveryDate] = useState("")

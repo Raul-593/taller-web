@@ -1,11 +1,13 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Input } from "@/componentes/ui/input"
 import { Label } from "@/componentes/ui/label"
 import { FormDialog } from "@/componentes/FormDialog"
 import { createClient } from "@/utils/supabase/clients"
 import { toast } from "sonner"
+import { CustomerSelect } from "@/componentes/ui/CustomerSelect"
+import { BicycleSelect } from "@/componentes/ui/BicycleSelect"
 
 type Props = {
     onMantenimientoAgregado: (mantenimiento: any) => void
@@ -19,9 +21,7 @@ export function AgregarMantenimiento({ onMantenimientoAgregado, trigger}: Props)
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     //Datos del Mantenimiento
-    const [bicicletas, setBicicletas] = useState<{ id: string, brand: string, model: string, customer_id: string }[]>([])
     const [bicycle_id, setBicycle_id] = useState<string | null>(null)
-    const [cliente, setCliente] = useState<{ id: string, name: string }[]>([])
     const [clienteId, setClienteId] = useState<string | null>(null)
     const [serviceDate, setServiceDate] = useState("")
     const [deliveryDate, setDeliveryDate] = useState("")
@@ -29,34 +29,6 @@ export function AgregarMantenimiento({ onMantenimientoAgregado, trigger}: Props)
     const [observacion, setObservacion] = useState("")
     const [cost, setCost] = useState("")
     const [estado, setEstado] = useState("recibido")
-
-    // Cargar Bicicletas
-    useEffect(() => {
-        if (isOpen && bicicletas.length === 0) {
-            const fetchBicicletas = async () => {
-                const { data } = await supabase
-                    .from("bicycles")
-                    .select("id, brand, model, customer_id")
-                    .order("created_at", { ascending: false })
-                if (data) setBicicletas(data)
-            }
-            fetchBicicletas()
-        }
-    }, [isOpen, supabase, bicicletas.length])
-
-    // Cargar Clientes
-    useEffect(() => {
-        if (isOpen && cliente.length === 0) {
-            const fetchClientes = async () => {
-                const { data } = await supabase
-                    .from("customers")
-                    .select("id, name, created_at")
-                    .order("created_at", { ascending: false })
-                if (data) setCliente(data)
-            }
-            fetchClientes()
-        }
-    }, [isOpen, supabase, cliente.length])
 
     function reset() { setBicycle_id(null); setClienteId(null); setServiceDate(""); setDeliveryDate(""); setDescription(""); setObservacion(""); setCost(""); setEstado("recibido")}
     const handleSubmit = async (e: React.FormEvent) => {
@@ -92,7 +64,6 @@ export function AgregarMantenimiento({ onMantenimientoAgregado, trigger}: Props)
         setIsSubmitting(false)
     }
 
-    const bicicletasFiltradas = clienteId ? bicicletas.filter(b => b.customer_id === clienteId) : []
 
     return (
         <FormDialog
@@ -105,45 +76,19 @@ export function AgregarMantenimiento({ onMantenimientoAgregado, trigger}: Props)
             isSubmitting={isSubmitting}
             submitLabel="Guardar Mantenimiento"
         >
-            <div className="grid gap-2">
-                <Label> Clientes </Label>
-                <div className="relative">
-                    <select 
-                        value={clienteId || ""}
-                        onChange={e => {
-                            setClienteId(e.target.value)
-                            setBicycle_id(null)
-                        }}
-                        className="w-full apperance-non cursor-pointer"
-                    >
-                        <option value="">Seleccionar Cliente</option>
-                        <optgroup>
-                            {cliente.map(c => (
-                                <option key={c.id} value={c.id}>
-                                    {c.name}
-                                </option>
-                            ))}
-                        </optgroup>
-                    </select>
-                </div>
-                <Label> Bicicletas </Label>
-                <div className="relative">
-                    <select 
-                        value= {bicycle_id || ""}
-                        onChange={e => setBicycle_id(e.target.value)}
-                        className="w-full apperance-non cursor-pointer"
-                        disabled={!clienteId}
-                    >
-                        <option value="">Seleccionar Bicicleta</option>
-                        <optgroup>
-                            {bicicletasFiltradas.map(b => (
-                                <option key={b.id} value={b.id}>
-                                    {b.brand} {b.model}
-                                </option>
-                            ))}
-                        </optgroup>
-                    </select>
-                </div>
+            <CustomerSelect 
+                value={clienteId} 
+                onChange={(id) => {
+                    setClienteId(id)
+                    setBicycle_id(null)
+                }}
+            />
+            <BicycleSelect 
+                customerId={clienteId}
+                value={bicycle_id}
+                onChange={setBicycle_id}
+                disabled={!clienteId}
+            />
                 <div className="grip gap-2">
                     <Label htmlFor="serviceDate"> Fecha de Servicio </Label>
                     <Input id="serviceDate" type="date" value={serviceDate} onChange={e => setServiceDate(e.target.value)} placeholder="Fecha de Servicio"/>
@@ -174,8 +119,6 @@ export function AgregarMantenimiento({ onMantenimientoAgregado, trigger}: Props)
                         <option value="cancelado">Cancelado</option>
                     </select>
                 </div>
-
-            </div>
         </FormDialog>
     )
 }

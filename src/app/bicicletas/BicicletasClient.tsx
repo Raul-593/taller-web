@@ -1,13 +1,12 @@
 "use client"
 
-import { useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/componentes/ui/cards"
-import { Toaster } from "sonner"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/componentes/ui/cards"
 import { EditarBicicletaDialog } from "@/componentes/bicicleta/EditarBicicleta"
 import { AgregarBicicleta } from "@/componentes/bicicleta/AgregarBicicleta"
-import { Input } from "@/componentes/ui/input"
-import { Search } from "lucide-react"
+import { PageHeader } from "@/componentes/ui/PageHeader"
+import { SearchBar } from "@/componentes/ui/SearchBar"
+import { useSearch } from "@/hooks/useSearch"
 
 type Bicicleta = {
   id: string
@@ -21,49 +20,31 @@ type Bicicleta = {
 export function BicicletasClient({ bicicletas }: { bicicletas: Bicicleta[] }) {
   const router = useRouter()
 
-  const [searchTerm, setSearchTerm] = useState("")
- 
-   const filtradas = useMemo(() =>
-     bicicletas.filter(b => 
-       (b.customers?.name || "Sin cliente")
-         .toLowerCase()
-         .includes(searchTerm.toLowerCase())
-     ),
-     [bicicletas, searchTerm]
-   )
+  const { searchTerm, setSearchTerm, filteredItems: filtradas } = useSearch(bicicletas, (b, term) => 
+    (b.customers?.name || "Sin cliente")
+      .toLowerCase()
+      .includes(term.toLowerCase())
+  )
 
   return (
-    <div className="flex flex-col gap-6">
-      <Toaster richColors position="top-right" />
-      {/* Header */}
-      <div className="flex items-start justify-between flex-wrap gap-4">
-        {/* Titulo y descripcion */}
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">593 Cycling Studio</h1>
-          <p className="text-muted-foreground mt-1">
-            {filtradas.length} bicicleta{filtradas.length !== 1 ? "s" : ""}
-            {searchTerm ? ` encontradas para "${searchTerm}"` : " registradas"}
-          </p>
-        </div>
-        {/* Botones */}
-        <div className="flex items-center gap-4 w-full sm:w-auto">
-          {/* Buscador */}
-          <div className="relative w-full sm:w-72">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Buscar por cliente..."
-              className="pl-9 bg-muted/50 focus-visible:bg-background transition-colors"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
+    <div className="flex flex-col gap-6">      
+      <PageHeader 
+        subtitle={`
+          ${filtradas.length} 
+          bicicleta${filtradas.length !== 1 ? "s" : ""}
+          ${searchTerm ? ` encontradas para "
+            ${searchTerm}"` : " registradas"}
+        `}
+      >
+        <SearchBar 
+          value={searchTerm} 
+          onChange={setSearchTerm} 
+          placeholder="Buscar por cliente..." 
+          className="w-full sm:w-72"
+        />
+        <AgregarBicicleta onBicicletaAgregado={() => router.refresh()} />
+      </PageHeader>
 
-          {/* Agregar Bicicleta */}
-          <AgregarBicicleta onBicicletaAgregado={() => router.refresh()} />
-        </div>
-      </div>
-
-      {/* Grid de cards */}
       {filtradas.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-muted-foreground gap-3">
           <p className="text-sm">No hay bicicletas para este cliente</p>

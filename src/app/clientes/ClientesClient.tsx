@@ -1,76 +1,63 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/componentes/ui/cards"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/componentes/ui/table"
-import { Toaster } from "sonner"
 import { AgregarClienteDialog } from "@/componentes/clientes/AgregarClienteDialog"
 import { EditarClienteDialog } from "@/componentes/clientes/EditarClienteDialog"
-import { Input } from "@/componentes/ui/input"
-import { Search } from "lucide-react"
+import { PageHeader } from "@/componentes/ui/PageHeader"
+import { SearchBar } from "@/componentes/ui/SearchBar"
+import { useSyncState } from "@/hooks/useSyncState"
+import { useSearch } from "@/hooks/useSearch"
 
 
 export function ClientesClient({ clientes: initial }: { clientes: any[] }) {
   const router = useRouter()
-  const [clientes, setClientes] = useState(initial)
-  const [searchTerm, setSearchTerm] = useState("")
-
-  useEffect(() => {
-    setClientes(initial)
-  }, [initial])
+  const [clientes] = useSyncState(initial)
+  
+  const { searchTerm, setSearchTerm, filteredItems } = useSearch(clientes, (c, term) => 
+    c.name.toLowerCase().includes(term.toLowerCase())
+  )
 
   return (
-    <div className="flex flex-col gap-6">
-      <Toaster richColors position="top-right" />
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">593 Cycling Studio</h1>
-        </div>
-        {/* Agregar Cliente */}
+    <div className="flex flex-col gap-6">      
+      <PageHeader>
         <AgregarClienteDialog onClienteAgregado={() => router.refresh()} />
-      </div>
+      </PageHeader>
 
       <Card className="md:col-span-4 overflow-hidden">
         <CardHeader className="pb-4 flex flex-col sm:flex-row sm:items-center justify-start gap-6">
-          {/* Titulo y descripcion */}
           <div className="flex flex-col gap-1">
             <CardTitle className="text-xl font-bold">Clientes</CardTitle>
             <CardDescription>Gestiona y busca tus clientes registrados</CardDescription>
           </div>
 
-          {/* Filtrar por cliente */}
-          <div className="relative w-full sm:w-80 sm:ml-auto">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Buscar cliente por nombre..."
-              className="pl-9 bg-muted/50 focus-visible:bg-background transition-colors"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
+          <SearchBar 
+            value={searchTerm} 
+            onChange={setSearchTerm} 
+            placeholder="Buscar cliente por nombre..." 
+            className="w-full sm:w-80 sm:ml-auto"
+          />
         </CardHeader>
         <CardContent>
-          {clientes.length === 0 ? (
+          {filteredItems.length === 0 ? (
             <p className="text-muted-foreground">No hay clientes registrados.</p>
           ) : (
-            <Table>
+            <Table className="table-fixed">
               <TableHeader>
                 <TableRow>
-                  <TableHead>Nombre</TableHead>
-                  <TableHead>Teléfono</TableHead>
-                  <TableHead>Dirección</TableHead>
-                  <TableHead>Acciones </TableHead>
+                  <TableHead className="w-[30%]">Nombre</TableHead>
+                  <TableHead className="w-[25%]">Teléfono</TableHead>
+                  <TableHead className="w-[35%]">Dirección</TableHead>
+                  <TableHead className="w-[10%]">Acciones</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {clientes
-                  .filter(c => c.name.toLowerCase().includes(searchTerm.toLowerCase()))
-                  .map(c => (
+                {filteredItems.map(c => (
                   <TableRow key={c.id} className="hover:bg-muted/50 transition-colors">
-                    <TableCell className="font-medium">{c.name}</TableCell>
-                    <TableCell>{c.phone || '—'}</TableCell>
-                    <TableCell>{c.address || '—'}</TableCell>
+                    <TableCell className="font-medium whitespace-normal break-words">{c.name}</TableCell>
+                    <TableCell className="whitespace-normal break-words">{c.phone || '—'}</TableCell>
+                    <TableCell className="whitespace-normal break-words">{c.address || '—'}</TableCell>
                     <TableCell>
                         <EditarClienteDialog 
                             cliente={c} 

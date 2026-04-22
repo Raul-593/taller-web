@@ -1,13 +1,17 @@
 "use client"
 
-import { useState, useMemo, useEffect } from "react"
-import { createClient } from "@/utils/supabase/clients"
+import { useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/componentes/ui/cards"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/componentes/ui/table"
 import { AgregarIngreso } from "@/componentes/finanzas/AgregarIngreso"
 import { AgregarGasto } from "@/componentes/finanzas/AgregarGasto"
+import { PageHeader } from "@/componentes/ui/PageHeader"
+import { DateFilter } from "@/componentes/ui/DateFilter"
+import { StatusSelect } from "@/componentes/ui/StatusSelect"
+import { useSyncState } from "@/hooks/useSyncState"
+import { useUpdateStatus } from "@/hooks/useUpdateStatus"
 
 const ESTADOS = [
     { value: 'completado', label: 'completado' },
@@ -18,68 +22,11 @@ const ESTADOS = [
 export function FinanzasClient({ sales: initialSales, purchases: initialPurchases, currentMonth, currentYear }: { sales: any[], purchases: any[], currentMonth?: string, currentYear?: string }) {
     const router = useRouter()
 
-    // Colores para el estado
-    const getStatusClasses = (status: string) => {
-        const s = status?.toLowerCase();
-        if (s === 'completado' || s === 'pagado') {
-            return "bg-green-100 text-green-700 border-green-200";
-        } else if (s === 'pendiente') {
-            return "bg-amber-100 text-amber-700 border-amber-200";
-        } else if (s === 'cancelado') {
-            return "bg-red-100 text-red-700 border-red-200";
-        }
-        return "bg-zinc-100 text-zinc-600 border-zinc-200";
-    };
-
-    const StatusBadge = ({ status }: { status: string }) => {
-        return (
-            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-tighter ${getStatusClasses(status)}`}>
-                {status}
-            </span>
-        );
-    };
-
-
-    const [sales, setSales] = useState(initialSales || [])
-    const [purchases, setPurchases] = useState(initialPurchases || [])
-    const [loadingId, setLoadingId] = useState<string | null>(null)
-    const supabase = createClient()
-
-    // Sincronizar el estado cliente con el servidor ante un router.refresh()
-    useEffect(() => {
-        setSales(initialSales || [])
-        setPurchases(initialPurchases || [])
-    }, [initialSales, initialPurchases])
-
-    const handleFilterChange = (type: 'month' | 'year', value: string) => {
-        const params = new URLSearchParams(window.location.search)
-        if (type === 'year') {
-            params.set('year', value)
-            if (!params.has('month')) params.set('month', currentMonth || 'all')
-        } else {
-            params.set('month', value)
-            if (!params.has('year')) params.set('year', currentYear || new Date().getFullYear().toString())
-        }
-        router.push(`/finanzas?${params.toString()}`)
-    }
-
-    const months = [
-        { value: 'all', label: 'Todo el año' },
-        { value: '1', label: 'Enero' },
-        { value: '2', label: 'Febrero' },
-        { value: '3', label: 'Marzo' },
-        { value: '4', label: 'Abril' },
-        { value: '5', label: 'Mayo' },
-        { value: '6', label: 'Junio' },
-        { value: '7', label: 'Julio' },
-        { value: '8', label: 'Agosto' },
-        { value: '9', label: 'Septiembre' },
-        { value: '10', label: 'Octubre' },
-        { value: '11', label: 'Noviembre' },
-        { value: '12', label: 'Diciembre' },
-    ]
-
-    const years = Array.from({ length: 10 }, (_, i) => (new Date().getFullYear() + i).toString()) // 7 años adelante
+    const [sales, setSales] = useSyncState(initialSales || [])
+    const [purchases, setPurchases] = useSyncState(initialPurchases || [])
+    
+    const { loadingId: loadingSaleId, updateStatus: updateSaleStatus } = useUpdateStatus<any>('sales', undefined, () => setSales(initialSales))
+    const { loadingId: loadingPurchaseId, updateStatus: updatePurchaseStatus } = useUpdateStatus<any>('purchases', undefined, () => setPurchases(initialPurchases))
 
     // Cálculos dinámicos de finanzas
     const totalSales = useMemo(() =>
@@ -105,73 +52,13 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
     const formattedExpenses = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(totalPurchases)
     const formattedNetBalance = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(netBalance)
 
-
-    async function cambiarEstadoSales(id: string, nuevosEstado: string) {
-        setLoadingId(id)
-
-        setSales(prev =>
-            prev.map(v => v.id === id ? { ...v, status: nuevosEstado } : v)
-        )
-
-        const { error } = await supabase
-            .from('sales')
-            .update({ status: nuevosEstado })
-            .eq('id', id)
-
-        if (error) {
-            console.error('Error al cambiar estado:', error)
-            setSales(initialSales)
-        }
-        setLoadingId(null)
-    }
-
-    async function cambiarEstadoPurchases(id: string, nuevosEstado: string) {
-        setLoadingId(id)
-
-        setPurchases(prev =>
-            prev.map(v => v.id === id ? { ...v, status: nuevosEstado } : v)
-        )
-
-        const { error } = await supabase
-            .from('purchases')
-            .update({ status: nuevosEstado })
-            .eq('id', id)
-
-        if (error) {
-            console.error('Error al cambiar estado:', error)
-            setPurchases(initialPurchases)
-        }
-        setLoadingId(null)
-    }
-
-
     return (
         <div className="flex flex-col gap-6">
-            <div className="flex items-start justify-between">
-                <div>
-                    <h1 className="text-2xl font-bold tracking-tight"> 593 Cycling Studio </h1>
-                    <div className="flex gap-2 items-center mt-2">
-                        <select
-                            value={currentMonth || 'all'}
-                            onChange={(e) => handleFilterChange('month', e.target.value)}
-                            className="bg-background border border-border rounded-md px-3 py-1 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/30"
-                        >
-                            {months.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
-                        </select>
-                        <select
-                            value={currentYear || new Date().getFullYear().toString()}
-                            onChange={(e) => handleFilterChange('year', e.target.value)}
-                            className="bg-background border border-border rounded-md px-3 py-1 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/30"
-                        >
-                            {years.map(y => <option key={y} value={y}>{y}</option>)}
-                        </select>
-                    </div>
-                </div>
-                <div className="flex gap-2">
-                    <AgregarIngreso onIngresoAgregado={() => router.refresh()} />
-                    <AgregarGasto onGastoAgregado={() => router.refresh()} />
-                </div>
-            </div>
+            <PageHeader>
+                <DateFilter currentMonth={currentMonth} currentYear={currentYear} />
+                <AgregarIngreso onIngresoAgregado={() => router.refresh()} />
+                <AgregarGasto onGastoAgregado={() => router.refresh()} />
+            </PageHeader>
 
             {/* --- KPIs --- */}
             <div className="grid gap-4 grid-cols-1 md:grid-cols-4">
@@ -262,18 +149,18 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
                         {sales.length === 0 ? (
                             <p className="text-muted-foreground">No hay ventas registradas.</p>
                         ) : (
-                            <Table>
+                            <Table className="table-fixed">
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>Fecha</TableHead>
-                                        <TableHead>Cliente</TableHead>
-                                        <TableHead>Tipo de Venta</TableHead>
-                                        <TableHead>Subtotal</TableHead>
-                                        <TableHead>Descuento</TableHead>
-                                        <TableHead>Total</TableHead>
-                                        <TableHead>Método de Pago</TableHead>
-                                        <TableHead>Estado</TableHead>
-                                        <TableHead className="w-64">Observación</TableHead>
+                                        <TableHead className="w-[10%]">Fecha</TableHead>
+                                        <TableHead className="w-[15%]">Cliente</TableHead>
+                                        <TableHead className="w-[10%]">Tipo</TableHead>
+                                        <TableHead className="w-[8%]">Sub</TableHead>
+                                        <TableHead className="w-[8%]">Desc</TableHead>
+                                        <TableHead className="w-[8%]">Total</TableHead>
+                                        <TableHead className="w-[12%]">Pago</TableHead>
+                                        <TableHead className="w-[13%]">Estado</TableHead>
+                                        <TableHead className="w-[18%]">Observación</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -287,24 +174,15 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
                                             <TableCell className="font-bold">${venta.total}</TableCell>
                                             <TableCell className="capitalize">{venta.payment_method}</TableCell>
                                             <TableCell className="capitalize" onClick={e => e.stopPropagation()}>
-                                                <select
-                                                    value={venta.status}
-                                                    onChange={(e) => cambiarEstadoSales(venta.id, e.target.value)}
-                                                    disabled={loadingId === venta.id}
-                                                    className={`
-                                                        px-2 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-tighter appearance-none cursor-pointer focus:outline-none transition-colors 
-                                                        ${getStatusClasses(venta.status)} ${loadingId === venta.id ? 'opacity-50' : ''}
-                                                    `}
-                                                >
-                                                    {ESTADOS.map(estado => (
-                                                        <option key={estado.value} value={estado.value} className="bg-white text-zinc-900 capitalize">
-                                                            {estado.label}
-                                                        </option>
-                                                    ))}
-                                                </select>
+                                                <StatusSelect 
+                                                    value={venta.status} 
+                                                    options={ESTADOS} 
+                                                    onChange={(val) => updateSaleStatus(venta.id, val, setSales, initialSales)}
+                                                    disabled={loadingSaleId === venta.id}
+                                                />
                                             </TableCell>
 
-                                            <TableCell className="whitespace-normal w-64">{venta.observacion || '-'}</TableCell>
+                                            <TableCell className="whitespace-normal break-words">{venta.observacion || '-'}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
@@ -325,17 +203,17 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
                         {purchases.length === 0 ? (
                             <p className="text-muted-foreground">No hay compras registradas.</p>
                         ) : (
-                            <Table>
+                            <Table className="table-fixed">
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead>Fecha</TableHead>
-                                        <TableHead>Proveedor</TableHead>
-                                        <TableHead className="w-64">Descripción</TableHead>
-                                        <TableHead>Subtotal</TableHead>
-                                        <TableHead>Total</TableHead>
-                                        <TableHead>Método de Pago</TableHead>
-                                        <TableHead>Estado</TableHead>
-                                        <TableHead className="w-64">Observación</TableHead>
+                                        <TableHead className="w-[10%]">Fecha</TableHead>
+                                        <TableHead className="w-[15%]">Proveedor</TableHead>
+                                        <TableHead className="w-[20%]">Descripción</TableHead>
+                                        <TableHead className="w-[10%]">Subtotal</TableHead>
+                                        <TableHead className="w-[10%]">Total</TableHead>
+                                        <TableHead className="w-[10%]">Método</TableHead>
+                                        <TableHead className="w-[10%]">Estado</TableHead>
+                                        <TableHead className="w-[15%]">Observación</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -343,29 +221,20 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
                                         <TableRow key={compra.id}>
                                             <TableCell>{compra.purchase_date}</TableCell>
                                             <TableCell>{compra.suppliers?.name || '-'}</TableCell>
-                                            <TableCell className="whitespace-normal w-64">{compra.description || '-'}</TableCell>
+                                            <TableCell className="whitespace-normal break-words">{compra.description || '-'}</TableCell>
                                             <TableCell>${compra.sub_total}</TableCell>
                                             <TableCell className="font-bold">${compra.total}</TableCell>
                                             <TableCell className="capitalize">{compra.payment_method}</TableCell>
                                             <TableCell className="capitalize" onClick={e => e.stopPropagation()}>
-                                                <select
-                                                    value={compra.status}
-                                                    onChange={(e) => cambiarEstadoPurchases(compra.id, e.target.value)}
-                                                    disabled={loadingId === compra.id}
-                                                    className={`
-                                                        px-2 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-tighter appearance-none cursor-pointer focus:outline-none transition-colors 
-                                                        ${getStatusClasses(compra.status)} ${loadingId === compra.id ? 'opacity-50' : ''}
-                                                    `}
-                                                >
-                                                    {ESTADOS.map(estado => (
-                                                        <option key={estado.value} value={estado.value} className="bg-white text-zinc-900 capitalize">
-                                                            {estado.label}
-                                                        </option>
-                                                    ))}
-                                                </select>
+                                                <StatusSelect 
+                                                    value={compra.status} 
+                                                    options={ESTADOS} 
+                                                    onChange={(val) => updatePurchaseStatus(compra.id, val, setPurchases, initialPurchases)}
+                                                    disabled={loadingPurchaseId === compra.id}
+                                                />
                                             </TableCell>
 
-                                            <TableCell className="whitespace-normal w-64">{compra.observacion || '-'}</TableCell>
+                                            <TableCell className="whitespace-normal break-words">{compra.observacion || '-'}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>

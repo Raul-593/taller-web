@@ -1,51 +1,13 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/componentes/ui/cards"
-
+import { DateFilter } from "@/componentes/ui/DateFilter"
+import { useSyncState } from "@/hooks/useSyncState"
 
 export function DashboardFinanzas({ sales: initialSales, purchases: initialPurchases, currentMonth, currentYear }: { sales: any[], purchases: any[], currentMonth?: string, currentYear?: string }) {
-    const router = useRouter()
+    const [sales] = useSyncState(initialSales || [])
+    const [purchases] = useSyncState(initialPurchases || [])
 
-    const [sales, setSales] = useState(initialSales || [])
-    const [purchases, setPurchases] = useState(initialPurchases || [])
-
-    useEffect(() => {
-        setSales(initialSales || [])
-        setPurchases(initialPurchases || [])
-    }, [initialSales, initialPurchases])
-
-    const handleFilterChange = (type: 'month' | 'year', value: string) => {
-        const params = new URLSearchParams(window.location.search)
-        if (type === 'year'){
-            params.set('year', value)
-            if (!params.has('month')) params.set('month', currentMonth || 'all')
-        } else {
-            params.set('month', value)
-            if (!params.has('year')) params.set('year', currentYear || new Date().getFullYear().toString())
-        }
-        router.push(`/dashboard?${params.toString()}`)
-    }
-
-    const months = [
-        { value: 'all', label: 'Todo el año'},
-        { value: '1', label: 'Enero'},
-        { value: '2', label: 'Febrero'},
-        { value: '3', label: 'Marzo'},
-        { value: '4', label: 'Abril'},
-        { value: '5', label: 'Mayo'},
-        { value: '6', label: 'Junio'},
-        { value: '7', label: 'Julio'},
-        { value: '8', label: 'Agosto'},
-        { value: '9', label: 'Septiembre'},
-        { value: '10', label: 'Octubre'},
-        { value: '11', label: 'Noviembre'},
-        { value: '12', label: 'Diciembre'},
-    ]
-
-    const years = Array.from({length: 10}, (_, i) => (new Date().getFullYear() + i).toString())
-    
     // Calculo Finanzas
     // Total de Ventas
     const totalSales = sales
@@ -76,20 +38,7 @@ export function DashboardFinanzas({ sales: initialSales, purchases: initialPurch
         <>
             <div className="md:col-span-4 flex justify-end items-center gap-2 mb-2">
                 <span className="text-xs text-muted-foreground font-medium">Periodo:</span>
-                <select
-                    value={currentMonth || 'all'}
-                    onChange={(e) => handleFilterChange('month', e.target.value)}
-                    className="bg-background border border-border rounded-md px-2 py-1 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary/30"
-                >
-                    {months.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
-                </select>
-                <select
-                    value={currentYear || new Date().getFullYear().toString()}
-                    onChange={(e) => handleFilterChange('year', e.target.value)}
-                    className="bg-background border border-border rounded-md px-2 py-1 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-primary/30"
-                >
-                    {years.map(y => <option key={y} value={y}>{y}</option>)}
-                </select>
+                <DateFilter currentMonth={currentMonth} currentYear={currentYear} size="xs" />
             </div>
 
             {/* Ingresos */}
@@ -139,4 +88,4 @@ export function DashboardFinanzas({ sales: initialSales, purchases: initialPurch
             </Card>
         </>
     )
-}
+}

@@ -1,5 +1,5 @@
 import { createClient } from "@/utils/supabase/server"
-import {BicicletasClient} from "./BicicletasClient"
+import { BicicletasClient } from "./BicicletasClient"
 
 type Bicicleta = {
   id: string

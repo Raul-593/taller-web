@@ -1,5 +1,5 @@
 import { createClient } from "@/utils/supabase/server"
-import { RepuestosClient } from "./RepuestosCliente"
+import { RepuestosClient } from "./RepuestosClient"
 
 export default async function Repuestos(){
   const supabase = await createClient()
