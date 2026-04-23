@@ -54,6 +54,7 @@ export function ClienteForm({
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+        e.stopPropagation()
         await onSubmit({ name, phone, address })
     }
 

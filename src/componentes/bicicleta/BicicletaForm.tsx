@@ -63,6 +63,7 @@ export function BicicletaForm({
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
+        e.stopPropagation()
         await onSubmit({ brand, model, serial_number: serialNumber, observacion, customer_id: customerId })
     }
 

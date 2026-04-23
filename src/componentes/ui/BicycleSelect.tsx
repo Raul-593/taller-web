@@ -32,7 +32,7 @@ export function BicycleSelect({ customerId, value, onChange, label = "Bicicleta"
             setLoading(false)
         }
         fetchBicycles()
-    }, [supabase, customerId])
+    }, [supabase, customerId, value])
 
     return (
         <div className="grid gap-2">
@@ -53,8 +53,8 @@ export function BicycleSelect({ customerId, value, onChange, label = "Bicicleta"
                         disabled:opacity-50 disabled:cursor-not-allowed
                         transition-colors duration-150"
                 >
-                    <option value="">{loading ? "Cargando..." : (bicycles.length === 0 && customerId ? "Sin bicicletas" : placeholder)}</option>
-                    {bicycles.map(b => (
+                    <option value="">{loading ? "Cargando..." : ((bicycles?.length || 0) === 0 && customerId ? "Sin bicicletas" : placeholder)}</option>
+                    {(bicycles?.length || 0) > 0 && bicycles.map(b => (
                         <option key={b.id} value={b.id}>
                             {b.brand} {b.model}
                         </option>

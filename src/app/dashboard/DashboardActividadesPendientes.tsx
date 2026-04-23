@@ -46,7 +46,7 @@ export function DashboardActividadesTable({ activities }: { activities: Mantenim
                 </div>
             </CardHeader>
             <CardContent className="overflow-x-auto max-h-[400px] overflow-y-auto">
-                {activities.length === 0 ? (
+                {(activities?.length || 0) === 0 ? (
                     <p className="text-muted-foreground text-sm mt-2">No hay mantenimientos pendientes.</p>
                 ) : (
                     <Table>

@@ -3,6 +3,7 @@ import { createClient } from "@/utils/supabase/server"
 import { DashboardChartClient } from "./DashboardChartClient"
 import { DashboardFinanzas } from "./DashboardFinanzas"
 import { DashboardActividadesSummary, DashboardActividadesTable } from "./DashboardActividadesPendientes"
+import { DashboardHeader } from "./DashboardHeader"
 
 type Mantenimiento = {
   id: string
@@ -102,9 +103,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-2xl font-bold tracking-tight"> 593 Cycling Studio </h1>
-      </div>
+      <DashboardHeader />
       
       <div className="grid gap-4 md:grid-cols-4">
         {/* --- Finanzas --- */}

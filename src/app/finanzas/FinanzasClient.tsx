@@ -149,20 +149,21 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
                         {sales.length === 0 ? (
                             <p className="text-muted-foreground">No hay ventas registradas.</p>
                         ) : (
-                            <Table className="table-fixed">
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead className="w-[10%]">Fecha</TableHead>
-                                        <TableHead className="w-[15%]">Cliente</TableHead>
-                                        <TableHead className="w-[10%]">Tipo</TableHead>
-                                        <TableHead className="w-[8%]">Sub</TableHead>
-                                        <TableHead className="w-[8%]">Desc</TableHead>
-                                        <TableHead className="w-[8%]">Total</TableHead>
-                                        <TableHead className="w-[12%]">Pago</TableHead>
-                                        <TableHead className="w-[13%]">Estado</TableHead>
-                                        <TableHead className="w-[18%]">Observación</TableHead>
-                                    </TableRow>
-                                </TableHeader>
+                            <div className="overflow-x-auto w-full">
+                                <Table className="min-w-[1000px]">
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead className="w-[100px]">Fecha</TableHead>
+                                            <TableHead className="w-[180px]">Cliente</TableHead>
+                                            <TableHead className="w-[100px]">Tipo</TableHead>
+                                            <TableHead className="w-[80px]">Sub</TableHead>
+                                            <TableHead className="w-[80px]">Desc</TableHead>
+                                            <TableHead className="w-[80px]">Total</TableHead>
+                                            <TableHead className="w-[120px]">Pago</TableHead>
+                                            <TableHead className="w-[140px]">Estado</TableHead>
+                                            <TableHead className="">Observación</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
                                 <TableBody>
                                     {sales.map((venta: any) => (
                                         <TableRow key={venta.id}>
@@ -186,7 +187,8 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
                                         </TableRow>
                                     ))}
                                 </TableBody>
-                            </Table>
+                                </Table>
+                            </div>
                         )}
                     </CardContent>
                 </Card>
@@ -203,19 +205,20 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
                         {purchases.length === 0 ? (
                             <p className="text-muted-foreground">No hay compras registradas.</p>
                         ) : (
-                            <Table className="table-fixed">
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead className="w-[10%]">Fecha</TableHead>
-                                        <TableHead className="w-[15%]">Proveedor</TableHead>
-                                        <TableHead className="w-[20%]">Descripción</TableHead>
-                                        <TableHead className="w-[10%]">Subtotal</TableHead>
-                                        <TableHead className="w-[10%]">Total</TableHead>
-                                        <TableHead className="w-[10%]">Método</TableHead>
-                                        <TableHead className="w-[10%]">Estado</TableHead>
-                                        <TableHead className="w-[15%]">Observación</TableHead>
-                                    </TableRow>
-                                </TableHeader>
+                            <div className="overflow-x-auto w-full">
+                                <Table className="min-w-[1000px]">
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead className="w-[100px]">Fecha</TableHead>
+                                            <TableHead className="w-[180px]">Proveedor</TableHead>
+                                            <TableHead className="w-[200px]">Descripción</TableHead>
+                                            <TableHead className="w-[100px]">Subtotal</TableHead>
+                                            <TableHead className="w-[100px]">Total</TableHead>
+                                            <TableHead className="w-[100px]">Método</TableHead>
+                                            <TableHead className="w-[140px]">Estado</TableHead>
+                                            <TableHead className="">Observación</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
                                 <TableBody>
                                     {purchases.map((compra: any) => (
                                         <TableRow key={compra.id}>
@@ -238,7 +241,8 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
                                         </TableRow>
                                     ))}
                                 </TableBody>
-                            </Table>
+                                </Table>
+                            </div>
                         )}
                     </CardContent>
                 </Card>
