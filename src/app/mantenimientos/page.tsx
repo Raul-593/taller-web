@@ -30,7 +30,15 @@ export default async function Mantenimientos() {
         bicycles (
             brand, 
             model, 
-            customers (name)
+            customers (id, name)
+        ),
+        maintenance_items (
+            id,
+            product_id,
+            quantity,
+            unit_price,
+            item_type,
+            description
         )
     `)
     .order('service_date', { ascending: false })

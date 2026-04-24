@@ -6,7 +6,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useRouter } from "next/navigation"
 import { AgregarMantenimiento } from "@/componentes/mantenimiento/AgregarMantenimiento"
 import { EditarMantenimientoDialog } from "@/componentes/mantenimiento/EditarMantenimiento"
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/componentes/ui/sheet"
 import { PageHeader } from "@/componentes/ui/PageHeader"
 import { StatusSelect } from "@/componentes/ui/StatusSelect"
 import { useSyncState } from "@/hooks/useSyncState"
@@ -91,15 +90,14 @@ export function MantenimientoClient({ mantenimientos: initial }: { mantenimiento
                                         <TableHead className="w-[15%]">Fecha</TableHead>
                                         <TableHead className="w-[10%]">Costo</TableHead>
                                         <TableHead className="w-[20%]">Estado</TableHead>
-                                        <TableHead className="w-[15%]"></TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {filtradas.map((m) => (
                                         <TableRow
                                             key={m.id}
-                                            className="cursor-pointer"
-                                            onClick={() => setMantenimientoSeleccionado(m)}  // abre el detalle
+                                            className="cursor-pointer hover:bg-muted/50"
+                                            onClick={() => setMantenimientoSeleccionado(m)} // Abre el modal de edición/detalle
                                         >
                                             <TableCell className="whitespace-normal break-words">{(m.bicycles as any)?.customers?.name || '-'}</TableCell>
                                             <TableCell className="whitespace-normal break-words">{(m.bicycles as any)?.brand} {(m.bicycles as any)?.model}</TableCell>
@@ -113,9 +111,6 @@ export function MantenimientoClient({ mantenimientos: initial }: { mantenimiento
                                                     disabled={loadingId === m.id}
                                                 />
                                             </TableCell>
-                                            <TableCell onClick={e => e.stopPropagation()}>
-                                                <EditarMantenimientoDialog mantenimiento={m} onMantenimientoActualizado={() => router.refresh()} />
-                                            </TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
@@ -124,50 +119,19 @@ export function MantenimientoClient({ mantenimientos: initial }: { mantenimiento
                     </CardContent>
                 </Card>
             </div>
-            <Sheet open={!!mantenimientoSeleccionado} onOpenChange={open => { if (!open) setMantenimientoSeleccionado(null) }}>
-                <SheetContent className="p-6 sm:max-w-md w-full overflow-y-auto">
-                    {mantenimientoSeleccionado && (
-                        <div className="pl-3">
-                            <SheetHeader>
-                                <SheetTitle>
-                                    {(mantenimientoSeleccionado.bicycles as any)?.customers?.name}
-                                </SheetTitle>
-                                <SheetDescription>
-                                    {(mantenimientoSeleccionado.bicycles as any)?.brand} {(mantenimientoSeleccionado.bicycles as any)?.model}
-                                </SheetDescription>
-                            </SheetHeader>
 
-                            <div className="mt-8 flex flex-col gap-6">
-                                <div>
-                                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Fecha de servicio</p>
-                                    <p className="text-sm font-medium">{mantenimientoSeleccionado.service_date}</p>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Costo</p>
-                                    <p className="text-sm font-medium">${mantenimientoSeleccionado.cost}</p>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Descripción</p>
-                                    <p className="text-sm">{mantenimientoSeleccionado.description || '—'}</p>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Observación</p>
-                                    <p className="text-sm">{mantenimientoSeleccionado.observation || '—'}</p>
-                                </div>
-                                <div>
-                                    <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Estado</p>
-                                    <StatusSelect 
-                                        value={mantenimientoSeleccionado.status} 
-                                        options={ESTADOS} 
-                                        onChange={(val) => updateStatus(mantenimientoSeleccionado.id, val, setMantenimientos, initial)}
-                                        disabled={loadingId === mantenimientoSeleccionado.id}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </SheetContent>
-            </Sheet>
+            {/* --- Modal de Edición/Detalle (Controlado) --- */}
+            {mantenimientoSeleccionado && (
+                <EditarMantenimientoDialog 
+                    mantenimiento={mantenimientoSeleccionado}
+                    isOpenOutside={!!mantenimientoSeleccionado}
+                    onOpenChangeOutside={(open) => { if(!open) setMantenimientoSeleccionado(null) }}
+                    onMantenimientoActualizado={() => {
+                        router.refresh()
+                        setMantenimientoSeleccionado(null)
+                    }}
+                />
+            )}
         </div>
     )
-}
+}
