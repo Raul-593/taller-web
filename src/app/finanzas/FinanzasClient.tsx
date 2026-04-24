@@ -55,9 +55,13 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
     return (
         <div className="flex flex-col gap-6">
             <PageHeader>
-                <DateFilter currentMonth={currentMonth} currentYear={currentYear} />
-                <AgregarIngreso onIngresoAgregado={() => router.refresh()} />
-                <AgregarGasto onGastoAgregado={() => router.refresh()} />
+                <div className="flex flex-col sm:flex-row items-end sm:items-center gap-2 w-full sm:w-auto">
+                    <DateFilter currentMonth={currentMonth} currentYear={currentYear} className="w-full sm:w-auto justify-end" />
+                    <div className="flex gap-2">
+                        <AgregarIngreso onIngresoAgregado={() => router.refresh()} />
+                        <AgregarGasto onGastoAgregado={() => router.refresh()} />
+                    </div>
+                </div>
             </PageHeader>
 
             {/* --- KPIs --- */}

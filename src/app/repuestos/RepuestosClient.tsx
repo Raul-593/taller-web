@@ -42,7 +42,7 @@ export function RepuestosClient({ repuestos: initial}: {repuestos: any[]}){
                     {filteredItems.length === 0 ? (
                         <p className="text-muted-foreground">No hay repuestos disponibles</p>
                     ) : (
-                        <Table className="table-fixed w-full">
+                        <Table className="min-w-[800px] w-full">
                             <TableHeader>
                                 <TableRow>
                                     <TableHead className="w-[15%]">Nombre</TableHead>

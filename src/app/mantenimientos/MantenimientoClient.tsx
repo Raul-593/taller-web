@@ -83,7 +83,7 @@ export function MantenimientoClient({ mantenimientos: initial }: { mantenimiento
                         {filtradas.length === 0 ? (
                             <p className="text-muted-foreground">No hay mantenimientos registrados en esta categoría</p>
                         ) : (
-                            <Table className="table-fixed">
+                            <Table className="min-w-[800px]">
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead className="w-[20%]">Cliente</TableHead>

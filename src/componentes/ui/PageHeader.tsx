@@ -16,7 +16,7 @@ export function PageHeader({ title = "593 Cycling Studio", subtitle, children }:
                 <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
                 {subtitle && <p className="text-muted-foreground mt-1">{subtitle}</p>}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap justify-end">
                 {children}
             </div>
         </div>

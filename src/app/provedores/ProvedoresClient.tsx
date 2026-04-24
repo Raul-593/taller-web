@@ -42,7 +42,7 @@ export function ProvedoresClient({ provedores: initial}: { provedores: any[]}){
                     {filteredItems.length === 0 ? (
                         <p className="text-muted-foreground">No hay proveedores registrados</p>
                     ) : (
-                        <Table className="table-fixed w-full">
+                        <Table className="min-w-[650px] w-full">
                             <TableHeader>
                                 <TableRow>
                                     <TableHead className="w-[25%]">Nombre</TableHead>
@@ -75,4 +75,4 @@ export function ProvedoresClient({ provedores: initial}: { provedores: any[]}){
             </Card>
         </div>
     )
-}
+}
