@@ -46,6 +46,11 @@ const sections = [
                 href: "/repuestos",
                 icon: Package,
             },
+            {
+                title: "Proveedores",
+                href: "/provedores",
+                icon: Users,
+            },
         ],
     },
     {
