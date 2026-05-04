@@ -132,11 +132,11 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
                     <Card className="md:col-span-1 flex flex-col justify-center">
                         <CardHeader>
                             <div className="space-y-1">
-                                <CardTitle> Diferentes Gastos</CardTitle>
+                                <CardTitle> Lista ultimos movimientos</CardTitle>
                             </div>
                         </CardHeader>
                         <CardContent>
-                            GRAFICO PIE CON LA INFORMACION DE GASTOS QUE ESTA EN LA PAGINA DE FINANZAS
+                            LISTA DE ULTIMOS MOVIMIENTOS
                         </CardContent>
                     </Card>
                 </div>

@@ -47,7 +47,9 @@ export async function signInWithGoogle() {
     const supabase = await createClient()
     const headersList = await headers()
     const host = headersList.get('host')
-    const protocol = headersList.get('x-forwarded-proto') || 'http'
+    
+    // En Vercel o entornos con proxy, x-forwarded-proto nos dice si es https
+    const protocol = headersList.get('x-forwarded-proto') || (host?.includes('localhost') ? 'http' : 'https')
     const origin = `${protocol}://${host}`
 
     const { data, error } = await supabase.auth.signInWithOAuth({
@@ -56,6 +58,7 @@ export async function signInWithGoogle() {
             redirectTo: `${origin}/auth/callback`,
         },
     })
+
 
     if (error) {
         redirect(`/login?error=${encodeURIComponent('Error al conectar con Google')}`)
