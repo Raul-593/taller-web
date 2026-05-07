@@ -73,8 +73,8 @@ La aplicación permite registrar clientes y sus bicicletas, crear órdenes de tr
 
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/tu-usuario/nombre-proyecto.git
-cd nombre-proyecto
+git clone https://github.com/Raul-593/app_taller.git
+cd app_taller
 
 # 2. Instalar dependencias
 npm install
@@ -127,8 +127,7 @@ nombre-proyecto/
 │   ├── services/       # Llamadas a la API
 │   ├── store/          # Estado global
 │   └── utils/          # Helpers y utilidades
-├── public/
-├── screenshots/        # Imágenes para el README
+├── public/             # Imágenes para el README
 ├── .env.example
 └── README.md
 ```
