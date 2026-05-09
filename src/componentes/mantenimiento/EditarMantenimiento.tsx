@@ -54,7 +54,7 @@ export function EditarMantenimientoDialog({ mantenimiento, onMantenimientoActual
             setServiceDate(mantenimiento.service_date || "")
             setDeliveryDate(mantenimiento.delivery_date || "")
             setDescription(mantenimiento.description || "")
-            setObservacion(mantenimiento.observation || "") // corrected typo observacion -> observation if needed, but page query says observation
+            setObservacion(mantenimiento.observation || "")
             setCost(mantenimiento.cost?.toString() || "0")
             setEstado(mantenimiento.status || "recibido")
             setItems(mantenimiento.maintenance_items || [])

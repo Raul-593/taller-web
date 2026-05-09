@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useRouter } from "next/navigation"
 import { AgregarMantenimiento } from "@/componentes/mantenimiento/AgregarMantenimiento"
 import { EditarMantenimientoDialog } from "@/componentes/mantenimiento/EditarMantenimiento"
+import { VistaMantenimiento } from "@/componentes/mantenimiento/VistaMantenimiento"
 import { PageHeader } from "@/componentes/ui/PageHeader"
 import { StatusSelect } from "@/componentes/ui/StatusSelect"
 import { useSyncState } from "@/hooks/useSyncState"
@@ -25,6 +26,7 @@ export function MantenimientoClient({ mantenimientos: initial }: { mantenimiento
     const [mantenimiento, setMantenimientos] = useSyncState(initial)
     const [filtro, setFiltro] = useState("Todas")
     const [mantenimientoSeleccionado, setMantenimientoSeleccionado] = useState<any | null>(null)
+    const [mantenimientoVista, setMantenimientoVista] = useState<any | null>(null)
 
     const { loadingId, updateStatus } = useUpdateStatus<any>('maintenance_records', undefined, () => setMantenimientos(initial))
 
@@ -97,7 +99,7 @@ export function MantenimientoClient({ mantenimientos: initial }: { mantenimiento
                                         <TableRow
                                             key={m.id}
                                             className="cursor-pointer hover:bg-muted/50"
-                                            onClick={() => setMantenimientoSeleccionado(m)} // Abre el modal de edición/detalle
+                                            onClick={() => setMantenimientoVista(m)} // Abre el modal de detalle
                                         >
                                             <TableCell className="whitespace-normal break-words">{(m.bicycles as any)?.customers?.name || '-'}</TableCell>
                                             <TableCell className="whitespace-normal break-words">{(m.bicycles as any)?.brand} {(m.bicycles as any)?.model}</TableCell>
@@ -120,7 +122,20 @@ export function MantenimientoClient({ mantenimientos: initial }: { mantenimiento
                 </Card>
             </div>
 
-            {/* --- Modal de Edición/Detalle (Controlado) --- */}
+            {/* --- Modal de Detalle  --- */}
+            {mantenimientoVista && (
+                <VistaMantenimiento 
+                    mantenimiento={mantenimientoVista}
+                    isOpen={!!mantenimientoVista}
+                    onOpenChange={(open) => { if(!open) setMantenimientoVista(null) }}
+                    onEdit={() => {
+                        setMantenimientoSeleccionado(mantenimientoVista)
+                        setMantenimientoVista(null)
+                    }}
+                />
+            )}
+
+            {/* --- Modal de Edición --- */}
             {mantenimientoSeleccionado && (
                 <EditarMantenimientoDialog 
                     mantenimiento={mantenimientoSeleccionado}
