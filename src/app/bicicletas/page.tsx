@@ -7,6 +7,7 @@ type Bicicleta = {
   model: string
   serial_number: string
   observacion: string
+  customer_id: string | null
   customers: { name: string } | null
 }
 
@@ -22,6 +23,7 @@ export default async function Bicicletas() {
       serial_number,
       observacion,
       created_at,
+      customer_id,
       customers ( name )
     `)
     .order("created_at", { ascending: false })

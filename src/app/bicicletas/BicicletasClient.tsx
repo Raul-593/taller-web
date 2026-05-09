@@ -14,6 +14,7 @@ type Bicicleta = {
   model: string
   serial_number: string
   observacion: string
+  customer_id: string | null
   customers: { name: string } | null
 }
 

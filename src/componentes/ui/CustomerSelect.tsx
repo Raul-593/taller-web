@@ -80,13 +80,18 @@ export function CustomerSelect({ value, onChange, label = "Cliente", placeholder
                     <input
                         type="text"
                         className="flex-1 bg-transparent border-none outline-none placeholder:text-muted-foreground"
-                        placeholder={selectedCustomer ? selectedCustomer.name : placeholder}
-                        value={searchTerm}
+                        placeholder={placeholder}
+                        value={isOpen ? searchTerm : (selectedCustomer?.name || "")}
                         onChange={(e) => {
                             setSearchTerm(e.target.value)
-                            setIsOpen(true)
+                            if (!isOpen) setIsOpen(true)
                         }}
-                        onFocus={() => setIsOpen(true)}
+                        onFocus={(e) => {
+                            // Al recibir foco, si hay un valor seleccionado, seleccionamos el texto para facilitar el reemplazo
+                            if (!isOpen && selectedCustomer) {
+                                e.target.select()
+                            }
+                        }}
                         disabled={disabled}
                     />
 
@@ -100,7 +105,13 @@ export function CustomerSelect({ value, onChange, label = "Cliente", placeholder
                         </button>
                     )}
                     
-                    <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform", isOpen && "rotate-180")} />
+                    <button 
+                        type="button" 
+                        onClick={() => setIsOpen(!isOpen)}
+                        className="p-1 hover:bg-zinc-100 rounded-md text-muted-foreground"
+                    >
+                        <ChevronDown className={cn("w-4 h-4 transition-transform", isOpen && "rotate-180")} />
+                    </button>
                 </div>
 
                 {/* Dropdown de resultados */}
