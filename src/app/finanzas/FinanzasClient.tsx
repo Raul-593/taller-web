@@ -24,7 +24,7 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
 
     const [sales, setSales] = useSyncState(initialSales || [])
     const [purchases, setPurchases] = useSyncState(initialPurchases || [])
-    
+
     const { loadingId: loadingSaleId, updateStatus: updateSaleStatus } = useUpdateStatus<any>('sales', undefined, () => setSales(initialSales))
     const { loadingId: loadingPurchaseId, updateStatus: updatePurchaseStatus } = useUpdateStatus<any>('purchases', undefined, () => setPurchases(initialPurchases))
 
@@ -168,29 +168,29 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
                                             <TableHead className="">Observación</TableHead>
                                         </TableRow>
                                     </TableHeader>
-                                <TableBody>
-                                    {sales.map((venta: any) => (
-                                        <TableRow key={venta.id}>
-                                            <TableCell>{venta.sales_date || '-'}</TableCell>
-                                            <TableCell className="font-medium capitalize">{venta.customers?.name || '-'}</TableCell>
-                                            <TableCell className="font-medium capitalize">{venta.sales_type}</TableCell>
-                                            <TableCell>${venta.sub_total}</TableCell>
-                                            <TableCell>${venta.discount}</TableCell>
-                                            <TableCell className="font-bold">${venta.total}</TableCell>
-                                            <TableCell className="capitalize">{venta.payment_method}</TableCell>
-                                            <TableCell className="capitalize" onClick={e => e.stopPropagation()}>
-                                                <StatusSelect 
-                                                    value={venta.status} 
-                                                    options={ESTADOS} 
-                                                    onChange={(val) => updateSaleStatus(venta.id, val, setSales, initialSales)}
-                                                    disabled={loadingSaleId === venta.id}
-                                                />
-                                            </TableCell>
+                                    <TableBody>
+                                        {sales.map((venta: any) => (
+                                            <TableRow key={venta.id}>
+                                                <TableCell>{venta.sales_date || '-'}</TableCell>
+                                                <TableCell className="font-medium capitalize">{venta.customers?.name || '-'}</TableCell>
+                                                <TableCell className="font-medium capitalize">{venta.sales_type}</TableCell>
+                                                <TableCell>${venta.sub_total}</TableCell>
+                                                <TableCell>${venta.discount}</TableCell>
+                                                <TableCell className="font-bold">${venta.total}</TableCell>
+                                                <TableCell className="capitalize">{venta.payment_method}</TableCell>
+                                                <TableCell className="capitalize" onClick={e => e.stopPropagation()}>
+                                                    <StatusSelect
+                                                        value={venta.status}
+                                                        options={ESTADOS}
+                                                        onChange={(val) => updateSaleStatus(venta.id, val, setSales, initialSales)}
+                                                        disabled={loadingSaleId === venta.id}
+                                                    />
+                                                </TableCell>
 
-                                            <TableCell className="whitespace-normal break-words">{venta.observacion || '-'}</TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
+                                                <TableCell className="whitespace-normal break-words">{venta.observacion || '-'}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
                                 </Table>
                             </div>
                         )}
@@ -223,28 +223,28 @@ export function FinanzasClient({ sales: initialSales, purchases: initialPurchase
                                             <TableHead className="">Observación</TableHead>
                                         </TableRow>
                                     </TableHeader>
-                                <TableBody>
-                                    {purchases.map((compra: any) => (
-                                        <TableRow key={compra.id}>
-                                            <TableCell>{compra.purchase_date}</TableCell>
-                                            <TableCell>{compra.suppliers?.name || '-'}</TableCell>
-                                            <TableCell className="whitespace-normal break-words">{compra.description || '-'}</TableCell>
-                                            <TableCell>${compra.sub_total}</TableCell>
-                                            <TableCell className="font-bold">${compra.total}</TableCell>
-                                            <TableCell className="capitalize">{compra.payment_method}</TableCell>
-                                            <TableCell className="capitalize" onClick={e => e.stopPropagation()}>
-                                                <StatusSelect 
-                                                    value={compra.status} 
-                                                    options={ESTADOS} 
-                                                    onChange={(val) => updatePurchaseStatus(compra.id, val, setPurchases, initialPurchases)}
-                                                    disabled={loadingPurchaseId === compra.id}
-                                                />
-                                            </TableCell>
+                                    <TableBody>
+                                        {purchases.map((compra: any) => (
+                                            <TableRow key={compra.id}>
+                                                <TableCell>{compra.purchase_date}</TableCell>
+                                                <TableCell>{compra.suppliers?.name || '-'}</TableCell>
+                                                <TableCell className="whitespace-normal break-words">{compra.description || '-'}</TableCell>
+                                                <TableCell>${compra.sub_total}</TableCell>
+                                                <TableCell className="font-bold">${compra.total}</TableCell>
+                                                <TableCell className="capitalize">{compra.payment_method}</TableCell>
+                                                <TableCell className="capitalize" onClick={e => e.stopPropagation()}>
+                                                    <StatusSelect
+                                                        value={compra.status}
+                                                        options={ESTADOS}
+                                                        onChange={(val) => updatePurchaseStatus(compra.id, val, setPurchases, initialPurchases)}
+                                                        disabled={loadingPurchaseId === compra.id}
+                                                    />
+                                                </TableCell>
 
-                                            <TableCell className="whitespace-normal break-words">{compra.observacion || '-'}</TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
+                                                <TableCell className="whitespace-normal break-words">{compra.observacion || '-'}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
                                 </Table>
                             </div>
                         )}

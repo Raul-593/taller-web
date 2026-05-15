@@ -8,7 +8,7 @@ export default async function Clientes() {
   const { data: clientes, error: clientesError } = await supabase
     .from('customers')
     .select('id, name, phone, address, created_at')
-    .order('created_at', { ascending: false })
+    .order('name', { ascending: true })
 
   if (clientesError) {
     console.error('Error al obtener clientes:', clientesError)

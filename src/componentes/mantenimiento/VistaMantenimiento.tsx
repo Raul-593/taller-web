@@ -61,7 +61,7 @@ export function VistaMantenimiento({ mantenimiento, isOpen, onOpenChange, onEdit
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-4xl p-0 flex flex-col overflow-hidden max-h-[90vh]">
                 <DialogHeader className="p-6 border-b bg-zinc-50/50">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
                         <div className="space-y-1">
                             <DialogTitle className="text-xl flex items-center gap-2">
                                 <Wrench className="h-5 w-5 text-primary" />
@@ -71,7 +71,7 @@ export function VistaMantenimiento({ mantenimiento, isOpen, onOpenChange, onEdit
                                 Vista detallada del registro de mantenimiento
                             </DialogDescription>
                         </div>
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-col items-end gap-2">
                             <div className={`px-3 py-1 rounded-full text-xs font-bold border ${getStatusColor(mantenimiento.status)} uppercase tracking-wider`}>
                                 {mantenimiento.status?.replace('_', ' ') || 'Sin estado'}
                             </div>

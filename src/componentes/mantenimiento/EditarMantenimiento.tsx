@@ -52,7 +52,6 @@ export function EditarMantenimientoDialog({ mantenimiento, onMantenimientoActual
         if (isOpen && mantenimiento) {
             setBicycle_id(mantenimiento.bicycle_id)
             setServiceDate(mantenimiento.service_date || "")
-            setDeliveryDate(mantenimiento.delivery_date || "")
             setDescription(mantenimiento.description || "")
             setObservacion(mantenimiento.observation || "")
             setCost(mantenimiento.cost?.toString() || "0")
@@ -107,7 +106,6 @@ export function EditarMantenimientoDialog({ mantenimiento, onMantenimientoActual
             .from("maintenance_records")
             .update({
                 service_date: serviceDate,
-                delivery_date: deliveryDate || null,
                 description: description.trim(),
                 observation: observacion.trim(),
                 cost: parseFloat(cost),
@@ -200,10 +198,7 @@ export function EditarMantenimientoDialog({ mantenimiento, onMantenimientoActual
                             <Label htmlFor="edit-service-date">Fecha de Servicio</Label>
                             <Input type="date" id="edit-service-date" value={serviceDate} onChange={e => setServiceDate(e.target.value)} />
                         </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="edit-delivery-date">Fecha de Entrega</Label>
-                            <Input type="date" id="edit-delivery-date" value={deliveryDate} onChange={e => setDeliveryDate(e.target.value)} />
-                        </div>
+                        
                     </div>
 
                     <div className="grid gap-2">
