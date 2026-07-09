@@ -42,7 +42,7 @@ export function AgregarGasto({ onGastoAgregado, trigger }: Props) {
     useEffect(() => {
         const fetchData = async () => {
             const [prods, custs] = await Promise.all([
-                supabase.from("products").select("*"),
+                supabase.from("products").select("*").order("name"),
                 supabase.from("suppliers").select("id, name")
             ])
             if (prods.data) setProducts(prods.data)

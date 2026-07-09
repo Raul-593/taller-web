@@ -8,6 +8,8 @@ import { createClient } from "@/utils/supabase/clients"
 import { toast } from "sonner"
 import { Button } from "@/componentes/ui/button"
 import { Trash2 } from "lucide-react"
+import { CustomerSelect } from "../ui/CustomerSelect"
+import { AgregarClienteDialog } from "../clientes/AgregarClienteDialog"
 
 type Props = {
     onIngresoAgregado: (ingreso: any) => void
@@ -42,8 +44,8 @@ export function AgregarIngreso({ onIngresoAgregado, trigger }: Props) {
     useEffect(() => {
         const fetchData = async () => {
             const [prods, custs] = await Promise.all([
-                supabase.from("products").select("*"),
-                supabase.from("customers").select("id, name")
+                supabase.from("products").select("*").order("name"),
+                supabase.from("customers").select("id, name").order("name")
             ])
             if (prods.data) setProducts(prods.data)
             if (custs.data) setCustomers(custs.data)
@@ -260,17 +262,10 @@ export function AgregarIngreso({ onIngresoAgregado, trigger }: Props) {
                 <div className="flex flex-col gap-5">
                     {/* Cliente */}
                     <div className="grid gap-2">
-                        <Label className="font-semibold">Cliente (Opcional)</Label>
-                        <select 
-                            value={customerId}
-                            onChange={e => setCustomerId(e.target.value)}
-                            className="w-full appearance-none bg-background border border-border rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/30"
-                        >
-                            <option value="">-- Sin Cliente --</option>
-                            {customers.map(c => (
-                                <option key={c.id} value={c.id}>{c.name}</option>
-                            ))}
-                        </select>
+                        <AgregarClienteDialog
+                            onClienteAgregado={(c) =>{ setCustomerId(c.id) }}
+                            trigger={<CustomerSelect value={customerId} onChange={(id) =>{ setCustomerId(id) }} />}
+                        />
                     </div>
 
                     <div className="grid gap-2">
@@ -309,14 +304,13 @@ export function AgregarIngreso({ onIngresoAgregado, trigger }: Props) {
                                         <div key={index} className="bg-white p-3 rounded-xl border border-zinc-200 shadow-sm flex flex-col gap-3 group transition-all hover:border-zinc-400">
                                             <div className="flex justify-between items-start gap-2">
                                                 <div className="flex-1 grid gap-1.5">
-                                                    <Label className="text-[9px] uppercase font-bold text-zinc-400 tracking-wider">Concepto</Label>
                                                     <select 
                                                         value={item.product_id}
                                                         onChange={e => updateItem(index, "product_id", e.target.value)}
                                                         className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-zinc-400"
                                                     >
                                                         <option value="">Seleccionar...</option>
-                                                        {products.map(p => (
+                                                        {(products?.length || 0) > 0 && products.map(p => (
                                                             <option key={p.id} value={p.id}>{p.name}</option>
                                                         ))}
                                                     </select>

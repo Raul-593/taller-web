@@ -177,7 +177,7 @@ export function AgregarMantenimiento({ onMantenimientoAgregado, trigger }: Props
                             />
                         </div>
                         <AgregarClienteDialog 
-                            onClienteAgregado={(c) => setClienteId(c.id)} 
+                            onClienteAgregado={(c) => setClienteId(c.id)}
                             trigger={<Button type="button" variant="outline" size="icon" className="shrink-0"><PlusCircle className="h-4 w-4" /></Button>} 
                         />
                     </div>
@@ -299,4 +299,4 @@ export function AgregarMantenimiento({ onMantenimientoAgregado, trigger }: Props
             </div>
         </FormDialog>
     )
-}
+}
