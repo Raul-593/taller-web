@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import { Label } from "@/componentes/ui/label"
 import { createClient } from "@/utils/supabase/clients"
 import { Search, ChevronDown, X } from "lucide-react"
@@ -10,19 +10,22 @@ export type Product = {
     id: string
     name: string
     price: number | null
+    cost: number | null
     category: string | null
 }
 
 type Props = {
     value: string | null
     onChange: (id: string, product?: Product) => void
+    onInputChange?: (value: string) => void
+    inputValue?: string
     label?: string
     placeholder?: string
     disabled?: boolean
 }
 
-export function ProductSelect({ value, onChange, label = "Producto o servicio", placeholder = "Buscar producto o servicio...", disabled }: Props) {
-    const supabase = createClient()
+export function ProductSelect({ value, onChange, onInputChange, inputValue, label = "Producto o servicio", placeholder = "Buscar producto o servicio...", disabled }: Props) {
+    const supabase = useMemo(() => createClient(), [])
     const [products, setProducts] = useState<Product[]>([])
     const [loading, setLoading] = useState(false)
     const [searchTerm, setSearchTerm] = useState("")
@@ -34,7 +37,7 @@ export function ProductSelect({ value, onChange, label = "Producto o servicio", 
             setLoading(true)
             const { data } = await supabase
                 .from("products")
-                .select("id, name, price, category")
+                .select("id, name, price, cost, category")
                 .order("name", { ascending: true })
             if (data) setProducts(data)
             setLoading(false)
@@ -57,16 +60,24 @@ export function ProductSelect({ value, onChange, label = "Producto o servicio", 
     )
 
     const selectedProduct = products.find(product => product.id === value)
+    const displayedValue = inputValue ?? selectedProduct?.name ?? ""
 
     const handleSelect = (product: Product) => {
+        onInputChange?.(product.name)
         onChange(product.id, product)
         setSearchTerm("")
         setIsOpen(false)
     }
 
     const clearSelection = () => {
+        onInputChange?.("")
         onChange("")
         setSearchTerm("")
+    }
+
+    const toggleDropdown = () => {
+        setSearchTerm(isOpen ? "" : displayedValue)
+        setIsOpen(!isOpen)
     }
 
     return (
@@ -86,9 +97,11 @@ export function ProductSelect({ value, onChange, label = "Producto o servicio", 
                         type="text"
                         className="min-w-0 flex-1 bg-transparent border-none outline-none placeholder:text-muted-foreground"
                         placeholder={placeholder}
-                        value={isOpen ? searchTerm : (selectedProduct?.name || "")}
+                        value={isOpen ? searchTerm : displayedValue}
                         onChange={(event) => {
-                            setSearchTerm(event.target.value)
+                            const value = event.target.value
+                            setSearchTerm(value)
+                            onInputChange?.(value)
                             if (!isOpen) setIsOpen(true)
                         }}
                         onFocus={(event) => {
@@ -109,7 +122,7 @@ export function ProductSelect({ value, onChange, label = "Producto o servicio", 
 
                     <button
                         type="button"
-                        onClick={() => setIsOpen(!isOpen)}
+                        onClick={toggleDropdown}
                         className="p-1 hover:bg-zinc-100 rounded-md text-muted-foreground"
                     >
                         <ChevronDown className={cn("w-4 h-4 transition-transform", isOpen && "rotate-180")} />

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect } from "react"
 import { Input } from "@/componentes/ui/input"
 import { Label } from "@/componentes/ui/label"
 import { FormDialog } from "@/componentes/FormDialog"
@@ -8,6 +8,7 @@ import { createClient } from "@/utils/supabase/clients"
 import { toast } from "sonner"
 import { Button } from "@/componentes/ui/button"
 import { Trash2 } from "lucide-react"
+import { Product, ProductSelect } from "@/componentes/ui/ProductSelect"
 
 type Props = {
     onGastoAgregado: (gasto: any) => void
@@ -30,9 +31,6 @@ export function AgregarGasto({ onGastoAgregado, trigger }: Props) {
     const [status, setStatus] = useState("completado")
     const [observacion, setObservacion] = useState("")
 
-    // Productos
-    const [products, setProducts] = useState<any[]>([])
-
     // Items de la compra
     const [items, setItems] = useState<any[]>([])
     
@@ -41,29 +39,14 @@ export function AgregarGasto({ onGastoAgregado, trigger }: Props) {
 
     useEffect(() => {
         const fetchData = async () => {
-            const [prods, custs] = await Promise.all([
-                supabase.from("products").select("*").order("name"),
-                supabase.from("suppliers").select("id, name")
-            ])
-            if (prods.data) setProducts(prods.data)
-            if (custs.data) setSuppliers(custs.data)
+            const { data } = await supabase
+                .from("suppliers")
+                .select("id, name")
+                .order("name", { ascending: true })
+            if (data) setSuppliers(data)
         }
         fetchData()
     }, [supabase])
-   
-    // Cargar Proveedores
-    useEffect(() => {
-        if (isOpen && suppliers.length === 0) {
-            const fetchSuppliers = async () => {
-                const { data } = await supabase
-                    .from("suppliers")
-                    .select("id, name")
-                    .order("name", { ascending: true })
-                if (data) setSuppliers(data)
-            }
-            fetchSuppliers()
-        }
-    }, [isOpen, supabase, suppliers.length])
     
     // Cálculo automático de totales
     useEffect(() => {
@@ -93,24 +76,26 @@ export function AgregarGasto({ onGastoAgregado, trigger }: Props) {
         setItems(items.filter((_, i) => i !== index))
     }
 
-    const updateItem = (index: number, field: string, value: any) => {
+    const updateItem = (index: number, field: string, value: any, product?: Product) => {
         const newItems = [...items]
         const item = { ...newItems[index], [field]: value }
-        
-        // Si cambia el nombre del producto, buscar si existe
-        if (field === "productName") {
-            const product = products.find(p => p.name.toLowerCase() === value.toLowerCase())
-            if (product) {
-                item.product_id = product.id
-                item.unit_price = product.cost || 0
-            } else {
-                item.product_id = "" // Es un producto nuevo
-            }
+
+        if (field === "product_id" && product) {
+            item.productName = product.name
+            item.unit_price = product.cost || 0
         }
 
         // Recalcular total del ítem
         item.total = (Number(item.quantity) || 0) * (Number(item.unit_price) || 0)
         
+        newItems[index] = item
+        setItems(newItems)
+    }
+
+    const updateProductName = (index: number, productName: string) => {
+        const newItems = [...items]
+        const item = { ...newItems[index], productName, product_id: "" }
+        item.total = (Number(item.quantity) || 0) * (Number(item.unit_price) || 0)
         newItems[index] = item
         setItems(newItems)
     }
@@ -127,12 +112,13 @@ export function AgregarGasto({ onGastoAgregado, trigger }: Props) {
 
         // Manejar creación de productos nuevos si existen
         const itemsWithIds = await Promise.all(items.map(async (item) => {
-            if (item.productName && !item.product_id) {
+            const productName = item.productName?.trim()
+            if (productName && !item.product_id) {
                 // Crear producto nuevo
                 const { data: newProd, error: prodError } = await supabase
                     .from("products")
                     .insert([{ 
-                        name: item.productName,
+                        name: productName,
                         cost: parseFloat(item.unit_price) || 0,
                         price: (parseFloat(item.unit_price) || 0),
                         active: true
@@ -141,7 +127,7 @@ export function AgregarGasto({ onGastoAgregado, trigger }: Props) {
                     .single()
                 
                 if (prodError) {
-                    console.error("Error al crear producto:", item.productName, prodError)
+                    console.error("Error al crear producto:", productName, prodError)
                     return item
                 }
                 return { ...item, product_id: newProd.id }
@@ -256,7 +242,7 @@ export function AgregarGasto({ onGastoAgregado, trigger }: Props) {
                         </Button>
                     </div>
                     
-                    <div className="p-4 space-y-3 min-h-[100px]">
+                    <div className="p-4 space-y-3 min-h-25">
                         {items.length === 0 ? (
                             <div className="text-center py-6 border-2 border-dashed rounded-md bg-zinc-50/50">
                                 <p className="text-xs text-muted-foreground">No hay productos agregados.</p>
@@ -278,19 +264,14 @@ export function AgregarGasto({ onGastoAgregado, trigger }: Props) {
                                 {/* Productos */}
                                 {items.map((item, index) => (
                                     <div key={index} className="grid grid-cols-[1fr,70px,100px,80px,30px] gap-2 items-center bg-zinc-50/50 p-2 rounded-lg border border-zinc-100 group hover:border-zinc-300 transition-colors">
-                                        <div className="w-full">
-                                            <input 
-                                                list="products-list"
-                                                value={item.productName}
-                                                onChange={e => updateItem(index, "productName", e.target.value)}
+                                        <div className="w-full min-w-0">
+                                            <ProductSelect
+                                                value={item.product_id || null}
+                                                inputValue={item.productName}
+                                                onInputChange={value => updateProductName(index, value)}
+                                                onChange={(id, product) => updateItem(index, "product_id", id, product)}
                                                 placeholder="Buscar o escribir nombre..."
-                                                className="w-full bg-white border border-border rounded-md px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-zinc-400 h-8"
                                             />
-                                            <datalist id="products-list">
-                                                {products.map(p => (
-                                                    <option key={p.id} value={p.name} />
-                                                ))}
-                                            </datalist>
                                         </div>
                                         <div>
                                             <Input 
