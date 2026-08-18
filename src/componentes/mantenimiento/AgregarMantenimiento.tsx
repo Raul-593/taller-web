@@ -1,12 +1,13 @@
 "use client"
 
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect } from "react"
 import { Input } from "@/componentes/ui/input"
 import { Label } from "@/componentes/ui/label"
 import { FormDialog } from "@/componentes/FormDialog"
 import { createClient } from "@/utils/supabase/clients"
 import { toast } from "sonner"
 import { CustomerSelect } from "@/componentes/ui/CustomerSelect"
+import { Product, ProductSelect } from "@/componentes/ui/ProductSelect"
 import { BicycleSelect } from "@/componentes/ui/BicycleSelect"
 import { Button } from "@/componentes/ui/button"
 import { Trash2, PlusCircle } from "lucide-react"
@@ -33,18 +34,8 @@ export function AgregarMantenimiento({ onMantenimientoAgregado, trigger }: Props
     const [cost, setCost] = useState("0")
     const [estado, setEstado] = useState("recibido")
 
-    // Ítems y Productos
-    const [products, setProducts] = useState<any[]>([])
+    // Ítems
     const [items, setItems] = useState<any[]>([])
-
-    // Cargar productos
-    useEffect(() => {
-        const fetchProducts = async () => {
-            const { data } = await supabase.from("products").select("*").order("name")
-            if (data) setProducts(data)
-        }
-        fetchProducts()
-    }, [supabase])
 
     // Cálculo automático del costo
     useEffect(() => {
@@ -72,17 +63,14 @@ export function AgregarMantenimiento({ onMantenimientoAgregado, trigger }: Props
         setItems(items.filter((_, i) => i !== index))
     }
 
-    const updateItem = (index: number, field: string, value: any) => {
+    const updateItem = (index: number, field: string, value: any, product?: Product) => {
         const newItems = [...items]
         const item = { ...newItems[index], [field]: value }
 
-        if (field === "product_id") {
-            const product = products.find(p => p.id === value)
-            if (product) {
-                item.unit_price = product.price || 0
-                item.item_type = product.category === 'Servicio' ? 'service' : 'retail'
-                item.description = product.name
-            }
+        if (field === "product_id" && product) {
+            item.unit_price = product.price || 0
+            item.item_type = product.category === 'Servicio' ? 'service' : 'retail'
+            item.description = product.name
         }
         newItems[index] = item
         setItems(newItems)
@@ -251,7 +239,7 @@ export function AgregarMantenimiento({ onMantenimientoAgregado, trigger }: Props
                         </Button>
                     </div>
                     
-                    <div className="p-4 flex-1 overflow-y-auto max-h-[400px]">
+                    <div className="p-4 flex-1 overflow-y-auto max-h-100">
                         {(items?.length || 0) === 0 ? (
                             <div className="text-center py-10 border-2 border-dashed rounded-lg bg-white/50">
                                 <p className="text-xs text-muted-foreground">No hay repuestos o servicios agregados.</p>
@@ -260,17 +248,14 @@ export function AgregarMantenimiento({ onMantenimientoAgregado, trigger }: Props
                             <div className="space-y-3">
                                 {items.map((item, index) => (
                                     <div key={index} className="bg-white p-3 rounded-lg border shadow-sm space-y-2">
-                                        <div className="flex gap-2">
-                                            <select 
-                                                value={item.product_id}
-                                                onChange={e => updateItem(index, "product_id", e.target.value)}
-                                                className="flex-1 bg-zinc-50 border rounded-md px-2 py-1.5 text-xs"
-                                            >
-                                                <option value="">Seleccionar producto/servicio...</option>
-                                                {(products?.length || 0) > 0 && products.map(p => (
-                                                    <option key={p.id} value={p.id}>{p.name}</option>
-                                                ))}
-                                            </select>
+                                        <div className="flex gap-2 items-end">
+                                            <div className="flex-1">
+                                                <ProductSelect
+                                                    value={item.product_id || null}
+                                                    onChange={(id, product) => updateItem(index, "product_id", id, product)}
+                                                />
+                                            </div>
+                                            
                                             <Button type="button" variant="ghost" size="sm" onClick={() => removeItem(index)} className="h-8 w-8 p-0 text-red-500">
                                                 <Trash2 className="h-4 w-4" />
                                             </Button>

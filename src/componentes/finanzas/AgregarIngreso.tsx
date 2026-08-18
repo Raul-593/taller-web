@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useMemo } from "react"
+import { useState, useEffect } from "react"
 import { Input } from "@/componentes/ui/input"
 import { Label } from "@/componentes/ui/label"
 import { FormDialog } from "@/componentes/FormDialog"
@@ -9,6 +9,7 @@ import { toast } from "sonner"
 import { Button } from "@/componentes/ui/button"
 import { Trash2 } from "lucide-react"
 import { CustomerSelect } from "../ui/CustomerSelect"
+import { Product, ProductSelect } from "../ui/ProductSelect"
 import { AgregarClienteDialog } from "../clientes/AgregarClienteDialog"
 
 type Props = {
@@ -33,25 +34,8 @@ export function AgregarIngreso({ onIngresoAgregado, trigger }: Props) {
     const [status, setStatus] = useState("completado")
     const [observacion, setObservacion] = useState("")
 
-    // Listas de referencia
-    const [products, setProducts] = useState<any[]>([])
-    const [customers, setCustomers] = useState<any[]>([])
-
     // Ítems de la venta
     const [items, setItems] = useState<any[]>([])
-
-    // Cargar datos de referencia
-    useEffect(() => {
-        const fetchData = async () => {
-            const [prods, custs] = await Promise.all([
-                supabase.from("products").select("*").order("name"),
-                supabase.from("customers").select("id, name").order("name")
-            ])
-            if (prods.data) setProducts(prods.data)
-            if (custs.data) setCustomers(custs.data)
-        }
-        fetchData()
-    }, [supabase])
 
     // Cálculo automático de totales
     useEffect(() => {
@@ -82,15 +66,16 @@ export function AgregarIngreso({ onIngresoAgregado, trigger }: Props) {
         setItems(items.filter((_, i) => i !== index))
     }
 
-    const updateItem = (index: number, field: string, value: any) => {
+    const updateItem = (index: number, field: string, value: any, product?: Product) => {
         const newItems = [...items]
         const item = { ...newItems[index], [field]: value }
 
         // Si cambia el producto, intentar actualizar el precio unitario si el producto lo tiene
         if (field === "product_id") {
-            const product = products.find(p => p.id === value)
             if (product) {
                 item.unit_price = product.price || 0
+            } else {
+                item.unit_price = 0
             }
         }
 
@@ -303,17 +288,12 @@ export function AgregarIngreso({ onIngresoAgregado, trigger }: Props) {
                                     {items.map((item, index) => (
                                         <div key={index} className="bg-white p-3 rounded-xl border border-zinc-200 shadow-sm flex flex-col gap-3 group transition-all hover:border-zinc-400">
                                             <div className="flex justify-between items-start gap-2">
-                                                <div className="flex-1 grid gap-1.5">
-                                                    <select 
-                                                        value={item.product_id}
-                                                        onChange={e => updateItem(index, "product_id", e.target.value)}
-                                                        className="w-full bg-zinc-50 border border-zinc-200 rounded-md px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-zinc-400"
-                                                    >
-                                                        <option value="">Seleccionar...</option>
-                                                        {(products?.length || 0) > 0 && products.map(p => (
-                                                            <option key={p.id} value={p.id}>{p.name}</option>
-                                                        ))}
-                                                    </select>
+                                                <div className="flex-1">
+                                                    <ProductSelect
+                                                        value={item.product_id || null}
+                                                        onChange={(id, product) => updateItem(index, "product_id", id, product)}
+                                                        placeholder="Seleccionar producto o servicio..."
+                                                    />
                                                 </div>
                                                 <Button 
                                                     type="button" 

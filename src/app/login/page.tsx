@@ -42,8 +42,14 @@ export default async function LoginPage(props: { searchParams: Promise<{ error?:
                                 <Input id="password" name="password" type="password"/>
                             </div>
                             <div className="flex flex-col gap-2 mt-2">
-                                <SubmitButton formAction={login}>Iniciar Sesión</SubmitButton>
-                                <SubmitButton formAction={signup} className="bg-secondary text-secondary-foreground hover:bg-secondary/80">Registrarse</SubmitButton>
+                                <SubmitButton formAction={login} data-testid="login-submit">Iniciar Sesión</SubmitButton>
+                                <SubmitButton 
+                                    formAction={signup} 
+                                    className="bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                                    data-testid="login-signup-submit"
+                                >
+                                    Registrarse
+                                </SubmitButton>
                             </div>
                             
                             <div className="relative my-2">
