@@ -20,7 +20,7 @@ export default async function LoginPage(props: { searchParams: Promise<{ error?:
                 </CardHeader>
                 <CardContent>
                     {error && (
-                        <div className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-600 border border-red-200">
+                        <div data-testid="login-error" className="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-600 border border-red-200">
                             {error}
                         </div>
                     )}

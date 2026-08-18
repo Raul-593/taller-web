@@ -50,9 +50,44 @@ INSERT INTO maintenance_records (id, bicycle_id, sale_id, service_date, delivery
     ('99999999-9999-9999-9999-999999999991', '44444444-4444-4444-4444-444444444441', NULL, CURRENT_DATE, CURRENT_DATE + 2, 'Mantenimiento preventivo QA', 'Registro de prueba', 25.00, 'recibido'),
     ('99999999-9999-9999-9999-999999999992', '44444444-4444-4444-4444-444444444442', NULL, CURRENT_DATE - 5, CURRENT_DATE - 1, 'Cambio de llanta QA', 'Registro de prueba entregado', 50.00, 'entregado');
 
--- Maintenance Items
-INSERT INTO maintenance_items (id, maintenance_id, product_id, item_type, description, quantity, unit_price, total_price) VALUES
-    ('99999999-9999-9999-9999-999999999993', '99999999-9999-9999-9999-999999999991','33333333-3333-3333-3333-333333333331', 'retail', 'Cambio de Cadena QA', '1', 15.00, 15.00),
-    ('99999999-9999-9999-9999-999999999994', '99999999-9999-9999-9999-999999999992','33333333-3333-3333-3333-333333333332', 'retail', 'Cambio de Llantas QA', '2', 50.00, 100.00);
+-- ========================================================
+-- Usuario de autenticación para pruebas QA (Selenium)
+-- SOLO para desarrollo/CI local. Nunca correr esto contra un proyecto
+-- Supabase real/desplegado (produccion).
+-- ========================================================
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
-    
+DO $$
+DECLARE
+  qa_user_id uuid := '00000000-0000-0000-0000-0000000000aa';
+BEGIN
+  INSERT INTO auth.users (
+    id, instance_id, aud, role, email, encrypted_password,
+    email_confirmed_at, raw_app_meta_data, raw_user_meta_data,
+    created_at, updated_at, confirmation_token, email_change,
+    email_change_token_new, recovery_token
+  ) VALUES (
+    qa_user_id,
+    '00000000-0000-0000-0000-000000000000',
+    'authenticated',
+    'authenticated',
+    'qatest@tallerweb.local',
+    crypt('QaTest123!', gen_salt('bf')),
+    now(),
+    '{"provider":"email","providers":["email"]}',
+    '{}',
+    now(), now(), '', '', '', ''
+  );
+
+  INSERT INTO auth.identities (
+    id, user_id, provider_id, identity_data, provider,
+    last_sign_in_at, created_at, updated_at
+  ) VALUES (
+    qa_user_id,
+    qa_user_id,
+    qa_user_id::text,
+    format('{"sub": "%s", "email": "qatest@tallerweb.local"}', qa_user_id)::jsonb,
+    'email',
+    now(), now(), now()
+  );
+END $$;

@@ -102,7 +102,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
   const totalActivities = pendingActivities.length
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6" data-testid="dashboard">
       <DashboardHeader />
       
       <div className="grid gap-4 md:grid-cols-4">
