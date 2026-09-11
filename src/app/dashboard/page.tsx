@@ -115,6 +115,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
 
 
       <div className="grid gap-4 grid-cols-1">
+       
         {/* --- Grafico de Barras --- */}
         <Card className="flex flex-col justify-center">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

@@ -9,6 +9,7 @@ import { toast } from "sonner"
 import { Button } from "@/componentes/ui/button"
 import { Trash2 } from "lucide-react"
 import { Product, ProductSelect } from "@/componentes/ui/ProductSelect"
+import { payment_methods } from "@/lib/finanzas/labels"
 
 type Props = {
     mantenimiento: any
@@ -34,6 +35,10 @@ export function EditarMantenimientoDialog({ mantenimiento, onMantenimientoActual
     const [observacion, setObservacion] = useState("")
     const [cost, setCost] = useState("0")
     const [estado, setEstado] = useState("recibido")
+    
+    // Pagos y metodo
+    const [salesType, setSalesType] = useState("")
+    const [paymentMehod, setPaymentMethod] = useState("")
 
     // Ítems
     const [items, setItems] = useState<any[]>([])
@@ -48,6 +53,8 @@ export function EditarMantenimientoDialog({ mantenimiento, onMantenimientoActual
             setCost(mantenimiento.cost?.toString() || "0")
             setEstado(mantenimiento.status || "recibido")
             setItems(mantenimiento.maintenance_items || [])
+            setSalesType(mantenimiento.sales_type || "")
+            setPaymentMethod(mantenimiento.payment_method || "")
         }
     }, [isOpen, mantenimiento])
 
@@ -87,6 +94,11 @@ export function EditarMantenimientoDialog({ mantenimiento, onMantenimientoActual
             toast.error("Llenar campos obligatorios")
             return
         }
+        // Asegurar se de seleccionar Sale Type y Metodo de pago
+        if (estado === "entregado" && (!salesType || !paymentMehod )){
+            toast.error("Selecciona el tipo de venta y el metodo de pago")
+            return
+        }
         setIsSubmitting(true)
 
         // 1. Actualizar el registro de mantenimiento
@@ -98,7 +110,9 @@ export function EditarMantenimientoDialog({ mantenimiento, onMantenimientoActual
                 observation: observacion.trim(),
                 cost: parseFloat(cost),
                 status: estado,
-                bicycle_id: bicycle_id
+                bicycle_id: bicycle_id,
+                sales_type: salesType || null,
+                payment_method: paymentMehod || null,
             })
             .eq("id", mantenimiento.id)
             .select()
@@ -222,6 +236,47 @@ export function EditarMantenimientoDialog({ mantenimiento, onMantenimientoActual
                             </div>
                         </div>
                     </div>
+
+                    {mantenimiento?.sale_id ? (
+                        <div className="rounded-md border border-blue-200 bg-blue-50 p-3 text-xs text-blue-800">
+                            Este mantenimiento ya fue entregado y facturado.
+                        </div>
+                    ): (
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="grid gap-2">
+                                <Label htmlFor="salesType">Tipo de Venta {estado === "entregado" && "*"}</Label>
+                                <select
+                                    id="salesType"
+                                    value={salesType}
+                                    onChange={e => setSalesType(e.target.value)}
+                                    className="w-full bg-background border border-input rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                                >
+                                    <option value="">Seleccionar</option>
+                                    <option value="retail">Producto</option>
+                                    <option value="service">Servicio</option>
+                                    <option value="mixed">Mixto</option>
+                                </select>
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="paymentMethod">Metodo de Pago {estado === "entregado" && "*"}</Label>
+                                <select
+                                    id="paymentMethod"
+                                    value={paymentMehod}
+                                    onChange={e => setPaymentMethod(e.target.value)}
+                                    className="w-full bg-background border border-input rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                                >
+                                    <option value="">Seleccionar</option>
+                                    {payment_methods.map((m)=>(
+                                        <option key={m.value} value={m.value}>
+                                            {m.label}
+                                        </option>
+                                    ))}
+                                </select>
+
+                            </div>
+
+                        </div>
+                    )}
                 </div>
 
                 {/* Columna Derecha: Items */}

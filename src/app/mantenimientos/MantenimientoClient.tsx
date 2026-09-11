@@ -7,10 +7,12 @@ import { useRouter } from "next/navigation"
 import { AgregarMantenimiento } from "@/componentes/mantenimiento/AgregarMantenimiento"
 import { EditarMantenimientoDialog } from "@/componentes/mantenimiento/EditarMantenimiento"
 import { VistaMantenimiento } from "@/componentes/mantenimiento/VistaMantenimiento"
+import { RegistrarAbonoMantenimiento } from "@/componentes/finanzas/RegsitroAbonoMantenimiento"
 import { PageHeader } from "@/componentes/ui/PageHeader"
 import { StatusSelect } from "@/componentes/ui/StatusSelect"
 import { useSyncState } from "@/hooks/useSyncState"
 import { useUpdateStatus } from "@/hooks/useUpdateStatus"
+import { getSalesTypesLabel, getPaymentMethodLabel } from "@/lib/finanzas/labels"
 
 
 const ESTADOS = [
@@ -21,12 +23,24 @@ const ESTADOS = [
     { value: 'cancelado', label: 'Cancelado' }
 ]
 
-export function MantenimientoClient({ mantenimientos: initial }: { mantenimientos: any[] }) {
+function CamposVentaBadge({ value, label }: { value: string | null; label: string}) {
+    if (!value){
+        return (
+            <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-tighter bg-red-50 text-red-600 border-red-200">
+                Falta
+            </span>
+        )
+    }
+    return <span className="text-sm">{label}</span>
+}
+
+export function MantenimientoClient({ mantenimientos: initial, accounts }: { mantenimientos: any[]; accounts: any[] }) {
     const router = useRouter()
     const [mantenimiento, setMantenimientos] = useSyncState(initial)
     const [filtro, setFiltro] = useState("Todas")
     const [mantenimientoSeleccionado, setMantenimientoSeleccionado] = useState<any | null>(null)
     const [mantenimientoVista, setMantenimientoVista] = useState<any | null>(null)
+    const [mantenimientoParaAbono, setMantenimientoParaAbono] = useState<any | null>(null)
 
     const { loadingId, updateStatus } = useUpdateStatus<any>('maintenance_records', undefined, () => setMantenimientos(initial))
 
@@ -84,14 +98,16 @@ export function MantenimientoClient({ mantenimientos: initial }: { mantenimiento
                         {filtradas.length === 0 ? (
                             <p className="text-muted-foreground">No hay mantenimientos registrados en esta categoría</p>
                         ) : (
-                            <Table className="min-w-[800px]">
+                            <Table className="min-w-200">
                                 <TableHeader>
                                     <TableRow>
-                                        <TableHead className="w-[20%]">Cliente</TableHead>
-                                        <TableHead className="w-[20%]">Bicicleta</TableHead>
-                                        <TableHead className="w-[15%]">Fecha</TableHead>
+                                        <TableHead className="w-[16%]">Cliente</TableHead>
+                                        <TableHead className="w-[16%]">Bicicleta</TableHead>
+                                        <TableHead className="w-[12%]">Fecha</TableHead>
                                         <TableHead className="w-[10%]">Costo</TableHead>
-                                        <TableHead className="w-[20%]">Estado</TableHead>
+                                        <TableHead className="w-[12%]">Estado</TableHead>
+                                        <TableHead className="w-[12%]">Tipo de venta</TableHead>
+                                        <TableHead className="w-[15%]">Método de pago</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
@@ -101,8 +117,8 @@ export function MantenimientoClient({ mantenimientos: initial }: { mantenimiento
                                             className="cursor-pointer hover:bg-muted/50"
                                             onClick={() => setMantenimientoVista(m)} // Abre el modal de detalle
                                         >
-                                            <TableCell className="whitespace-normal break-words">{(m.bicycles as any)?.customers?.name || '-'}</TableCell>
-                                            <TableCell className="whitespace-normal break-words">{(m.bicycles as any)?.brand} {(m.bicycles as any)?.model}</TableCell>
+                                            <TableCell className="whitespace-normal wrap-break-words">{(m.bicycles as any)?.customers?.name || '-'}</TableCell>
+                                            <TableCell className="whitespace-normal wrap-break-words">{(m.bicycles as any)?.brand} {(m.bicycles as any)?.model}</TableCell>
                                             <TableCell>{m.service_date}</TableCell>
                                             <TableCell>${m.cost}</TableCell>
                                             <TableCell onClick={e => e.stopPropagation()}>
@@ -113,6 +129,12 @@ export function MantenimientoClient({ mantenimientos: initial }: { mantenimiento
                                                     disabled={loadingId === m.id}
                                                 />
                                             </TableCell>
+                                            <TableCell>
+                                                <CamposVentaBadge value={m.sales_type} label={getSalesTypesLabel(m.sales_type)} />
+                                            </TableCell>
+                                            <TableCell>
+                                                <CamposVentaBadge value={m.payment_method} label={getPaymentMethodLabel(m.payment_method)} />
+                                            </TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>
@@ -122,7 +144,7 @@ export function MantenimientoClient({ mantenimientos: initial }: { mantenimiento
                 </Card>
             </div>
 
-            {/* --- Modal de Detalle  --- */}
+            {/* Detalle Mantenimiento */}
             {mantenimientoVista && (
                 <VistaMantenimiento 
                     mantenimiento={mantenimientoVista}
@@ -132,12 +154,16 @@ export function MantenimientoClient({ mantenimientos: initial }: { mantenimiento
                         setMantenimientoSeleccionado(mantenimientoVista)
                         setMantenimientoVista(null)
                     }}
+                    onAbonar={() => {
+                        setMantenimientoParaAbono(mantenimientoVista)
+                        setMantenimientoVista(null)
+                    }}
                 />
             )}
 
-            {/* --- Modal de Edición --- */}
+            {/* Editar Mantenimiento */}
             {mantenimientoSeleccionado && (
-                <EditarMantenimientoDialog 
+                <EditarMantenimientoDialog
                     mantenimiento={mantenimientoSeleccionado}
                     isOpenOutside={!!mantenimientoSeleccionado}
                     onOpenChangeOutside={(open) => { if(!open) setMantenimientoSeleccionado(null) }}
@@ -147,6 +173,21 @@ export function MantenimientoClient({ mantenimientos: initial }: { mantenimiento
                     }}
                 />
             )}
+
+            {/* Registrar Abono Mantenimiento */}
+            {mantenimientoParaAbono && (
+                <RegistrarAbonoMantenimiento
+                    mantenimiento={mantenimientoParaAbono}
+                    accounts={accounts}
+                    isOpen={!!mantenimientoParaAbono}
+                    onOpenChange={(open) => {if (!open) setMantenimientoParaAbono(null) }}
+                    onAbonoRegistrado={() => {
+                        setMantenimientoParaAbono(null)
+                        router.refresh()
+                    }}
+                />
+            )}
+
         </div>
     )
 }
