@@ -7,9 +7,10 @@ import { FormDialog } from "@/componentes/FormDialog";
 import { createClient } from "@/utils/supabase/clients";
 import { toast } from "sonner";
 import { Button } from "@/componentes/ui/button";
-import { Trash2 } from "lucide-react";
+import { Trash2, PlusCircle } from "lucide-react";
 import { Product, ProductSelect } from "@/componentes/ui/ProductSelect";
 import { getPurchaseCategories } from "@/lib/finanzas/categorias";
+import { AgregarRepuesto } from "@/componentes/repuestos/AgregarRepuesto";
 
 type Props = {
   accounts: any[];
@@ -155,7 +156,7 @@ export function AgregarGasto({
 
     setIsSubmitting(true);
 
-    // Manejar creación de productos nuevos si existen
+    /* // Manejar creación de productos nuevos si existen
     const itemsWithIds = await Promise.all(
       items.map(async (item) => {
         const productName = item.productName?.trim();
@@ -182,7 +183,8 @@ export function AgregarGasto({
         }
         return item;
       }),
-    );
+    ); */
+    const filterItems = items.filter((item) => item.product_id);
 
     // Insertar la compra
     const { data: purchase, error: purchasError } = await supabase
@@ -212,7 +214,7 @@ export function AgregarGasto({
     }
 
     // 3. Insertar los ítems
-    const filteredItems = itemsWithIds.filter((item) => item.product_id);
+    const filteredItems = filterItems.filter((item) => item.product_id);
     if (filteredItems.length > 0) {
       const itemsToInsert = filteredItems.map((item: any) => ({
         purchase_id: purchase.id,
@@ -365,16 +367,19 @@ export function AgregarGasto({
                     <div className="w-full min-w-0">
                       <ProductSelect
                         value={item.product_id || null}
-                        inputValue={item.productName}
-                        onInputChange={(value) =>
-                          updateProductName(index, value)
-                        }
                         onChange={(id, product) =>
                           updateItem(index, "product_id", id, product)
                         }
-                        placeholder="Buscar o escribir nombre..."
                       />
                     </div>
+                    <AgregarRepuesto 
+                      onRepuestoNuevo={(nuevo) => updateItem(index, "product_id", nuevo.id, nuevo)}
+                      trigger={
+                        <Button type="button" variant="outline" size="icon" className="h-9 w-9 shrink-0">
+                          <PlusCircle className="h-4 w-4" />
+                        </Button>
+                      }
+                    />
                     <div>
                       <Input
                         type="number"
