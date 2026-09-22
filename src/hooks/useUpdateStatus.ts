@@ -17,18 +17,19 @@ export function useUpdateStatus<T extends { id: string }>(
         id: string, 
         newStatus: string, 
         setLocalItems: (fn: (prev: T[]) => T[]) => void,
-        revertItems?: T[]
+        revertItems?: T[],
+        fieldName: string = 'status'
     ) => {
         setLoadingId(id);
 
         // Actualización optimista
         setLocalItems(prev =>
-            prev.map(item => item.id === id ? { ...item, status: newStatus } : item)
+            prev.map(item => item.id === id ? { ...item, [fieldName]: newStatus } : item)
         );
 
         const { error } = await supabase
             .from(tableName)
-            .update({ status: newStatus })
+            .update({ [fieldName]: newStatus })
             .eq('id', id);
 
         if (error) {
