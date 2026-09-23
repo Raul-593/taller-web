@@ -11,7 +11,7 @@ export default async function DeudasPage() {
         { data: categorias, error: categoriasError },
     ] = await Promise.all([
         supabase
-            .from("deudas")
+            .from("debts")
             .select(`
                 id, creditor, description, total_amount, due_date, status, purchase_id,
                 purchases (suppliers (name))

@@ -29,7 +29,7 @@ export function VistaDeuda({ deudaId, accounts, categorias, isOpen, onOpenChange
         setLoading(true)
         const [{ data: deudaData }, { data: pagosData }] = await Promise.all([
             supabase
-                .from("deudas")
+                .from("debts")
                 .select(`
                     id, creditor, description, total_amount, due_date, status, purchase_id,
                     purchases (id, description, total, purchase_date, suppliers (name))

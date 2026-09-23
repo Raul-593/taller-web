@@ -50,7 +50,7 @@ export default async function Finanzas({ searchParams }: { searchParams: Promise
       .select(`
         id, purchase_date, supplier_id, description, sub_total, total,
         payment_method, status, observacion, suppliers (name),
-        deudas (id, status, total_amount)
+        debts (id, status, total_amount)
       `)
       .gte('purchase_date', startDate)
       .lte('purchase_date', endDateTime)

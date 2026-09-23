@@ -295,7 +295,7 @@ export function FinanzasClient({
                                     </TableHeader>
                                     <TableBody>
                                         {purchases.map((compra: any) => {
-                                            const deudaVinculada = compra.deudas?.[0]
+                                            const deudaVinculada = compra.debts?.[0]
                                             return (
                                                 <TableRow key={compra.id}>
                                                     <TableCell>{compra.purchase_date}</TableCell>

@@ -39,7 +39,7 @@ export function AgregarDeuda({ onDeudaAgregada, trigger }: Props) {
         setIsSubmitting(true)
 
         const { data, error } = await supabase
-            .from("deudas")
+            .from("debts")
             .insert([{
                 creditor: creditor.trim(),
                 description: description.trim() || null,
