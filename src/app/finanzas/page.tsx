@@ -71,7 +71,7 @@ export default async function Finanzas({ searchParams }: { searchParams: Promise
     // Cuentas por cobrar/pagar son una "foto del momento" -- no se
     // filtran por el periodo seleccionado, a diferencia de todo lo demás
     supabase.from('sales').select('id, total').eq('status', 'pendiente'),
-    supabase.from('deudas').select('id, total_amount').eq('status', 'pendiente'),
+    supabase.from('debts').select('id, total_amount').eq('status', 'pendiente'),
   ])
 
   if (saleError) console.error('Error al obtener ventas:', saleError)

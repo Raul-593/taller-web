@@ -14,7 +14,7 @@ export function calcularSaldoDeuda(totalAmount: number, pagos: { amount: number 
 /*
   Saldo de muchas deudas a la vez, en una sola consulta a movimientos
   (reference_type = 'debt_payment'), igual que getSaldosVentas
- */
+*/
 export async function getSaldosDeudas(
     supabase: SupabaseClient,
     deudas: { id: string; total_amount: number }[]
