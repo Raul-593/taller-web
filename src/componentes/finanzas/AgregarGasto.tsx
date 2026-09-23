@@ -1,514 +1,486 @@
-"use client";
+  "use client";
 
-import { useState, useEffect } from "react";
-import { Input } from "@/componentes/ui/input";
-import { Label } from "@/componentes/ui/label";
-import { FormDialog } from "@/componentes/FormDialog";
-import { createClient } from "@/utils/supabase/clients";
-import { toast } from "sonner";
-import { Button } from "@/componentes/ui/button";
-import { Trash2, PlusCircle } from "lucide-react";
-import { Product, ProductSelect } from "@/componentes/ui/ProductSelect";
-import { getPurchaseCategories } from "@/lib/finanzas/categorias";
-import { AgregarRepuesto } from "@/componentes/repuestos/AgregarRepuesto";
+  import { useState, useEffect } from "react";
+  import { Input } from "@/componentes/ui/input";
+  import { Label } from "@/componentes/ui/label";
+  import { FormDialog } from "@/componentes/FormDialog";
+  import { createClient } from "@/utils/supabase/clients";
+  import { toast } from "sonner";
+  import { Button } from "@/componentes/ui/button";
+  import { Trash2, PlusCircle } from "lucide-react";
+  import { Product, ProductSelect } from "@/componentes/ui/ProductSelect";
+  import { getPurchaseCategories } from "@/lib/finanzas/categorias";
+  import { AgregarRepuesto } from "@/componentes/repuestos/AgregarRepuesto";
 
-type Props = {
-  accounts: any[];
-  categorias: any[];
-  onGastoAgregado: (gasto: any) => void;
-  trigger?: React.ReactNode;
-};
+  type Props = {
+    accounts: any[];
+    categorias: any[];
+    onGastoAgregado: (gasto: any) => void;
+    trigger?: React.ReactNode;
+  };
 
-export function AgregarGasto({
-  accounts,
-  categorias,
-  onGastoAgregado,
-  trigger,
-}: Props) {
-  // Base de datos
-  const supabase = createClient();
-  const [isOpen, setIsOpen] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  export function AgregarGasto({
+    accounts,
+    categorias,
+    onGastoAgregado,
+    trigger,
+  }: Props) {
+    // Base de datos
+    const supabase = createClient();
+    const [isOpen, setIsOpen] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Datos del Gasto
-  const [supplierId, setSupplierId] = useState("");
-  const [purchaseDate, setPurchaseDate] = useState(new Date().toISOString());
-  const [description, setDescription] = useState("");
-  const [subTotal, setSubTotal] = useState("");
-  const [total, setTotal] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("transferencia");
-  const [status, setStatus] = useState("completado");
-  const [observacion, setObservacion] = useState("");
+    // Datos del Gasto
+    const [supplierId, setSupplierId] = useState("");
+    const [purchaseDate, setPurchaseDate] = useState(new Date().toISOString());
+    const [description, setDescription] = useState("");
+    const [subTotal, setSubTotal] = useState("");
+    const [total, setTotal] = useState("");
+    const [paymentMethod, setPaymentMethod] = useState("transferencia");
+    const [status, setStatus] = useState("completado");
+    const [observacion, setObservacion] = useState("");
 
-  // Cuentas
-  const [accountId, setAccountId] = useState("");
-  const cuentasActivas = accounts.filter((a) => a.is_active);
+    // Cuentas
+    const [accountId, setAccountId] = useState("");
+    const cuentasActivas = accounts.filter((a) => a.is_active);
 
-  // Categorias
-  const [categoryId, setCategoryId] = useState("");
-  const opcionesCategorias = getPurchaseCategories(categorias);
+    // Categorias
+    const [categoryId, setCategoryId] = useState("");
+    const opcionesCategorias = getPurchaseCategories(categorias);
 
-  // Items de la compra
-  const [items, setItems] = useState<any[]>([]);
+    // Items de la compra
+    const [items, setItems] = useState<any[]>([]);
 
-  // Proveedor
-  const [suppliers, setSuppliers] = useState<{ id: string; name: string }[]>(
-    [],
-  );
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const { data } = await supabase
-        .from("suppliers")
-        .select("id, name")
-        .order("name", { ascending: true });
-      if (data) setSuppliers(data);
-    };
-    fetchData();
-  }, [supabase]);
-
-  // Cálculo automático de totales
-  useEffect(() => {
-    const calculatedSubTotal = items.reduce(
-      (acc, item) => acc + (item.total || 0),
-      0,
+    // Proveedor
+    const [suppliers, setSuppliers] = useState<{ id: string; name: string }[]>(
+      [],
     );
-    setSubTotal(calculatedSubTotal.toFixed(2));
-    setTotal(calculatedSubTotal.toFixed(2));
-  }, [items]);
 
-  // Limpiar formulario
-  function reset() {
-    setPurchaseDate(new Date().toISOString());
-    setSupplierId("");
-    setDescription("");
-    setSubTotal("0");
-    setTotal("0");
-    setPaymentMethod("transferencia");
-    setStatus("completado");
-    setObservacion("");
-    setAccountId("");
-    setCategoryId("");
-    setItems([]);
-  }
+    useEffect(() => {
+      const fetchData = async () => {
+        const { data } = await supabase
+          .from("suppliers")
+          .select("id, name")
+          .order("name", { ascending: true });
+        if (data) setSuppliers(data);
+      };
+      fetchData();
+    }, [supabase]);
 
-  const addItem = () => {
-    setItems([
-      ...items,
-      { product_id: "", productName: "", quantity: 1, unit_price: 0, total: 0 },
-    ]);
-  };
+    // Cálculo automático de totales
+    useEffect(() => {
+      const calculatedSubTotal = items.reduce(
+        (acc, item) => acc + (item.total || 0),
+        0,
+      );
+      setSubTotal(calculatedSubTotal.toFixed(2));
+      setTotal(calculatedSubTotal.toFixed(2));
+    }, [items]);
 
-  const removeItem = (index: number) => {
-    setItems(items.filter((_, i) => i !== index));
-  };
-
-  const updateItem = (
-    index: number,
-    field: string,
-    value: any,
-    product?: Product,
-  ) => {
-    const newItems = [...items];
-    const item = { ...newItems[index], [field]: value };
-
-    if (field === "product_id" && product) {
-      item.productName = product.name;
-      item.unit_price = product.cost || 0;
+    // Limpiar formulario
+    function reset() {
+      setPurchaseDate(new Date().toISOString());
+      setSupplierId("");
+      setDescription("");
+      setSubTotal("0");
+      setTotal("0");
+      setPaymentMethod("transferencia");
+      setStatus("completado");
+      setObservacion("");
+      setAccountId("");
+      setCategoryId("");
+      setItems([]);
     }
 
-    // Recalcular total del ítem
-    item.total = (Number(item.quantity) || 0) * (Number(item.unit_price) || 0);
+    const addItem = () => {
+      setItems([
+        ...items,
+        { product_id: "", productName: "", quantity: 1, unit_price: 0, total: 0 },
+      ]);
+    };
 
-    newItems[index] = item;
-    setItems(newItems);
-  };
+    const removeItem = (index: number) => {
+      setItems(items.filter((_, i) => i !== index));
+    };
 
-  const updateProductName = (index: number, productName: string) => {
-    const newItems = [...items];
-    const item = { ...newItems[index], productName, product_id: "" };
-    item.total = (Number(item.quantity) || 0) * (Number(item.unit_price) || 0);
-    newItems[index] = item;
-    setItems(newItems);
-  };
+    const updateItem = (
+      index: number,
+      field: string,
+      value: any,
+      product?: Product,
+    ) => {
+      const newItems = [...items];
+      const item = { ...newItems[index], [field]: value };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (
-      !purchaseDate ||
-      parseFloat(total) === 0 ||
-      !paymentMethod ||
-      !supplierId
-    ) {
-      toast.error("Existen campos obligatorios vacíos o el total es 0");
-      return;
-    }
-
-    if (status === "completado" && !accountId) {
-      toast.error("Selecciona la cuenta de donde salio el dinero");
-      return;
-    }
-    if (status === "completado" && !categoryId) {
-      toast.error("Selecciona una categoria");
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    /* // Manejar creación de productos nuevos si existen
-    const itemsWithIds = await Promise.all(
-      items.map(async (item) => {
-        const productName = item.productName?.trim();
-        if (productName && !item.product_id) {
-          // Crear producto nuevo
-          const { data: newProd, error: prodError } = await supabase
-            .from("products")
-            .insert([
-              {
-                name: productName,
-                cost: parseFloat(item.unit_price) || 0,
-                price: parseFloat(item.unit_price) || 0,
-                active: true,
-              },
-            ])
-            .select()
-            .single();
-
-          if (prodError) {
-            console.error("Error al crear producto:", productName, prodError);
-            return item;
-          }
-          return { ...item, product_id: newProd.id };
-        }
-        return item;
-      }),
-    ); */
-    const filterItems = items.filter((item) => item.product_id);
-
-    // Insertar la compra
-    const { data: purchase, error: purchasError } = await supabase
-      .from("purchases")
-      .insert([
-        {
-          purchase_date: purchaseDate,
-          supplier_id: supplierId,
-          description: description.trim() || null,
-          sub_total: parseFloat(subTotal),
-          total: parseFloat(total),
-          payment_method: paymentMethod,
-          status: status,
-          observacion: observacion.trim() || null,
-          account_id: accountId || null,
-          category_id: categoryId || null,
-        },
-      ])
-      .select()
-      .single();
-
-    if (purchasError) {
-      toast.error("Error al registrar la compra");
-      console.error(purchasError);
-      setIsSubmitting(false);
-      return;
-    }
-
-    // 3. Insertar los ítems
-    const filteredItems = filterItems.filter((item) => item.product_id);
-    if (filteredItems.length > 0) {
-      const itemsToInsert = filteredItems.map((item: any) => ({
-        purchase_id: purchase.id,
-        product_id: item.product_id,
-        quantity: parseInt(item.quantity),
-        unit_cost: parseFloat(item.unit_price),
-        total: parseFloat(item.total),
-      }));
-
-      const { error: itemsError } = await supabase
-        .from("purchase_items")
-        .insert(itemsToInsert);
-
-      if (itemsError) {
-        toast.error(
-          "Compra creada, pero hubo un error al registrar los productos",
-        );
-        console.error(itemsError);
+      if (field === "product_id" && product) {
+        item.productName = product.name;
+        item.unit_price = product.cost || 0;
       }
-    }
 
-    if (purchase) {
-      onGastoAgregado(purchase);
-      toast.success("Compra e ítems registrados correctamente");
-      reset();
-      setIsOpen(false);
-    }
-    setIsSubmitting(false);
-  };
+      // Recalcular total del ítem
+      item.total = (Number(item.quantity) || 0) * (Number(item.unit_price) || 0);
 
-  const defaultTrigger = trigger || (
-    <Button
-      variant="default"
-      className="bg-zinc-900 text-white hover:bg-zinc-800 rounded-lg px-6 font-semibold"
-    >
-      Gastos
-    </Button>
-  );
+      newItems[index] = item;
+      setItems(newItems);
+    };
 
-  return (
-    <FormDialog
-      title="Registrar Gasto"
-      description="Ingresa los datos de la compra del taller"
-      trigger={defaultTrigger}
-      isOpen={isOpen}
-      onOpenChange={(open) => {
-        setIsOpen(open);
-        if (!open) reset();
-      }}
-      onSubmit={handleSubmit}
-      isSubmitting={isSubmitting}
-      submitLabel="Guardar Gasto"
-      className="sm:max-w-2xl"
-    >
-      <div className="grid grid-cols-2 gap-4">
-        <div className="grid gap-2">
-          <Label htmlFor="purchaseDate">Fecha de Compra *</Label>
-          <Input
-            id="purchaseDate"
-            type="date"
-            value={purchaseDate}
-            onChange={(e) => setPurchaseDate(e.target.value)}
-          />
-        </div>
+    const updateProductName = (index: number, productName: string) => {
+      const newItems = [...items];
+      const item = { ...newItems[index], productName, product_id: "" };
+      item.total = (Number(item.quantity) || 0) * (Number(item.unit_price) || 0);
+      newItems[index] = item;
+      setItems(newItems);
+    };
 
-        <div className="grid gap-2">
-          <Label>Proveedor *</Label>
-          <select
-            value={supplierId || ""}
-            onChange={(e) => setSupplierId(e.target.value)}
-            className="w-full appearance-none bg-background border border-border rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer"
-          >
-            <option value="">Seleccionar Proveedor</option>
-            {suppliers.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
-          </select>
-        </div>
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
 
-        <div className="grid gap-2 col-span-2">
-          <Label htmlFor="description">Descripción</Label>
-          <Input
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Ej. Lote de llantas..."
-          />
-        </div>
+      if (
+        !purchaseDate ||
+        parseFloat(total) === 0 ||
+        !paymentMethod ||
+        !supplierId
+      ) {
+        toast.error("Existen campos obligatorios vacíos o el total es 0");
+        return;
+      }
 
-        {/* Sección de Ítems */}
-        <div className="col-span-2 border rounded-lg overflow-hidden bg-white shadow-sm mt-2">
-          <div className="bg-zinc-100/80 px-4 py-2 border-b flex items-center justify-between">
-            <Label className="font-bold text-zinc-800 text-sm">
-              Productos / Repuestos
-            </Label>
-            <Button
-              type="button"
-              onClick={addItem}
-              size="sm"
-              variant="outline"
-              className="h-7 text-[10px] bg-white"
+      if (status === "completado" && !accountId) {
+        toast.error("Selecciona la cuenta de donde salio el dinero");
+        return;
+      }
+      if (status === "completado" && !categoryId) {
+        toast.error("Selecciona una categoria");
+        return;
+      }
+
+      setIsSubmitting(true);
+
+      const filterItems = items.filter((item) => item.product_id);
+
+      // Insertar la compra
+      const { data: purchase, error: purchasError } = await supabase
+        .from("purchases")
+        .insert([
+          {
+            purchase_date: purchaseDate,
+            supplier_id: supplierId,
+            description: description.trim() || null,
+            sub_total: parseFloat(subTotal),
+            total: parseFloat(total),
+            payment_method: paymentMethod,
+            status: status,
+            observacion: observacion.trim() || null,
+            account_id: accountId || null,
+            category_id: categoryId || null,
+          },
+        ])
+        .select()
+        .single();
+
+      if (purchasError) {
+        toast.error("Error al registrar la compra");
+        console.error(purchasError);
+        setIsSubmitting(false);
+        return;
+      }
+
+      // 3. Insertar los ítems
+      const filteredItems = filterItems.filter((item) => item.product_id);
+      if (filteredItems.length > 0) {
+        const itemsToInsert = filteredItems.map((item: any) => ({
+          purchase_id: purchase.id,
+          product_id: item.product_id,
+          quantity: parseInt(item.quantity),
+          unit_cost: parseFloat(item.unit_price),
+          total: parseFloat(item.total),
+        }));
+
+        const { error: itemsError } = await supabase
+          .from("purchase_items")
+          .insert(itemsToInsert);
+
+        if (itemsError) {
+          toast.error(
+            "Compra creada, pero hubo un error al registrar los productos",
+          );
+          console.error(itemsError);
+        }
+      }
+
+      if (purchase) {
+        onGastoAgregado(purchase);
+        toast.success("Compra e ítems registrados correctamente");
+        reset();
+        setIsOpen(false);
+      }
+      setIsSubmitting(false);
+    };
+
+    const defaultTrigger = trigger || (
+      <Button
+        variant="default"
+        className="bg-zinc-900 text-white hover:bg-zinc-800 rounded-lg px-6 font-semibold"
+      >
+        Gastos
+      </Button>
+    );
+
+    return (
+      <FormDialog
+        title="Registrar Gasto"
+        description="Ingresa los datos de la compra del taller"
+        trigger={defaultTrigger}
+        isOpen={isOpen}
+        onOpenChange={(open) => {
+          setIsOpen(open);
+          if (!open) reset();
+        }}
+        onSubmit={handleSubmit}
+        isSubmitting={isSubmitting}
+        submitLabel="Guardar Gasto"
+        className="sm:max-w-2xl"
+      >
+        <div className="grid grid-cols-2 gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="purchaseDate">Fecha de Compra *</Label>
+            <Input
+              id="purchaseDate"
+              type="date"
+              value={purchaseDate}
+              onChange={(e) => setPurchaseDate(e.target.value)}
+            />
+          </div>
+
+          <div className="grid gap-2">
+            <Label>Proveedor *</Label>
+            <select
+              value={supplierId || ""}
+              onChange={(e) => setSupplierId(e.target.value)}
+              className="w-full appearance-none bg-background border border-border rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/30 cursor-pointer"
             >
-              + AGREGAR ITEM
-            </Button>
+              <option value="">Seleccionar Proveedor</option>
+              {suppliers.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+            </select>
           </div>
 
-          <div className="p-4 space-y-3 min-h-25">
-            {items.length === 0 ? (
-              <div className="text-center py-6 border-2 border-dashed rounded-md bg-zinc-50/50">
-                <p className="text-xs text-muted-foreground">
-                  No hay productos agregados.
-                </p>
-                <Button
-                  type="button"
-                  variant="link"
-                  size="sm"
-                  onClick={addItem}
-                  className="text-xs"
-                >
-                  Haz clic aquí para agregar uno
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {/* Header */}
-                <div className="hidden sm:grid grid-cols-[1fr,70px,100px,80px,36px] gap-3 px-2">
-                  <Label className="text-[10px] uppercase font-bold text-zinc-400">
-                    Producto / Concepto
-                  </Label>
-                  <Label className="text-[10px] uppercase font-bold text-zinc-400 text-center">
-                    Cant.
-                  </Label>
-                  <Label className="text-[10px] uppercase font-bold text-zinc-400">
-                    Costo Unit.
-                  </Label>
-                  <Label className="text-[10px] uppercase font-bold text-zinc-400">
-                    Total
-                  </Label>
-                  <div></div>
-                </div>
+          <div className="grid gap-2 col-span-2">
+            <Label htmlFor="description">Descripción</Label>
+            <Input
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Ej. Lote de llantas..."
+            />
+          </div>
 
-                {/* Productos */}
-                {items.map((item, index) => (
-                  <div
-                    key={index}
-                    className="grid grid-cols-[1fr,70px,100px,80px,30px] gap-2 items-center bg-zinc-50/50 p-2 rounded-lg border border-zinc-100 group hover:border-zinc-300 transition-colors"
+          {/* Sección de Ítems */}
+          <div className="col-span-2 border rounded-lg overflow-hidden bg-white shadow-sm mt-2">
+            <div className="bg-zinc-100/80 px-4 py-2 border-b flex items-center justify-between">
+              <Label className="font-bold text-zinc-800 text-sm">
+                Productos / Repuestos
+              </Label>
+              <Button
+                type="button"
+                onClick={addItem}
+                size="sm"
+                variant="outline"
+                className="h-7 text-[10px] bg-white"
+              >
+                + AGREGAR ITEM
+              </Button>
+            </div>
+
+            <div className="p-4 space-y-3 min-h-25">
+              {items.length === 0 ? (
+                <div className="text-center py-6 border-2 border-dashed rounded-md bg-zinc-50/50">
+                  <p className="text-xs text-muted-foreground">
+                    No hay productos agregados.
+                  </p>
+                  <Button
+                    type="button"
+                    variant="link"
+                    size="sm"
+                    onClick={addItem}
+                    className="text-xs"
                   >
-                    <div className="w-full min-w-0">
-                      <ProductSelect
-                        value={item.product_id || null}
-                        onChange={(id, product) =>
-                          updateItem(index, "product_id", id, product)
-                        }
-                      />
-                    </div>
-                    <AgregarRepuesto 
-                      onRepuestoNuevo={(nuevo) => updateItem(index, "product_id", nuevo.id, nuevo)}
-                      trigger={
-                        <Button type="button" variant="outline" size="icon" className="h-9 w-9 shrink-0">
-                          <PlusCircle className="h-4 w-4" />
-                        </Button>
-                      }
-                    />
-                    <div>
-                      <Input
-                        type="number"
-                        value={item.quantity}
-                        onChange={(e) =>
-                          updateItem(index, "quantity", e.target.value)
-                        }
-                        className="h-8 text-xs px-2 text-left"
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        value={item.unit_price}
-                        onChange={(e) =>
-                          updateItem(index, "unit_price", e.target.value)
-                        }
-                        className="h-8 text-xs px-2"
-                      />
-                    </div>
-                    <div className="text-xs font-bold text-zinc-700 px-1">
-                      ${item.total.toFixed(2)}
-                    </div>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeItem(index)}
-                      className="h-8 w-8 p-0 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-full"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    Haz clic aquí para agregar uno
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {/* Header */}
+                  <div className="hidden sm:grid grid-cols-[1fr,70px,100px,80px,36px] gap-3 px-2">
+                    <Label className="text-[10px] uppercase font-bold text-zinc-400">
+                      Producto / Concepto
+                    </Label>
+                    <Label className="text-[10px] uppercase font-bold text-zinc-400 text-center">
+                      Cant.
+                    </Label>
+                    <Label className="text-[10px] uppercase font-bold text-zinc-400">
+                      Costo Unit.
+                    </Label>
+                    <Label className="text-[10px] uppercase font-bold text-zinc-400">
+                      Total
+                    </Label>
+                    <div></div>
                   </div>
-                ))}
+
+                  {/* Productos */}
+                  {items.map((item, index) => (
+                    <div
+                      key={index}
+                      className="grid grid-cols-[1fr,70px,100px,80px,30px] gap-2 items-center bg-zinc-50/50 p-2 rounded-lg border border-zinc-100 group hover:border-zinc-300 transition-colors"
+                    >
+                      <div className="w-full min-w-0">
+                        <ProductSelect
+                          value={item.product_id || null}
+                          onChange={(id, product) =>
+                            updateItem(index, "product_id", id, product)
+                          }
+                        />
+                      </div>
+                      <AgregarRepuesto 
+                        onRepuestoNuevo={(nuevo) => updateItem(index, "product_id", nuevo.id, nuevo)}
+                        trigger={
+                          <Button type="button" variant="outline" size="icon" className="h-9 w-9 shrink-0">
+                            <PlusCircle className="h-4 w-4" />
+                          </Button>
+                        }
+                      />
+                      <div>
+                        <Input
+                          type="number"
+                          value={item.quantity}
+                          onChange={(e) =>
+                            updateItem(index, "quantity", e.target.value)
+                          }
+                          className="h-8 text-xs px-2 text-left"
+                        />
+                      </div>
+                      <div>
+                        <Input
+                          type="number"
+                          step="0.01"
+                          value={item.unit_price}
+                          onChange={(e) =>
+                            updateItem(index, "unit_price", e.target.value)
+                          }
+                          className="h-8 text-xs px-2"
+                        />
+                      </div>
+                      <div className="text-xs font-bold text-zinc-700 px-1">
+                        ${item.total.toFixed(2)}
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeItem(index)}
+                        className="h-8 w-8 p-0 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-full"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Resumen Final */}
+          <div className="col-span-2 grid sm:grid-cols-2 gap-6 bg-zinc-900 text-white p-5 rounded-xl mt-2">
+            <div className="flex flex-col gap-1">
+              <Label className="text-zinc-400 text-[10px] uppercase tracking-wider">
+                Sub Total Acumulado
+              </Label>
+              <div className="text-lg font-medium">
+                ${parseFloat(subTotal).toFixed(2)}
               </div>
-            )}
-          </div>
-        </div>
-
-        {/* Resumen Final */}
-        <div className="col-span-2 grid sm:grid-cols-2 gap-6 bg-zinc-900 text-white p-5 rounded-xl mt-2">
-          <div className="flex flex-col gap-1">
-            <Label className="text-zinc-400 text-[10px] uppercase tracking-wider">
-              Sub Total Acumulado
-            </Label>
-            <div className="text-lg font-medium">
-              ${parseFloat(subTotal).toFixed(2)}
+            </div>
+            <div className="flex flex-col gap-1 sm:items-end">
+              <Label className="text-orange-400 text-[10px] uppercase tracking-wider font-bold">
+                Total a Pagar
+              </Label>
+              <div className="text-2xl font-black text-orange-400">
+                ${parseFloat(total).toFixed(2)}
+              </div>
             </div>
           </div>
-          <div className="flex flex-col gap-1 sm:items-end">
-            <Label className="text-orange-400 text-[10px] uppercase tracking-wider font-bold">
-              Total a Pagar
-            </Label>
-            <div className="text-2xl font-black text-orange-400">
-              ${parseFloat(total).toFixed(2)}
-            </div>
+
+          <div className="grid gap-2">
+            <Label>Método de Pago *</Label>
+            <select
+              value={paymentMethod}
+              onChange={(e) => setPaymentMethod(e.target.value)}
+              className="w-full appearance-none bg-background border border-border rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/30"
+            >
+              <option value="efectivo">Efectivo</option>
+              <option value="transferencia">Transferencia</option>
+              <option value="tarjeta">Tarjeta</option>
+            </select>
+          </div>
+
+          <div className="grid gap-2">
+            <Label>Estado del Pago</Label>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="w-full appearance-none bg-background border border-border rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/30"
+            >
+              <option value="completado">Pagado</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="cancelado">Cancelado</option>
+            </select>
+          </div>
+
+          {/* Cuentas */}
+          <div className="grid gap-2">
+            <Label>Cuenta {status === "completado" && "*"}</Label>
+            <select
+              value={accountId}
+              onChange={(e) => setAccountId(e.target.value)}
+              className="w-full appearance-none bg-background border border-border rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/30"
+            >
+              <option value="">Seleccionar cuenta</option>
+              {cuentasActivas.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          {/* Categorias */}
+          <div className="grid gap-2">
+            <Label>Categorias {status === "completado" && "*"}</Label>
+            <select
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              className="w-full appearance-none bg-background border border-border rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/30"
+            >
+              <option value="">Seleccionar categoria</option>
+              {opcionesCategorias.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.group ? `${c.group} > ${c.name}` : c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="grid gap-2 col-span-2">
+            <Label htmlFor="observacion">Observación</Label>
+            <Input
+              id="observacion"
+              value={observacion}
+              onChange={(e) => setObservacion(e.target.value)}
+              placeholder="Ej. Lote de llantas..."
+            />
           </div>
         </div>
-
-        <div className="grid gap-2">
-          <Label>Método de Pago *</Label>
-          <select
-            value={paymentMethod}
-            onChange={(e) => setPaymentMethod(e.target.value)}
-            className="w-full appearance-none bg-background border border-border rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/30"
-          >
-            <option value="efectivo">Efectivo</option>
-            <option value="transferencia">Transferencia</option>
-            <option value="tarjeta">Tarjeta</option>
-          </select>
-        </div>
-
-        <div className="grid gap-2">
-          <Label>Estado del Pago</Label>
-          <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className="w-full appearance-none bg-background border border-border rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/30"
-          >
-            <option value="completado">Pagado</option>
-            <option value="pendiente">Pendiente</option>
-            <option value="cancelado">Cancelado</option>
-          </select>
-        </div>
-
-        {/* Cuentas */}
-        <div className="grid gap-2">
-          <Label>Cuenta {status === "completado" && "*"}</Label>
-          <select
-            value={accountId}
-            onChange={(e) => setAccountId(e.target.value)}
-            className="w-full appearance-none bg-background border border-border rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/30"
-          >
-            <option value="">Seleccionar cuenta</option>
-            {cuentasActivas.map((a) => (
-              <option key={a.id} value={a.id}>
-                {a.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        {/* Categorias */}
-        <div className="grid gap-2">
-          <Label>Categorias {status === "completado" && "*"}</Label>
-          <select
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
-            className="w-full appearance-none bg-background border border-border rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/30"
-          >
-            <option value="">Seleccionar categoria</option>
-            {opcionesCategorias.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.group ? `${c.group} > ${c.name}` : c.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="grid gap-2 col-span-2">
-          <Label htmlFor="observacion">Observación</Label>
-          <Input
-            id="observacion"
-            value={observacion}
-            onChange={(e) => setObservacion(e.target.value)}
-            placeholder="Ej. Lote de llantas..."
-          />
-        </div>
-      </div>
-    </FormDialog>
-  );
-}
+      </FormDialog>
+    );
+  }

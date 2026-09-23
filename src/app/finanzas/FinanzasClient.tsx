@@ -170,7 +170,6 @@ export function FinanzasClient({
                                         <CartesianGrid strokeDasharray="3 3" vertical={false} />
                                         <XAxis dataKey="name" />
                                         <YAxis tickFormatter={(value) => `$${value}`} />
-                                        <Tooltip formatter={(value) => formatCurrency(Number(value ?? 0))} />
                                         <Legend />
                                         <Bar dataKey="Ingresos" fill="#22c55e" radius={[4, 4, 0, 0]} maxBarSize={150} />
                                         <Bar dataKey="Gastos" fill="#ef4444" radius={[4, 4, 0, 0]} maxBarSize={150} />
@@ -328,35 +327,6 @@ export function FinanzasClient({
                                     </TableBody>
                                 </Table>
                             </div>
-                        )}
-                    </CardContent>
-                </Card>
-
-                {/* --- Gastos por Categoría --- */}
-                <Card className="md:col-span-4 flex flex-col">
-                    <CardHeader>
-                        <CardTitle className="text-base font-semibold">Gastos por Categoría</CardTitle>
-                        <CardDescription>Desglose del periodo seleccionado</CardDescription>
-                    </CardHeader>
-                    <CardContent className="h-[320px] w-full pt-2">
-                        {gastosPorCategoria.length === 0 ? (
-                            <div className="h-full flex items-center justify-center text-muted-foreground">
-                                No hay gastos registrados en este periodo.
-                            </div>
-                        ) : (
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart
-                                    data={gastosPorCategoria}
-                                    layout="vertical"
-                                    margin={{ top: 5, right: 30, left: 10, bottom: 5 }}
-                                >
-                                    <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                                    <XAxis type="number" tickFormatter={(value) => `$${value}`} />
-                                    <YAxis dataKey="name" type="category" width={140} tick={{ fontSize: 12 }} />
-                                    <Tooltip formatter={(value) => formatCurrency(Number(value ?? 0))} />
-                                    <Bar dataKey="total" fill="#ef4444" radius={[0, 4, 4, 0]} maxBarSize={28} />
-                                </BarChart>
-                            </ResponsiveContainer>
                         )}
                     </CardContent>
                 </Card>
