@@ -44,7 +44,7 @@ export function EditarRepuestosDialog({ repuestos, onRepuestosActualizado, trigg
         if (isService) {
             updatePayload.stock = null
             updatePayload.stock_min = null
-            updatePayload.cost = null
+            updatePayload.cost = 0
         } else {
             updatePayload.stock = parseInt(values.stock) || 0
             updatePayload.stock_min = values.stock_min !== undefined && values.stock_min !== "" ? parseInt(values.stock_min) : (repuestos.stock_min ?? 0)
@@ -85,4 +85,4 @@ export function EditarRepuestosDialog({ repuestos, onRepuestosActualizado, trigg
             isService={isService}
         />
     )
-}
+}

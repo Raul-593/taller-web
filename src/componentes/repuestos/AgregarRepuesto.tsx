@@ -48,7 +48,7 @@ export function AgregarRepuesto({ onRepuestoNuevo, trigger }: Props) {
         if (isService) {
             insertPayload.type = 'servicio'
             insertPayload.price = parseFloat(values.price) || 0
-            insertPayload.cost = null
+            insertPayload.cost = 0
             insertPayload.stock = null
             insertPayload.stock_min = null
         } else {
@@ -96,4 +96,4 @@ export function AgregarRepuesto({ onRepuestoNuevo, trigger }: Props) {
             allowTypeSelection={true}
         />
     )
-}
+}
