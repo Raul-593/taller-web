@@ -1,4 +1,4 @@
-import { login, signup, signInWithGoogle } from './actions'
+import { login, signInWithGoogle } from './actions'
 import { Input } from '@/componentes/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/componentes/ui/cards'
 import { Label } from '@/componentes/ui/label'
@@ -42,14 +42,7 @@ export default async function LoginPage(props: { searchParams: Promise<{ error?:
                                 <Input id="password" name="password" type="password"/>
                             </div>
                             <div className="flex flex-col gap-2 mt-2">
-                                <SubmitButton formAction={login} data-testid="login-submit">Iniciar Sesión</SubmitButton>
-                                <SubmitButton 
-                                    formAction={signup} 
-                                    className="bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                                    data-testid="login-signup-submit"
-                                >
-                                    Registrarse
-                                </SubmitButton>
+                                <SubmitButton formAction={login} data-testid="login-submit" className="w-full">Iniciar Sesión</SubmitButton>
                             </div>
                             
                             <div className="relative my-2">
