@@ -1,6 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
-import { MovimientosClient } from "@/app/finanzas/movimientos/MovimientoClient";
-
+import { MovimientosClient } from "@/app/(interno)/finanzas/movimientos/MovimientoClient";
 
 export default async function MovimientosPage({
   searchParams,
@@ -45,7 +44,7 @@ export default async function MovimientosPage({
       `)
       .gte("movement_date", startDate)
       .lte("movement_date", endDate)
-      .order("movement_date", { ascending: true }),
+      .order("movement_date", { ascending: false }),
       supabase.from("accounts").select("id, name, type, is_active").order("name", {ascending: true }),
       supabase.from("categories").select("*").order("name", {ascending: true }),
   ])

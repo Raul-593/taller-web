@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Shell from "@/componentes/shell";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,7 +27,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <meta charSet="utf-8" />
       </head>
       <body className="h-full flex flex-col">
-        <Shell>{children}</Shell>
+        {children}
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   );
