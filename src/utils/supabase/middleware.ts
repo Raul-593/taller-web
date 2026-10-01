@@ -2,7 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 const rutas_publicas_exactas = ['/', '/robots.txt', '/sitemap.xml']
-const rutas_publicas_prefijo = ['/login', 'auth']
+const rutas_publicas_prefijo = ['/login', '/auth']
 
 function esRutaPublica(pathname: string){
     return(
