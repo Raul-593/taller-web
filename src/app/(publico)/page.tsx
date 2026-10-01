@@ -1,28 +1,23 @@
-import { Button } from "@/componentes/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/componentes/ui/cards"
-import Link from "next/link"
-import { Analytics } from "@vercel/analytics/next"
+import { Navbar } from "@/componentes/(publico)/landing/Navbar";
+import { Hero } from "@/componentes/(publico)/landing/Hero";
+import { About } from "@/componentes/(publico)/landing/About";
+import { Services } from "@/componentes/(publico)/landing/Services";
+import { Contact } from "@/componentes/(publico)/landing/Contact";
+import { Footer } from "@/componentes/(publico)/landing/Footer";
+import { Analytics } from "@vercel/analytics/next";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-950 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <Analytics />
-          <CardTitle>Bienvenido a la Página de 593 Cycling Studio</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-zinc-600 dark:text-zinc-400">
-            Toda la información necesaria se cuentra en las paginas internas del sistema.
-          </p>
-          <p>Aqui debe estar el logo del taller</p>
-        </CardContent>
-        <CardFooter className="flex justify-between">
-          <Link href="/dashboard">
-            <Button>Comencemos</Button>
-          </Link>
-        </CardFooter>
-      </Card>
+    <div className="min-h-screen bg-background text-foreground flex flex-col scroll-smooth selection:bg-primary selection:text-primary-foreground">
+      <Analytics />
+      <Navbar />
+       <main className="flex-1">
+        <Hero />
+        <About />
+        <Services />
+        <Contact />
+       </main>
+      <Footer />
     </div>
-  )
+  );
 }
