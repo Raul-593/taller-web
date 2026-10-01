@@ -290,7 +290,7 @@ export default function Sidebar() {
       {/* === DESKTOP VIEW === */}
       <aside className="hidden border-r bg-white text-black w-64 md:flex flex-col h-screen">
         <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-          <Link href="/" className="flex items-center gap-2 font-semibold">
+          <Link href="/dashboard" className="flex items-center gap-2 font-semibold">
             <Bike className="h-5 w-5 text-[#9ADCF9]" />
             <span className="tracking-tight">593 Cycling Studio</span>
           </Link>
@@ -301,7 +301,7 @@ export default function Sidebar() {
       {/* === MOBILE VIEW === */}
       <header className="flex h-14 bg-white items-center justify-between border-b px-4 md:hidden">
         <Link
-          href="/"
+          href="/dashboard"
           className="flex items-center gap-2 font-semibold text-black"
         >
           <Bike className="h-5 w-5 text-[#9ADCF9]" />
