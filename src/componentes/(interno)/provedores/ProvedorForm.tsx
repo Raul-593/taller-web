@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { Input } from "@/componentes/ui/input"
 import { Label } from "@/componentes/ui/label"
-import { FormDialog } from "@/componentes/FormDialog"
+import { FormDialog } from "@/componentes/(interno)/FormDialog"
 
 type ProvedorData = {
     name: string

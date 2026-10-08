@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/componentes/ui/cards"
-import { EditarBicicletaDialog } from "@/componentes/bicicleta/EditarBicicleta"
-import { AgregarBicicleta } from "@/componentes/bicicleta/AgregarBicicleta"
+import { EditarBicicletaDialog } from "@/componentes/(interno)/bicicletas/EditarBicicleta"
+import { AgregarBicicleta } from "@/componentes/(interno)/bicicletas/AgregarBicicleta"
 import { PageHeader } from "@/componentes/ui/PageHeader"
 import { SearchBar } from "@/componentes/ui/SearchBar"
 import { useSearch } from "@/hooks/useSearch"

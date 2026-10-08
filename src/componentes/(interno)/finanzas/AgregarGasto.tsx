@@ -3,14 +3,16 @@
 import { useState, useEffect } from "react";
 import { Input } from "@/componentes/ui/input";
 import { Label } from "@/componentes/ui/label";
-import { FormDialog } from "@/componentes/FormDialog";
+import { FormDialog } from "@/componentes/(interno)/FormDialog";
 import { createClient } from "@/utils/supabase/clients";
 import { toast } from "sonner";
 import { Button } from "@/componentes/ui/button";
-import { Trash2, PlusCircle } from "lucide-react";
-import { Product, ProductSelect } from "@/componentes/ui/ProductSelect";
+import { PlusCircle } from "lucide-react";
+import { Product } from "@/componentes/ui/ProductSelect";
+import { FormularioItemProducto } from "@/componentes/(interno)/finanzas/FormularioItemProducto";
 import { getPurchaseCategories } from "@/lib/finanzas/categorias";
-import { AgregarRepuesto } from "@/componentes/repuestos/AgregarRepuesto";
+import { AgregarRepuesto } from "@/componentes/(interno)/repuestos/AgregarRepuesto";
+import { SelectCuenta } from "@/componentes/(interno)/finanzas/SelectCuenta";
 
 type Props = {
   accounts: any[];
@@ -93,37 +95,20 @@ export function AgregarGasto({
     setItems([]);
   }
 
-  const addItem = () => {
-    setItems([
-      ...items,
-      { product_id: "", productName: "", quantity: 1, unit_price: 0, total: 0 },
-    ]);
-  };
+  // Ítem nuevo con la forma que usa este formulario.
+  const crearItemVacio = () => ({
+    product_id: "",
+    productName: "",
+    quantity: 1,
+    unit_price: 0,
+    total: 0,
+  });
 
-  const removeItem = (index: number) => {
-    setItems(items.filter((_, i) => i !== index));
-  };
-
-  const updateItem = (
-    index: number,
-    field: string,
-    value: any,
-    product?: Product,
-  ) => {
-    const newItems = [...items];
-    const item = { ...newItems[index], [field]: value };
-
-    if (field === "product_id" && product) {
-      // item.productName = product.name;
-      item.unit_price = product.cost || 0;
-    }
-
-    // Recalcular total del ítem
-    item.total = (Number(item.quantity) || 0) * (Number(item.unit_price) || 0);
-
-    newItems[index] = item;
-    setItems(newItems);
-  };
+  // En gastos el precio se toma del costo del producto.
+  const alSeleccionarProducto = (item: any, product: Product) => ({
+    ...item,
+    unit_price: (product as any).cost || 0,
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -270,127 +255,39 @@ export function AgregarGasto({
         </div>
 
         {/* Sección de Ítems */}
-        <div className="col-span-2 border rounded-lg overflow-hidden bg-white shadow-sm mt-2">
-          <div className="bg-zinc-100/80 px-4 py-2 border-b flex items-center justify-between">
-            <Label className="font-bold text-zinc-800 text-sm">
-              Productos / Repuestos
-            </Label>
-            <Button
-              type="button"
-              onClick={addItem}
-              size="sm"
-              variant="outline"
-              className="h-7 text-[10px] bg-white"
-            >
-              + AGREGAR ITEM
-            </Button>
-          </div>
-
-          <div className="p-4 space-y-3 min-h-25">
-            {items.length === 0 ? (
-              <div className="text-center py-6 border-2 border-dashed rounded-md bg-zinc-50/50">
-                <p className="text-xs text-muted-foreground">
-                  No hay productos agregados.
-                </p>
+        <FormularioItemProducto
+          items={items}
+          onChange={setItems}
+          titulo="Productos / Repuestos"
+          etiquetaPrecio="Costo Unit."
+          crearItemVacio={crearItemVacio}
+          alSeleccionarProducto={alSeleccionarProducto}
+          accionExtraProducto={(index) => (
+            <AgregarRepuesto
+              onRepuestoNuevo={(nuevo) =>
+                setItems((prev) => {
+                  const nuevos = [...prev];
+                  const base = { ...nuevos[index], product_id: nuevo.id };
+                  const item = alSeleccionarProducto(base, nuevo);
+                  const cantidad = Number(item.quantity) || 0;
+                  const precio = Number(item.unit_price) || 0;
+                  nuevos[index] = { ...item, total: cantidad * precio };
+                  return nuevos;
+                })
+              }
+              trigger={
                 <Button
                   type="button"
-                  variant="link"
-                  size="sm"
-                  onClick={addItem}
-                  className="text-xs"
+                  variant="outline"
+                  size="icon"
+                  className="h-9 w-9 shrink-0"
                 >
-                  Haz clic aquí para agregar uno
+                  <PlusCircle className="h-4 w-4" />
                 </Button>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {/* Header */}
-                <div className="hidden sm:grid grid-cols-[1fr,70px,100px,80px,36px] gap-3 px-2">
-                  <Label className="text-[10px] uppercase font-bold text-zinc-400">
-                    Producto / Concepto
-                  </Label>
-                  <Label className="text-[10px] uppercase font-bold text-zinc-400 text-center">
-                    Cant.
-                  </Label>
-                  <Label className="text-[10px] uppercase font-bold text-zinc-400">
-                    Costo Unit.
-                  </Label>
-                  <Label className="text-[10px] uppercase font-bold text-zinc-400">
-                    Total
-                  </Label>
-                  <div></div>
-                </div>
-
-                {/* Productos */}
-                {items.map((item, index) => (
-                  <div
-                    key={index}
-                    className="grid grid-cols-[1fr,70px,100px,80px,30px] gap-2 items-center bg-zinc-50/50 p-2 rounded-lg border border-zinc-100 group hover:border-zinc-300 transition-colors"
-                  >
-                    <div className="w-full min-w-0 flex items-end gap-1">
-                      <div className="w-full min-w-0">
-                        <ProductSelect
-                          value={item.product_id || null}
-                          onChange={(id, product) =>
-                            updateItem(index, "product_id", id, product)
-                          }
-                        />
-                      </div>
-                      <AgregarRepuesto
-                        onRepuestoNuevo={(nuevo) =>
-                          updateItem(index, "product_id", nuevo.id, nuevo)
-                        }
-                        trigger={
-                          <Button
-                            type="button"
-                            variant="outline"
-                            size="icon"
-                            className="h-9 w-9 shrink-0"
-                          >
-                            <PlusCircle className="h-4 w-4" />
-                          </Button>
-                        }
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        type="number"
-                        value={item.quantity}
-                        onChange={(e) =>
-                          updateItem(index, "quantity", e.target.value)
-                        }
-                        className="h-8 text-xs px-2 text-left"
-                      />
-                    </div>
-                    <div>
-                      <Input
-                        type="number"
-                        step="0.01"
-                        value={item.unit_price}
-                        onChange={(e) =>
-                          updateItem(index, "unit_price", e.target.value)
-                        }
-                        className="h-8 text-xs px-2"
-                      />
-                    </div>
-                    <div className="text-xs font-bold text-zinc-700 px-1">
-                      ${item.total.toFixed(2)}
-                    </div>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeItem(index)}
-                      className="h-8 w-8 p-0 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded-full"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
+              }
+            />
+          )}
+        />
 
         {/* Resumen Final */}
         {items.length > 0 ? (
@@ -465,22 +362,13 @@ export function AgregarGasto({
           </select>
         </div>
 
-        {/* Cuentas */}
-        <div className="grid gap-2">
-          <Label>Cuenta {status === "completado" && "*"}</Label>
-          <select
-            value={accountId}
-            onChange={(e) => setAccountId(e.target.value)}
-            className="w-full appearance-none bg-background border border-border rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/30"
-          >
-            <option value="">Seleccionar cuenta</option>
-            {cuentasActivas.map((a) => (
-              <option key={a.id} value={a.id}>
-                {a.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        <SelectCuenta
+          cuentas={cuentasActivas}
+          value={accountId}
+          onChange={setAccountId}
+          label={`Cuenta ${status === "completado" ? "*" : ""}`}
+          required={status === "completado"}
+        />
 
         {/* Categorias de finanzas*/}
         <div className="grid gap-2">

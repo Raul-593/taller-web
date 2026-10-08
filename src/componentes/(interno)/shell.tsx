@@ -1,6 +1,6 @@
 'use client'
 
-import Sidebar from "@/componentes/sidebar";
+import Sidebar from "@/componentes/(interno)/sidebar";
 
 export default function Shell({ children }: { children: React.ReactNode }) {
 

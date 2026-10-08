@@ -4,12 +4,11 @@ import { useState, useEffect } from "react";
 import { Input } from "@/componentes/ui/input";
 import { Label } from "@/componentes/ui/label";
 import { Button } from "@/componentes/ui/button";
-import { FormDialog } from "@/componentes/FormDialog";
+import { FormDialog } from "@/componentes/(interno)/FormDialog";
 import { CustomerSelect } from "@/componentes/ui/CustomerSelect";
-import { Product, ProductSelect } from "@/componentes/ui/ProductSelect";
+import { FormularioItemProducto } from "@/componentes/(interno)/finanzas/FormularioItemProducto";
 import { createClient } from "@/utils/supabase/clients";
 import { toast } from "sonner";
-import { Trash2 } from "lucide-react";
 import { credit_note_type } from "@/lib/finanzas/labels";
 import type { CreditNoteType } from "@/lib/finanzas/types";
 
@@ -63,28 +62,9 @@ export function AgregarNotaCredito({ onNotaAgregada, trigger }: Props) {
     setItems([]);
   }
 
-  const addItem = () => {
-    setItems([...items, { product_id: "", quantity: 1, unit_price: 0 }]);
-  };
-
-  const removeItem = (index: number) => {
-    setItems(items.filter((_, i) => i !== index));
-  };
-
-  const updateItem = (
-    index: number,
-    field: string,
-    value: any,
-    product?: Product,
-  ) => {
-    const newItems = [...items];
-    const item = { ...newItems[index], [field]: value };
-    if (field === "product_id" && product) {
-      item.unit_price = product.price || 0;
-    }
-    newItems[index] = item;
-    setItems(newItems);
-  };
+  // Ítem nuevo con la forma que usa este formulario.
+  // El precio se toma del producto automáticamente (comportamiento por defecto).
+  const crearItemVacio = () => ({ product_id: "", quantity: 1, unit_price: 0 });
 
   const totalItems = items.reduce(
     (acc, i) => acc + (Number(i.quantity) || 0) * (Number(i.unit_price) || 0),
@@ -251,84 +231,20 @@ export function AgregarNotaCredito({ onNotaAgregada, trigger }: Props) {
           />
         </div>
       ) : (
-        <div className="border rounded-lg overflow-hidden">
-          <div className="flex items-center justify-between px-3 py-2 bg-zinc-50 border-b">
-            <Label className="font-bold text-sm">Productos a Devolver</Label>
-            <Button
-              type="button"
-              onClick={addItem}
-              size="sm"
-              variant="outline"
-              className="h-7 text-[10px]"
-            >
-              + Agregar Producto
-            </Button>
-          </div>
-          <div className="p-3 space-y-3">
-            {items.length === 0 ? (
-              <p className="text-xs text-muted-foreground italic text-center py-4">
-                Sin productos agregados.
-              </p>
-            ) : (
-              items.map((item, index) => (
-                <div
-                  key={index}
-                  className="flex gap-2 items-end bg-zinc-50/50 p-2 rounded-lg border"
-                >
-                  <div className="flex-1 min-w-0">
-                    <ProductSelect
-                      value={item.product_id || null}
-                      onChange={(id, product) =>
-                        updateItem(index, "product_id", id, product)
-                      }
-                    />
-                  </div>
-                  <div className="w-20">
-                    <Label className="text-[10px] uppercase text-zinc-400 font-bold">
-                      Cant.
-                    </Label>
-                    <Input
-                      type="number"
-                      value={item.quantity}
-                      onChange={(e) =>
-                        updateItem(index, "quantity", e.target.value)
-                      }
-                      className="h-9 text-xs"
-                    />
-                  </div>
-                  <div className="w-24">
-                    <Label className="text-[10px] uppercase text-zinc-400 font-bold">
-                      Precio
-                    </Label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={item.unit_price}
-                      onChange={(e) =>
-                        updateItem(index, "unit_price", e.target.value)
-                      }
-                      className="h-9 text-xs"
-                    />
-                  </div>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => removeItem(index)}
-                    className="h-9 w-9 p-0 text-red-500"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))
-            )}
-            {items.length > 0 && (
-              <div className="text-right text-sm font-bold pt-2 border-t">
-                Total: ${totalItems.toFixed(2)}
-              </div>
-            )}
-          </div>
-        </div>
+        <>
+          <FormularioItemProducto
+            items={items}
+            onChange={setItems}
+            titulo="Productos a Devolver"
+            etiquetaPrecio="Precio"
+            crearItemVacio={crearItemVacio}
+          />
+          {items.length > 0 && (
+            <div className="text-right text-sm font-bold pt-2 border-t">
+              Total: ${totalItems.toFixed(2)}
+            </div>
+          )}
+        </>
       )}
     </FormDialog>
   );

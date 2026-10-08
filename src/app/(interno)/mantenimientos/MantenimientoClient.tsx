@@ -4,11 +4,12 @@ import { useState, useMemo } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/componentes/ui/cards"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/componentes/ui/table"
 import { useRouter } from "next/navigation"
-import { AgregarMantenimiento } from "@/componentes/mantenimiento/AgregarMantenimiento"
-import { EditarMantenimientoDialog } from "@/componentes/mantenimiento/EditarMantenimiento"
-import { VistaMantenimiento } from "@/componentes/mantenimiento/VistaMantenimiento"
-import { RegistrarAbonoMantenimiento } from "@/componentes/finanzas/RegsitroAbonoMantenimiento"
+import { AgregarMantenimiento } from "@/componentes/(interno)/mantenimientos/AgregarMantenimiento"
+import { EditarMantenimientoDialog } from "@/componentes/(interno)/mantenimientos/EditarMantenimiento"
+import { VistaMantenimiento } from "@/componentes/(interno)/mantenimientos/VistaMantenimiento"
+import { RegistrarAbonoMantenimiento } from "@/componentes/(interno)/finanzas/RegsitroAbonoMantenimiento"
 import { PageHeader } from "@/componentes/ui/PageHeader"
+import { FiltroEstadoTabs } from "@/componentes/ui/FiltroEstadoTabs"
 import { StatusSelect } from "@/componentes/ui/StatusSelect"
 import { useSyncState } from "@/hooks/useSyncState"
 import { useUpdateStatus } from "@/hooks/useUpdateStatus"
@@ -52,6 +53,15 @@ export function MantenimientoClient({ mantenimientos: initial, accounts }: { man
         [mantenimiento, filtro]
     )
 
+    // Cantidad de mantenimientos por estado para las pestañas de filtro.
+    const conteosPorEstado = useMemo(() => {
+        const conteos: Record<string, number> = { Todas: mantenimiento.length }
+        for (const m of mantenimiento) {
+            conteos[m.status] = (conteos[m.status] || 0) + 1
+        }
+        return conteos
+    }, [mantenimiento])
+
     return (
         <div className="flex flex-col gap-6">
             <PageHeader>
@@ -59,28 +69,12 @@ export function MantenimientoClient({ mantenimientos: initial, accounts }: { man
             </PageHeader>
 
             {/* Tabs de filtro por estado */}
-            <div className="flex flex-wrap gap-2">
-                {[{ value: 'Todas', label: 'Todas' }, ...ESTADOS].map(tab => {
-                    const count = tab.value === 'Todas' ? mantenimiento.length : mantenimiento.filter(m => m.status === tab.value).length;
-
-                    return (
-                        <button
-                            key={tab.value}
-                            onClick={() => setFiltro(tab.value)}
-                            className={["px-4 py-1.5 rounded-full text-sm font-medium border transition-all duration-150",
-                                filtro === tab.value
-                                    ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                                    : "bg-background text-muted-foreground border-border hover:text-foreground hover:border-foreground/30"
-                            ].join(" ")}
-                        >
-                            {tab.label}
-                            <span className="ml-1.5 opacity-60 text-xs">
-                                {count}
-                            </span>
-                        </button>
-                    )
-                })}
-            </div>
+            <FiltroEstadoTabs
+                opciones={[{ value: 'Todas', label: 'Todas' }, ...ESTADOS]}
+                valor={filtro}
+                onChange={setFiltro}
+                conteos={conteosPorEstado}
+            />
             {/* ---  Lista de Mantenimientos --- */}
             <div className="grid gap-4 grid-cols-1 md:grid-cols-4">
                 <Card className="md:col-span-4 flex flex-col">
@@ -158,6 +152,19 @@ export function MantenimientoClient({ mantenimientos: initial, accounts }: { man
                         setMantenimientoParaAbono(mantenimientoVista)
                         setMantenimientoVista(null)
                     }}
+                    onCamposVentaActualizados={(actualizado) => {
+                        if (actualizado) {
+                            setMantenimientos((prev) =>
+                                prev.map((m) =>
+                                    m.id === actualizado.id
+                                        ? { ...m, ...actualizado }
+                                        : m
+                                )
+                            )
+                            setMantenimientoVista((prev: any) => prev ? { ...prev, ...actualizado } : null)
+                        }
+                        router.refresh()
+                    }}
                 />
             )}
 
@@ -167,7 +174,16 @@ export function MantenimientoClient({ mantenimientos: initial, accounts }: { man
                     mantenimiento={mantenimientoSeleccionado}
                     isOpenOutside={!!mantenimientoSeleccionado}
                     onOpenChangeOutside={(open) => { if(!open) setMantenimientoSeleccionado(null) }}
-                    onMantenimientoActualizado={() => {
+                    onMantenimientoActualizado={(actualizado) => {
+                        if (actualizado) {
+                            setMantenimientos((prev) =>
+                                prev.map((m) =>
+                                    m.id === actualizado.id
+                                        ? { ...m, ...actualizado, bicycles: actualizado.bicycles || m.bicycles }
+                                        : m
+                                )
+                            )
+                        }
                         router.refresh()
                         setMantenimientoSeleccionado(null)
                     }}

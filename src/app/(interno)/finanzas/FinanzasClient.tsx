@@ -2,15 +2,15 @@
 
 import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts"
+import { GraficoBarrasFinanzas } from "@/componentes/ui/GraficoBarrasFinanzas"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/componentes/ui/cards"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/componentes/ui/table"
 import { Button } from "@/componentes/ui/button"
-import { AgregarIngreso } from "@/componentes/finanzas/AgregarIngreso"
-import { AgregarGasto } from "@/componentes/finanzas/AgregarGasto"
-import { VistaVenta } from "@/componentes/finanzas/VistaVenta"
-import { RegistrarAbonoVenta } from "@/componentes/finanzas/RegistroAbonoVenta"
-import { VistaDeuda } from "@/componentes/finanzas/deuda/VistaDeuda"
+import { AgregarIngreso } from "@/componentes/(interno)/finanzas/AgregarIngreso"
+import { AgregarGasto } from "@/componentes/(interno)/finanzas/AgregarGasto"
+import { VistaVenta } from "@/componentes/(interno)/finanzas/VistaVenta"
+import { RegistrarAbonoVenta } from "@/componentes/(interno)/finanzas/RegistroAbonoVenta"
+import { VistaDeuda } from "@/componentes/(interno)/finanzas/deuda/VistaDeuda"
 import { PageHeader } from "@/componentes/ui/PageHeader"
 import { DateFilter } from "@/componentes/ui/DateFilter"
 import { getStatusClasses } from "@/utils/status-colors"
@@ -59,10 +59,6 @@ export function FinanzasClient({
     const [deudaVistaId, setDeudaVistaId] = useState<string | null>(null)
 
     const balanceNetoPeriodo = ingresosPeriodo - gastosPeriodo
-
-    const chartData = useMemo(() => [
-        { name: 'Resumen del Periodo', Ingresos: ingresosPeriodo, Gastos: gastosPeriodo }
-    ], [ingresosPeriodo, gastosPeriodo])
 
     const gastosPorCategoria = useMemo(
         () => aggregateGastosByCategoria(movimientosPeriodo, categorias),
@@ -160,22 +156,13 @@ export function FinanzasClient({
                             <CardTitle>Ingreso vs Gasto</CardTitle>
                         </CardHeader>
                         <CardContent className="h-[300px] w-full pt-4">
-                            {ingresosPeriodo === 0 && gastosPeriodo === 0 ? (
-                                <div className="h-full flex items-center justify-center text-muted-foreground">
-                                    No hay movimientos para el periodo seleccionado.
-                                </div>
-                            ) : (
-                                <ResponsiveContainer width="100%" height="100%" minHeight={undefined} minWidth={0}>
-                                    <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                        <XAxis dataKey="name" />
-                                        <YAxis tickFormatter={(value) => `$${value}`} />
-                                        <Legend />
-                                        <Bar dataKey="Ingresos" fill="#22c55e" radius={[4, 4, 0, 0]} maxBarSize={150} />
-                                        <Bar dataKey="Gastos" fill="#ef4444" radius={[4, 4, 0, 0]} maxBarSize={150} />
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            )}
+                            <GraficoBarrasFinanzas
+                                ingresos={ingresosPeriodo}
+                                gastos={gastosPeriodo}
+                                etiqueta="Resumen del Periodo"
+                                mensajeVacio="No hay movimientos para el periodo seleccionado."
+                                conLeyenda
+                            />
                         </CardContent>
                     </Card>
 

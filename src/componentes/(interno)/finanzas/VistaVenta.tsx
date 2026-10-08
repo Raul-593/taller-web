@@ -7,6 +7,7 @@ import { Button } from "@/componentes/ui/button"
 import { Label } from "@/componentes/ui/label"
 import { getStatusClasses } from "@/utils/status-colors"
 import { calcularSaldoVenta } from "@/lib/finanzas/ventas"
+import { TablaDetalleFinanciero } from "@/componentes/(interno)/finanzas/TablaDetalleFinanciero"
 
 type Props = {
     venta: any
@@ -106,34 +107,26 @@ export function VistaVenta({ venta, isOpen, onOpenChange, onAbonar }: Props) {
                         )}
                     </section>
 
-                    <section>
-                        <div className="flex items-center justify-between mb-2">
-                            <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-tight">Historial de Pagos</h3>
-                            {venta.status !== "cancelado" && saldoPendiente > 0 && (
-                                <Button size="sm" onClick={onAbonar}>Registrar Abono</Button>
-                            )}
-                        </div>
-                        {loading ? (
-                            <p className="text-sm text-muted-foreground italic">Cargando...</p>
-                        ) : pagos.length === 0 && creditos.length === 0 ? (
-                            <p className="text-sm text-muted-foreground italic">Sin pagos registrados todavía.</p>
-                        ) : (
-                            <div className="border rounded-lg divide-y">
-                                {pagos.map((p) => (
-                                    <div key={p.id} className="flex justify-between p-2 text-sm">
-                                        <span>{p.payment_date} — {p.accounts?.name || "—"} ({p.payment_method})</span>
-                                        <span className="font-medium text-green-700">+{formatCurrency(Number(p.amount))}</span>
-                                    </div>
-                                ))}
-                                {creditos.map((c, idx) => (
-                                    <div key={`credito-${idx}`} className="flex justify-between p-2 text-sm">
-                                        <span>Crédito aplicado — {c.reason || "Nota de crédito"}</span>
-                                        <span className="font-medium text-blue-700">+{formatCurrency(Math.abs(Number(c.amount)))}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </section>
+                    <TablaDetalleFinanciero
+                        titulo="Historial de Pagos"
+                        cargando={loading}
+                        movimientos={[
+                            ...pagos.map((p) => ({
+                                id: p.id,
+                                descripcion: `${p.payment_date} — ${p.accounts?.name || "—"} (${p.payment_method})`,
+                                monto: Number(p.amount),
+                                tono: "verde" as const,
+                            })),
+                            ...creditos.map((c, idx) => ({
+                                id: `credito-${idx}`,
+                                descripcion: `Crédito aplicado — ${c.reason || "Nota de crédito"}`,
+                                monto: Math.abs(Number(c.amount)),
+                                tono: "azul" as const,
+                            })),
+                        ]}
+                        mostrarBotonAgregar={venta.status !== "cancelado" && saldoPendiente > 0}
+                        onAgregar={onAbonar}
+                    />
                 </div>
 
                 <DialogFooter className="p-6 border-t bg-zinc-50/50">

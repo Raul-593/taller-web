@@ -25,6 +25,7 @@ import { generateMaintenancePDF } from "@/lib/pdf-generator";
 import { toast } from "sonner";
 import { calcularSaldoMantenimiento } from "@/lib/mantenimientos";
 import { createClient } from "@/utils/supabase/clients";
+import { TablaDetalleFinanciero } from "@/componentes/(interno)/finanzas/TablaDetalleFinanciero";
 import {
   sales_types,
   payment_methods,
@@ -38,7 +39,7 @@ type Props = {
   onOpenChange: (open: boolean) => void;
   onEdit: () => void;
   onAbonar: () => void;
-  onCamposVentaActualizados?: () => void;
+  onCamposVentaActualizados?: (actualizado?: any) => void;
 };
 
 export function VistaMantenimiento({
@@ -130,10 +131,12 @@ export function VistaMantenimiento({
     else setPaymentMethod(value);
 
     setGuardandoCampo(field);
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("maintenance_records")
       .update({ [field]: value || null })
-      .eq("id", mantenimiento.id);
+      .eq("id", mantenimiento.id)
+      .select()
+      .single();
 
     if (error) {
       toast.error("Error al guardar cambio");
@@ -146,7 +149,7 @@ export function VistaMantenimiento({
           ? "Tipo de venta actualizado"
           : "Método de pago actualizado",
       );
-      onCamposVentaActualizados?.();
+      onCamposVentaActualizados?.(data || { ...mantenimiento, [field]: value || null });
     }
     setGuardandoCampo(null);
   };
@@ -385,20 +388,19 @@ export function VistaMantenimiento({
                 </div>
               </section>
               <section className="space=y-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-zinc-400 uppercasse tracking-tight">
-                    Pagos
-                  </h3>
-                  {!mantenimiento.sale_id && saldoPendiente > 0 && (
-                    <Button
-                      size="sm"
-                      onClick={onAbonar}
-                      className="h-7 text-xs"
-                    >
-                      Registrar Abonos
-                    </Button>
-                  )}
-                </div>
+                <TablaDetalleFinanciero
+                  titulo="Pagos"
+                  movimientos={pagos.map((p: any) => ({
+                    id: p.id,
+                    descripcion: `${p.payment_date} - ${p.accounts?.name || "-"} (${p.payment_method})`,
+                    monto: Number(p.amount),
+                    tono: "verde" as const,
+                  }))}
+                  mensajeVacio="Sin abonos registrados"
+                  mostrarBotonAgregar={!mantenimiento.sale_id && saldoPendiente > 0}
+                  etiquetaAgregar="Registrar Abonos"
+                  onAgregar={onAbonar}
+                />
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-2 rounded-lg border bg-green-50/50">
@@ -419,25 +421,6 @@ export function VistaMantenimiento({
                   </div>
                 </div>
 
-                {pagos.length === 0 ? (
-                  <p className="text-xs text-muted-foreground italic">
-                    Sin abonos registrados
-                  </p>
-                ) : (
-                  <div className="border rounded-lg divide-y">
-                    {pagos.map((p: any) => (
-                      <div key={p.id} className="flex justify-between">
-                        <span>
-                          {p.payment_date} - {p.accounts?.name || "-"} (
-                          {p.payment_method})
-                        </span>
-                        <span className="font-medium text-green-700">
-                          +{formatCurrency(Number(p.amount))}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </section>
             </div>
           </div>

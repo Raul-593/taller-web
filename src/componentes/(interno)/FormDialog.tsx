@@ -1,6 +1,6 @@
 "use client"
 
-import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger} from "@/componentes/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/componentes/ui/dialog"
 import { Button } from "@/componentes/ui/button"
 import { cn } from "@/lib/utils"
 

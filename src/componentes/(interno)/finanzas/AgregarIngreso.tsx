@@ -3,15 +3,15 @@
 import { useState, useEffect } from "react"
 import { Input } from "@/componentes/ui/input"
 import { Label } from "@/componentes/ui/label"
-import { FormDialog } from "@/componentes/FormDialog"
+import { FormDialog } from "@/componentes/(interno)/FormDialog"
 import { createClient } from "@/utils/supabase/clients"
 import { toast } from "sonner"
 import { Button } from "@/componentes/ui/button"
-import { Trash2 } from "lucide-react"
-import { CustomerSelect } from "../ui/CustomerSelect"
-import { Product, ProductSelect } from "../ui/ProductSelect"
-import { AgregarClienteDialog } from "../clientes/AgregarClienteDialog"
+import { CustomerSelect } from "@/componentes/ui/CustomerSelect"
+import { FormularioItemProducto } from "@/componentes/(interno)/finanzas/FormularioItemProducto"
+import { AgregarClienteDialog } from "@/componentes/(interno)/clientes/AgregarClienteDialog"
 import { payment_methods } from "@/lib/finanzas/labels"
+import { SelectCuenta } from "@/componentes/(interno)/finanzas/SelectCuenta"
 
 type Props = {
     accounts: any[]
@@ -64,26 +64,9 @@ export function AgregarIngreso({ accounts, onIngresoAgregado, trigger }: Props) 
         setPagoInicialReferencia("")
     }
 
-    const addItem = () => {
-        setItems([...items, { product_id: "", quantity: 1, unit_price: 0, total: 0 }])
-    }
-
-    const removeItem = (index: number) => {
-        setItems(items.filter((_, i) => i !== index))
-    }
-
-    const updateItem = (index: number, field: string, value: any, product?: Product) => {
-        const newItems = [...items]
-        const item = { ...newItems[index], [field]: value }
-
-        if (field === "product_id") {
-            item.unit_price = product ? (product.price || 0) : 0
-        }
-
-        item.total = (Number(item.quantity) || 0) * (Number(item.unit_price) || 0)
-        newItems[index] = item
-        setItems(newItems)
-    }
+    // Ítem nuevo con la forma que usa este formulario.
+    // El precio se toma del producto automáticamente (comportamiento por defecto).
+    const crearItemVacio = () => ({ product_id: "", quantity: 1, unit_price: 0, total: 0 })
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -267,19 +250,13 @@ export function AgregarIngreso({ accounts, onIngresoAgregado, trigger }: Props) 
                                 </select>
                             </div>
                         </div>
-                        <div className="grid gap-1.5">
-                            <Label className="text-[10px] uppercase text-zinc-400 font-bold">Cuenta {parseFloat(pagoInicialMonto) > 0 && "*"}</Label>
-                            <select
-                                value={pagoInicialCuenta}
-                                onChange={e => setPagoInicialCuenta(e.target.value)}
-                                className="w-full h-9 appearance-none bg-background border border-border rounded-lg px-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary/30"
-                            >
-                                <option value="">Seleccionar cuenta</option>
-                                {cuentasActivas.map((a) => (
-                                    <option key={a.id} value={a.id}>{a.name}</option>
-                                ))}
-                            </select>
-                        </div>
+                        <SelectCuenta
+                            cuentas={cuentasActivas}
+                            value={pagoInicialCuenta}
+                            onChange={setPagoInicialCuenta}
+                            label={`Cuenta ${parseFloat(pagoInicialMonto) > 0 ? "*" : ""}`}
+                            required={parseFloat(pagoInicialMonto) > 0}
+                        />
                         <Input
                             value={pagoInicialReferencia}
                             onChange={e => setPagoInicialReferencia(e.target.value)}
@@ -297,78 +274,13 @@ export function AgregarIngreso({ accounts, onIngresoAgregado, trigger }: Props) 
                         />
                     </div>
 
-                    <div className="flex-1 border-2 border-zinc-100 rounded-2xl bg-zinc-50/30 overflow-hidden flex flex-col">
-                        <div className="bg-white/80 px-4 py-3 border-b flex items-center justify-between">
-                            <Label className="font-bold text-zinc-800">Productos / Servicios</Label>
-                            <Button type="button" onClick={addItem} size="sm" variant="outline" className="h-8 text-[10px] font-bold border-zinc-200 hover:bg-zinc-50 shadow-sm">
-                                + AGREGAR ITEM
-                            </Button>
-                        </div>
-
-                        <div className="p-4 flex-1 overflow-y-auto">
-                            {items.length === 0 ? (
-                                <div className="h-full flex flex-col items-center justify-center py-10 px-4 text-center border-2 border-dashed border-zinc-200 rounded-xl bg-white/50">
-                                    <p className="text-xs text-muted-foreground mb-1">No hay ítems agregados.</p>
-                                    <Button type="button" variant="link" size="sm" onClick={addItem} className="text-xs font-semibold text-zinc-900 hover:no-underline">
-                                        Haz clic aquí para agregar uno
-                                    </Button>
-                                </div>
-                            ) : (
-                                <div className="space-y-4">
-                                    {items.map((item, index) => (
-                                        <div key={index} className="bg-white p-3 rounded-xl border border-zinc-200 shadow-sm flex flex-col gap-3 group transition-all hover:border-zinc-400">
-                                            <div className="flex justify-between items-start gap-2">
-                                                <div className="flex-1">
-                                                    <ProductSelect
-                                                        value={item.product_id || null}
-                                                        onChange={(id, product) => updateItem(index, "product_id", id, product)}
-                                                        placeholder="Seleccionar producto o servicio..."
-                                                    />
-                                                </div>
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    onClick={() => removeItem(index)}
-                                                    className="h-8 w-8 p-0 text-zinc-400 hover:text-red-500 hover:bg-red-50 rounded-lg flex-none"
-                                                >
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
-                                            </div>
-
-                                            <div className="grid grid-cols-3 gap-3">
-                                                <div className="grid gap-1.5">
-                                                    <Label className="text-[9px] uppercase font-bold text-zinc-400 tracking-wider text-center">Cant.</Label>
-                                                    <Input
-                                                        type="number"
-                                                        value={item.quantity}
-                                                        onChange={e => updateItem(index, "quantity", e.target.value)}
-                                                        className="h-8 text-xs px-2 text-center bg-zinc-50 border-zinc-200"
-                                                    />
-                                                </div>
-                                                <div className="grid gap-1.5">
-                                                    <Label className="text-[9px] uppercase font-bold text-zinc-400 tracking-wider">P. Unit.</Label>
-                                                    <Input
-                                                        type="number"
-                                                        step="0.01"
-                                                        value={item.unit_price}
-                                                        onChange={e => updateItem(index, "unit_price", e.target.value)}
-                                                        className="h-8 text-xs px-2 bg-zinc-50 border-zinc-200"
-                                                    />
-                                                </div>
-                                                <div className="grid gap-1.5">
-                                                    <Label className="text-[9px] uppercase font-bold text-zinc-400 tracking-wider">Total</Label>
-                                                    <div className="h-8 flex items-center px-1 text-xs font-bold text-zinc-900">
-                                                        ${item.total.toFixed(2)}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    </div>
+                    <FormularioItemProducto
+                        items={items}
+                        onChange={setItems}
+                        titulo="Productos / Servicios"
+                        etiquetaPrecio="P. Unit."
+                        crearItemVacio={crearItemVacio}
+                    />
                 </div>
             </div>
         </FormDialog>

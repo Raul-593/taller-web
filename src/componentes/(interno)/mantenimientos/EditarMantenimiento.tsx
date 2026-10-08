@@ -3,12 +3,12 @@
 import { useState, useEffect } from "react"
 import { Input } from "@/componentes/ui/input"
 import { Label } from "@/componentes/ui/label"
-import { FormDialog } from "@/componentes/FormDialog"
+import { FormDialog } from "@/componentes/(interno)/FormDialog"
 import { createClient } from "@/utils/supabase/clients"
 import { toast } from "sonner"
 import { Button } from "@/componentes/ui/button"
-import { Trash2 } from "lucide-react"
-import { Product, ProductSelect } from "@/componentes/ui/ProductSelect"
+import { Product } from "@/componentes/ui/ProductSelect"
+import { FormularioItemProducto } from "@/componentes/(interno)/finanzas/FormularioItemProducto"
 import { payment_methods } from "@/lib/finanzas/labels"
 
 type Props = {
@@ -66,26 +66,16 @@ export function EditarMantenimientoDialog({ mantenimiento, onMantenimientoActual
         }
     }, [items])
 
-    const addItem = () => {
-        setItems([...items, { product_id: "", quantity: 1, unit_price: 0, item_type: "retail", description: "" }])
-    }
+    // Ítem nuevo con la forma que usa este formulario.
+    const crearItemVacio = () => ({ product_id: "", quantity: 1, unit_price: 0, item_type: "retail", description: "" })
 
-    const removeItem = (index: number) => {
-        setItems(items.filter((_, i) => i !== index))
-    }
-
-    const updateItem = (index: number, field: string, value: any, product?: Product) => {
-        const newItems = [...items]
-        const item = { ...newItems[index], [field]: value }
-
-        if (field === "product_id" && product) {
-            item.unit_price = product.price || 0
-            item.item_type = product.category === 'Servicio' ? 'service' : 'retail'
-            item.description = product.name
-        }
-        newItems[index] = item
-        setItems(newItems)
-    }
+    // El precio se toma del producto y se clasifica como servicio o repuesto.
+    const alSeleccionarProducto = (item: any, product: Product) => ({
+        ...item,
+        unit_price: product.price || 0,
+        item_type: product.category === 'Servicio' ? 'service' : 'retail',
+        description: product.name,
+    })
 
     // Actualizar mantenimiento
     const handleSubmit = async (e: React.FormEvent) => {
@@ -115,7 +105,10 @@ export function EditarMantenimientoDialog({ mantenimiento, onMantenimientoActual
                 payment_method: paymentMehod || null,
             })
             .eq("id", mantenimiento.id)
-            .select()
+            .select(`
+                id, service_date, description, observation, cost, status, bicycle_id, sales_type, payment_method, sale_id,
+                bicycles (id, brand, model, customers (id, name, phone, email))
+            `)
             .single()
 
         if (recordError) {
@@ -280,54 +273,15 @@ export function EditarMantenimientoDialog({ mantenimiento, onMantenimientoActual
                 </div>
 
                 {/* Columna Derecha: Items */}
-                <div className="flex flex-col border rounded-lg bg-zinc-50/50">
-                    <div className="p-3 border-b bg-white flex items-center justify-between">
-                        <Label className="font-bold">Repuestos y Servicios</Label>
-                        <Button type="button" onClick={addItem} variant="outline" size="sm" className="h-8 text-xs">
-                            + Agregar Ítem
-                        </Button>
-                    </div>
-                    
-                    <div className="p-4 flex-1 overflow-y-auto max-h-100">
-                        {items.length === 0 ? (
-                            <div className="text-center py-10 border-2 border-dashed rounded-lg bg-white/50">
-                                <p className="text-xs text-muted-foreground">No hay repuestos o servicios agregados.</p>
-                            </div>
-                        ) : (
-                            <div className="space-y-3">
-                                {items.map((item, index) => (
-                                    <div key={index} className="bg-white p-3 rounded-lg border shadow-sm space-y-2">
-                                        <div className="flex gap-2 items-end">
-                                            <div className="flex-1 min-w-0">
-                                                <ProductSelect
-                                                    value={item.product_id || null}
-                                                    onChange={(id, product) => updateItem(index, "product_id", id, product)}
-                                                />
-                                            </div>
-                                            <Button type="button" variant="ghost" size="sm" onClick={() => removeItem(index)} className="h-8 w-8 p-0 text-red-500">
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                        <div className="grid grid-cols-3 gap-2">
-                                            <div>
-                                                <Label className="text-[10px] uppercase text-zinc-400 font-bold">Cant.</Label>
-                                                <Input type="number" value={item.quantity} onChange={e => updateItem(index, "quantity", e.target.value)} className="h-8 text-xs" />
-                                            </div>
-                                            <div>
-                                                <Label className="text-[10px] uppercase text-zinc-400 font-bold">Precio</Label>
-                                                <Input type="number" step="0.01" value={item.unit_price} onChange={e => updateItem(index, "unit_price", e.target.value)} className="h-8 text-xs" />
-                                            </div>
-                                            <div className="flex flex-col justify-end">
-                                                <div className="h-8 flex items-center font-bold text-xs">
-                                                    ${(item.quantity * item.unit_price).toFixed(2)}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
+                <div>
+                    <FormularioItemProducto
+                        items={items}
+                        onChange={setItems}
+                        titulo="Repuestos y Servicios"
+                        etiquetaPrecio="Precio"
+                        crearItemVacio={crearItemVacio}
+                        alSeleccionarProducto={alSeleccionarProducto}
+                    />
                 </div>
             </div>
         </FormDialog>

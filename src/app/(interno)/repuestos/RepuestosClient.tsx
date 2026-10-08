@@ -8,8 +8,8 @@ import { SearchBar } from "@/componentes/ui/SearchBar"
 import { useSyncState } from "@/hooks/useSyncState"
 import { useSearch } from "@/hooks/useSearch"
 import { useRouter } from "next/navigation"
-import { EditarRepuestosDialog } from "@/componentes/repuestos/EditarRepuestos"
-import { AgregarRepuesto } from "@/componentes/repuestos/AgregarRepuesto"
+import { EditarRepuestosDialog } from "@/componentes/(interno)/repuestos/EditarRepuestos"
+import { AgregarRepuesto } from "@/componentes/(interno)/repuestos/AgregarRepuesto"
 import { cn } from "@/lib/utils"
 
 export type ProductItem = {

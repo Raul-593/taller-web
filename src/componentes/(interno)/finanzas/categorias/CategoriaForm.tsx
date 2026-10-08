@@ -4,7 +4,7 @@
 import React, { useState, useEffect, useMemo } from "react"
 import { Input } from "@/componentes/ui/input"
 import { Label } from "@/componentes/ui/label"
-import { FormDialog } from "@/componentes/FormDialog"
+import { FormDialog } from "@/componentes/(interno)/FormDialog"
 import { category_types } from "@/lib/finanzas/categorias"
 import type { Category, CategoryType } from "@/lib/finanzas/types"
 

@@ -8,6 +8,7 @@ import { Label } from "@/componentes/ui/label"
 import { getStatusClasses } from "@/utils/status-colors"
 import { calcularSaldoDeuda } from "@/lib/finanzas/deudas"
 import { RegistrarAbonoDeuda } from "./RegistrarAbonoDeuda"
+import { TablaDetalleFinanciero } from "@/componentes/(interno)/finanzas/TablaDetalleFinanciero"
 
 type Props = {
     deudaId: string
@@ -115,26 +116,18 @@ export function VistaDeuda({ deudaId, accounts, categorias, isOpen, onOpenChange
                                     </section>
                                 )}
 
-                                <section>
-                                    <div className="flex items-center justify-between mb-2">
-                                        <h3 className="text-sm font-bold text-zinc-400 uppercase tracking-tight">Historial de Pagos</h3>
-                                        {deuda.status === "pendiente" && (
-                                            <Button size="sm" onClick={() => setMostrarAbono(true)}>Registrar Pago</Button>
-                                        )}
-                                    </div>
-                                    {pagos.length === 0 ? (
-                                        <p className="text-sm text-muted-foreground italic">Sin pagos registrados todavía.</p>
-                                    ) : (
-                                        <div className="border rounded-lg divide-y">
-                                            {pagos.map((p) => (
-                                                <div key={p.id} className="flex justify-between p-2 text-sm">
-                                                    <span>{p.movement_date} — {p.accounts?.name || "—"}</span>
-                                                    <span className="font-medium text-green-700">+{formatCurrency(Number(p.amount))}</span>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    )}
-                                </section>
+                                <TablaDetalleFinanciero
+                                    titulo="Historial de Pagos"
+                                    movimientos={pagos.map((p) => ({
+                                        id: p.id,
+                                        descripcion: `${p.movement_date} — ${p.accounts?.name || "—"}`,
+                                        monto: Number(p.amount),
+                                        tono: "verde" as const,
+                                    }))}
+                                    mostrarBotonAgregar={deuda.status === "pendiente"}
+                                    etiquetaAgregar="Registrar Pago"
+                                    onAgregar={() => setMostrarAbono(true)}
+                                />
                             </div>
 
                             <DialogFooter className="p-6 border-t bg-zinc-50/50">

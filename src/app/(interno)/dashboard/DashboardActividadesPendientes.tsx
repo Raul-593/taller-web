@@ -1,5 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/componentes/ui/cards"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/componentes/ui/table"
+import { EstadoVacio } from "@/componentes/ui/EstadoVacio"
+import { TarjetaKPI } from "@/componentes/ui/TarjetaKPI"
 
 type Mantenimiento = {
     id: string
@@ -17,23 +19,11 @@ type Mantenimiento = {
 
 export function DashboardActividadesSummary({ total }: { total: number }) {
     return (
-        <Card className="flex flex-col justify-center">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <div className="space-y-1">
-                    <CardTitle className="text-base font-semibold">
-                        Actividades Pendientes
-                    </CardTitle>
-                    <CardDescription>
-                        Mantenimientos en curso
-                    </CardDescription>
-                </div>
-            </CardHeader>
-            <CardContent>
-                <div>
-                    <span className="text-2xl font-bold">{total}</span>
-                </div>
-            </CardContent>
-        </Card>
+        <TarjetaKPI
+            titulo="Actividades Pendientes"
+            descripcion="Mantenimientos en curso"
+            valor={total}
+        />
     )
 }
 
@@ -47,7 +37,7 @@ export function DashboardActividadesTable({ activities }: { activities: Mantenim
             </CardHeader>
             <CardContent className="overflow-x-auto max-h-[400px] overflow-y-auto">
                 {(activities?.length || 0) === 0 ? (
-                    <p className="text-muted-foreground text-sm mt-2">No hay mantenimientos pendientes.</p>
+                    <EstadoVacio mensaje="No hay mantenimientos pendientes." />
                 ) : (
                     <Table>
                         <TableHeader>

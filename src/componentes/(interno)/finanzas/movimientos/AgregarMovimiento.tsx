@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react"
 import { Input } from "@/componentes/ui/input"
 import { Label } from "@/componentes/ui/label"
-import { FormDialog } from "@/componentes/FormDialog"
+import { FormDialog } from "@/componentes/(interno)/FormDialog"
 import { createClient } from "@/utils/supabase/clients"
 import { toast } from "sonner"
 import { getSelectableCategories } from "@/lib/finanzas/categorias"
