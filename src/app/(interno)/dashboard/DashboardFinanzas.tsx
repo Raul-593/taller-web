@@ -1,8 +1,14 @@
 "use client"
 
+<<<<<<< HEAD
 import { DateFilter } from "@/componentes/ui/DateFilter"
 import { useSyncState } from "@/hooks/useSyncState"
 import { TarjetaKPI } from "@/componentes/ui/TarjetaKPI"
+=======
+import { Card, CardContent, CardHeader, CardTitle } from "@/componentes/ui/cards"
+import { DateFilter } from "@/componentes/ui/DateFilter"
+import { useSyncState } from "@/hooks/useSyncState"
+>>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
 
 export function DashboardFinanzas({ sales: initialSales, purchases: initialPurchases, currentMonth, currentYear }: { sales: any[], purchases: any[], currentMonth?: string, currentYear?: string }) {
     const [sales] = useSyncState(initialSales || [])
@@ -41,9 +47,57 @@ export function DashboardFinanzas({ sales: initialSales, purchases: initialPurch
                 <DateFilter currentMonth={currentMonth} currentYear={currentYear} size="xs" />
             </div>
 
+<<<<<<< HEAD
             <TarjetaKPI titulo="Ingresos" valor={formattedIncome} color="green" />
             <TarjetaKPI titulo="Gastos" valor={formattedExpenses} color="red" />
             <TarjetaKPI titulo="Saldo Neto" valor={formattedNetBalance} />
+=======
+            {/* Ingresos */}
+            <Card className="flex flex-col justify-center">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <div className="space-y-1">
+                        <CardTitle className="text-base font-bold">
+                            Ingresos
+                        </CardTitle>
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <div>
+                        <span className="text-2xl font-semibold text-green-500">{formattedIncome}</span>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Card className="flex flex-col justify-center">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <div className="space-y-1">
+                        <CardTitle className="text-base font-bold">
+                            Gastos
+                        </CardTitle>
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <div>
+                        <span className="text-2xl font-semibold text-red-500">{formattedExpenses}</span>
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Card className="flex flex-col justify-center">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <div className="space-y-1">
+                        <CardTitle className="text-base font-bold">
+                            Saldo Neto
+                        </CardTitle>
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <div>
+                        <span className="text-2xl font-semibold">{formattedNetBalance}</span>
+                    </div>
+                </CardContent>
+            </Card>
+>>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
         </>
     )
 }
