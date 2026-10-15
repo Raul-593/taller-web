@@ -31,14 +31,9 @@ Memoria del proyecto entre sesiones. Máximo 50 líneas: resume o elimina lo que
 - Los badges de estado con `getStatusClasses` (deudas, nota-crédito, movimientos) se conservan tal cual; `<BadgeEstado>` solo cubre activo/inactivo.
 
 ## Aprendizaje y errores a evitar
-- El error de ESLint `eslint-config-next/core-web-vitals` es preexistente y no afecta al build.
-- `updateItem` varía por caso (gastos usan `cost`, mantenimientos usan `price` + `item_type`); por eso el componente de ítems expone `alSeleccionarProducto` y `crearItemVacio`.
-- Sincronizar el estado local `setMantenimientos` en los callbacks de edición para reflejar cambios (como tipo de venta o método de pago) al instante sin esperar o forzar recarga de página.
-
-## Componentes creados (Fase 3)
-- `<FiltroEstadoTabs>`: pestañas de filtro por estado con conteos opcionales; usado en deudas, nota-crédito y mantenimientos.
-- `<GraficoBarrasFinanzas>`: barras de ingresos vs gastos con estado vacío; el padre define la altura; `conLeyenda` solo en finanzas (sin `Tooltip`, como antes).
-- Descartados: `<DialogoConfirmacion>` (`FormDialog` ya cubre esos diálogos) y `<FormularioBasico>` (campos heterogéneos; sería sobre-arquitectura).
+- La tabla `customers` no tiene columna `email` (genera error 42703 al consultarla con PostgREST).
+- Mantener limpios los archivos huérfanos al reorganizar rutas a `(interno)` (ej. `src/componentes/shell.tsx`).
+- Sincronizar el estado local `setMantenimientos` en los callbacks de edición para reflejar cambios al instante.
 
 ## Próximos pasos
 - Fase 4 (baja prioridad): `<BotonEditar>`, `<HeaderPagina>`.
