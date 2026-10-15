@@ -21,6 +21,7 @@ import { PageHeader } from "@/componentes/ui/PageHeader";
 import { useSyncState } from "@/hooks/useSyncState";
 import { AgregarTransferencia } from "@/componentes/(interno)/finanzas/transferencias/AgregarTransferencia";
 
+
 export function TransferenciasClient({
   transferencias: initial,
   accounts,
