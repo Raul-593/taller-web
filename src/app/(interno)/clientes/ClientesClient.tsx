@@ -1,6 +1,12 @@
 "use client"
 
 import { useRouter } from "next/navigation"
+<<<<<<< HEAD
+import { AgregarClienteDialog } from "@/componentes/(interno)/clientes/AgregarClienteDialog"
+import { EditarClienteDialog } from "@/componentes/(interno)/clientes/EditarClienteDialog"
+import { PageHeader } from "@/componentes/ui/PageHeader"
+import { TablaConBusqueda } from "@/componentes/ui/TablaConBusqueda"
+=======
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/componentes/ui/cards"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/componentes/ui/table"
 import { AgregarClienteDialog } from "@/componentes/clientes/AgregarClienteDialog"
@@ -9,10 +15,16 @@ import { PageHeader } from "@/componentes/ui/PageHeader"
 import { SearchBar } from "@/componentes/ui/SearchBar"
 import { useSyncState } from "@/hooks/useSyncState"
 import { useSearch } from "@/hooks/useSearch"
+>>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
 
 
 export function ClientesClient({ clientes: initial }: { clientes: any[] }) {
   const router = useRouter()
+<<<<<<< HEAD
+
+  return (
+    <div className="flex flex-col gap-6">
+=======
   const [clientes] = useSyncState(initial)
   
   const { searchTerm, setSearchTerm, filteredItems } = useSearch(clientes, (c, term) => 
@@ -21,10 +33,41 @@ export function ClientesClient({ clientes: initial }: { clientes: any[] }) {
 
   return (
     <div className="flex flex-col gap-6">      
+>>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
       <PageHeader>
         <AgregarClienteDialog onClienteAgregado={() => router.refresh()} />
       </PageHeader>
 
+<<<<<<< HEAD
+      <TablaConBusqueda
+        titulo="Clientes"
+        descripcion="Gestiona y busca tus clientes registrados"
+        items={initial}
+        columns={[
+          { key: "name", header: "Nombre", className: "w-[30%]", render: (c) => <span className="font-medium">{c.name}</span> },
+          { key: "phone", header: "Teléfono", className: "w-[25%]", render: (c) => c.phone || "—" },
+          { key: "address", header: "Dirección", className: "w-[35%]", render: (c) => c.address || "—" },
+          {
+            key: "actions",
+            header: "Acciones",
+            className: "w-[10%]",
+            render: (c) => (
+              <EditarClienteDialog
+                cliente={c}
+                onClienteActualizado={() => router.refresh()}
+              />
+            ),
+          },
+        ]}
+        searchKeys={["name"]}
+        placeholderBusqueda="Buscar cliente por nombre..."
+        mensajeVacio="No hay clientes registrados."
+        claseTabla="table-fixed"
+      />
+    </div>
+  )
+}
+=======
       <Card className="md:col-span-4 overflow-hidden">
         <CardHeader className="pb-4 flex flex-col sm:flex-row sm:items-center justify-start gap-6">
           <div className="flex flex-col gap-1">
@@ -74,3 +117,4 @@ export function ClientesClient({ clientes: initial }: { clientes: any[] }) {
     </div>
   )
 }
+>>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625

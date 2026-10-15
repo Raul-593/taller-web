@@ -1,5 +1,13 @@
 "use client"
 
+<<<<<<< HEAD
+import { PageHeader } from "@/componentes/ui/PageHeader"
+import { TablaConBusqueda } from "@/componentes/ui/TablaConBusqueda"
+import { BadgeEstado } from "@/componentes/ui/BadgeEstado"
+import { useRouter } from "next/navigation"
+import { AgregarProvedor } from "@/componentes/(interno)/provedores/AgregarProvedor"
+import { EditarProvedorDialog } from "@/componentes/(interno)/provedores/EditarProvedor"
+=======
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/componentes/ui/cards"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/componentes/ui/table"
 import { PageHeader } from "@/componentes/ui/PageHeader"
@@ -9,14 +17,18 @@ import { useSearch } from "@/hooks/useSearch"
 import { useRouter } from "next/navigation"
 import { AgregarProvedor } from "@/componentes/provedores/AgregarProvedor"
 import { EditarProvedorDialog } from "@/componentes/provedores/EditarProvedor"
+>>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
 
 
 export function ProvedoresClient({ provedores: initial}: { provedores: any[]}){
     const router = useRouter()
+<<<<<<< HEAD
+=======
     const [provedores] = useSyncState(initial)
     const { searchTerm, setSearchTerm, filteredItems } = useSearch(provedores, (p, term) => 
         p.name.toLowerCase().includes(term.toLowerCase())
     )
+>>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
 
     return (
         <div className="flex flex-col gap-6">
@@ -24,6 +36,36 @@ export function ProvedoresClient({ provedores: initial}: { provedores: any[]}){
                 <AgregarProvedor onProvedorNuevo={() => router.refresh()} />
             </PageHeader>
 
+<<<<<<< HEAD
+            <TablaConBusqueda
+                titulo="Proveedores"
+                descripcion="Busca los proveedores disponibles"
+                items={initial}
+                columns={[
+                    { key: "name", header: "Nombre", className: "w-[25%]", render: (p) => <span className="font-medium">{p.name}</span> },
+                    { key: "phone", header: "Teléfono", className: "w-[20%]", render: (p) => p.phone || "—" },
+                    { key: "address", header: "Dirección", className: "w-[30%]", render: (p) => p.address || "—" },
+                    {
+                        key: "estado",
+                        header: "Estado",
+                        className: "w-[15%]",
+                        render: (p) => <BadgeEstado estado={p.active ? "activo" : "inactivo"} />,
+                    },
+                    {
+                        key: "actions",
+                        header: "",
+                        className: "w-[10%]",
+                        render: (p) => (
+                            <EditarProvedorDialog provedores={p} onProvedoresActualizado={() => router.refresh()} />
+                        ),
+                    },
+                ]}
+                searchKeys={["name"]}
+                placeholderBusqueda="Buscar proveedor por nombre..."
+                mensajeVacio="No hay proveedores registrados"
+                claseTabla="min-w-[650px] w-full"
+            />
+=======
             <Card className="md:col-span-4 overflow-hidden">
                 <CardHeader className="pb-4 flex flex-col sm:flex-row sm:items-center justify-start gap-6">
                     <div className="flex flex-col gap-1">
@@ -73,6 +115,7 @@ export function ProvedoresClient({ provedores: initial}: { provedores: any[]}){
                     )}
                 </CardContent>
             </Card>
+>>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
         </div>
     )
 }

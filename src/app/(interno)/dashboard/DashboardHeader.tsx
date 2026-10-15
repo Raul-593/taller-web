@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { AgregarMantenimiento } from "@/componentes/mantenimiento/AgregarMantenimiento"
+import { AgregarMantenimiento } from "@/componentes/(interno)/mantenimientos/AgregarMantenimiento"
 
 export function DashboardHeader() {
     const router = useRouter()
