@@ -15,8 +15,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/componentes/ui/table"
 import { PageHeader } from "@/componentes/ui/PageHeader"
 import { useSyncState } from "@/hooks/useSyncState"
-import { AgregarDeuda } from "@/componentes/finanzas/deuda/AgregarDeuda"
-import { VistaDeuda } from "@/componentes/finanzas/deuda/VistaDeuda"
+import { AgregarDeuda } from "@/componentes/(interno)/finanzas/deuda/AgregarDeuda"
+import { VistaDeuda } from "@/componentes/(interno)/finanzas/deuda/VistaDeuda"
 import { getStatusClasses } from "@/utils/status-colors"
 >>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
 

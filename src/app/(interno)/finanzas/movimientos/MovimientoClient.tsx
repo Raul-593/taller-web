@@ -16,7 +16,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { PageHeader } from "@/componentes/ui/PageHeader"
 import { DateFilter } from "@/componentes/ui/DateFilter"
 import { useSyncState } from "@/hooks/useSyncState"
-import { AgregarMovimiento } from "@/componentes/finanzas/movimientos/AgregarMovimiento"
+import { AgregarMovimiento } from "@/componentes/(interno)/finanzas/movimientos/AgregarMovimiento"
 import { getCategoryDisplayLabel } from "@/lib/finanzas/categorias"
 import type { Category } from "@/lib/finanzas/types"
 >>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
