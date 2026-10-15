@@ -1,31 +1,18 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-<<<<<<< HEAD
-import { PageHeader } from "@/componentes/ui/PageHeader"
-import { TablaConBusqueda } from "@/componentes/ui/TablaConBusqueda"
-import { BadgeEstado } from "@/componentes/ui/BadgeEstado"
-import { TarjetaKPI } from "@/componentes/ui/TarjetaKPI"
-import { AgregarCuenta } from "@/componentes/(interno)/finanzas/cuentas/AgregarCuenta"
-import { EditarCuentaDialog } from "@/componentes/(interno)/finanzas/cuentas/EditarCuenta"
-=======
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/componentes/ui/cards"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/componentes/ui/table"
 import { PageHeader } from "@/componentes/ui/PageHeader"
 import { useSyncState } from "@/hooks/useSyncState"
-import { AgregarCuenta } from "@/componentes/finanzas/cuentas/AgregarCuenta"
-import { EditarCuentaDialog } from "@/componentes/finanzas/cuentas/EditarCuenta"
->>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
+import { AgregarCuenta } from "@/componentes/(interno)/finanzas/cuentas/AgregarCuenta"
+import { EditarCuentaDialog } from "@/componentes/(interno)/finanzas/cuentas/EditarCuenta"
 import { getAccountTypeLabel } from "@/lib/finanzas/labels"
 import type { AccountWithBalance } from "@/lib/finanzas/balance"
 
 export function CuentasClient({ cuentas: initial }: { cuentas: AccountWithBalance[] }) {
     const router = useRouter()
-<<<<<<< HEAD
-    const cuentas = initial
-=======
     const [cuentas] = useSyncState(initial)
->>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
 
     const formatCurrency = (value: number) =>
         new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(value)
@@ -46,64 +33,6 @@ export function CuentasClient({ cuentas: initial }: { cuentas: AccountWithBalanc
             </PageHeader>
 
             <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
-<<<<<<< HEAD
-                <TarjetaKPI
-                    titulo="Saldo Total"
-                    descripcion="Todas las cuentas activas"
-                    valor={formatCurrency(saldoTotal)}
-                />
-                <TarjetaKPI
-                    titulo="Efectivo"
-                    descripcion="Caja chica y similares"
-                    valor={formatCurrency(saldoEfectivo)}
-                    color="green"
-                />
-                <TarjetaKPI
-                    titulo="Bancos"
-                    descripcion="Cuentas bancarias"
-                    valor={formatCurrency(saldoBancos)}
-                    color="blue"
-                />
-            </div>
-
-            <TablaConBusqueda
-                titulo="Cuentas"
-                descripcion="Caja chica, bancos y otros medios donde entra o sale dinero del taller"
-                items={cuentas}
-                columns={[
-                    { key: "name", header: "Nombre", className: "w-[30%]", render: (c) => <span className="font-medium">{c.name}</span> },
-                    { key: "type", header: "Tipo", className: "w-[20%]", render: (c) => getAccountTypeLabel(c.type) },
-                    {
-                        key: "balance",
-                        header: "Saldo",
-                        className: "w-[20%]",
-                        render: (c) => (
-                            <span className={`font-bold ${c.balance < 0 ? "text-red-600" : ""}`}>
-                                {formatCurrency(c.balance)}
-                            </span>
-                        ),
-                    },
-                    {
-                        key: "estado",
-                        header: "Estado",
-                        className: "w-[15%]",
-                        render: (c) => (
-                            <BadgeEstado estado={c.is_active ? "activo" : "inactivo"} label={c.is_active ? "Activa" : "Inactiva"} />
-                        ),
-                    },
-                    {
-                        key: "actions",
-                        header: "",
-                        className: "w-[15%]",
-                        render: (c) => (
-                            <EditarCuentaDialog cuenta={c} onCuentaActualizada={() => router.refresh()} />
-                        ),
-                    },
-                ]}
-                mensajeVacio="No hay cuentas registradas."
-                claseTabla="min-w-[650px] w-full"
-            />
-=======
                 <Card className="flex flex-col justify-center">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <div className="space-y-1">
@@ -189,7 +118,6 @@ export function CuentasClient({ cuentas: initial }: { cuentas: AccountWithBalanc
                     )}
                 </CardContent>
             </Card>
->>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
         </div>
     )
 }

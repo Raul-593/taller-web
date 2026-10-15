@@ -2,23 +2,13 @@
 
 import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
-<<<<<<< HEAD
-import { PageHeader } from "@/componentes/ui/PageHeader"
-import { TablaConBusqueda } from "@/componentes/ui/TablaConBusqueda"
-import { FiltroEstadoTabs } from "@/componentes/ui/FiltroEstadoTabs"
-import { AgregarDeuda } from "@/componentes/(interno)/finanzas/deuda/AgregarDeuda"
-import { VistaDeuda } from "@/componentes/(interno)/finanzas/deuda/VistaDeuda"
-import { getStatusClasses } from "@/utils/status-colors"
-import { TarjetaKPI } from "@/componentes/ui/TarjetaKPI"
-=======
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/componentes/ui/cards"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/componentes/ui/table"
 import { PageHeader } from "@/componentes/ui/PageHeader"
 import { useSyncState } from "@/hooks/useSyncState"
-import { AgregarDeuda } from "@/componentes/finanzas/deuda/AgregarDeuda"
-import { VistaDeuda } from "@/componentes/finanzas/deuda/VistaDeuda"
+import { AgregarDeuda } from "@/componentes/(interno)/finanzas/deuda/AgregarDeuda"
+import { VistaDeuda } from "@/componentes/(interno)/finanzas/deuda/VistaDeuda"
 import { getStatusClasses } from "@/utils/status-colors"
->>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
 
 const FILTROS = [
     { value: "pendiente", label: "Pendiente" },
@@ -34,11 +24,7 @@ export function DeudasClient({
     saldos: Record<string, { totalPagado: number; saldoPendiente: number }>
 }) {
     const router = useRouter()
-<<<<<<< HEAD
-    const deudas = initial
-=======
     const [deudas] = useSyncState(initial)
->>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
     const [filtro, setFiltro] = useState("pendiente")
     const [deudaVistaId, setDeudaVistaId] = useState<string | null>(null)
 
@@ -59,61 +45,6 @@ export function DeudasClient({
                 <AgregarDeuda onDeudaAgregada={() => router.refresh()} />
             </PageHeader>
 
-<<<<<<< HEAD
-            <TarjetaKPI
-                titulo="Total Por Pagar"
-                descripcion="Deudas pendientes"
-                valor={formatCurrency(totalPendiente)}
-                color="amber"
-            />
-
-            <FiltroEstadoTabs opciones={FILTROS} valor={filtro} onChange={setFiltro} />
-
-            <TablaConBusqueda
-                titulo="Deudas"
-                descripcion="Préstamos y compras pendientes de pago — clic en una fila para ver el detalle"
-                items={filtradas}
-                columns={[
-                    { key: "acreedor", header: "Acreedor", className: "w-[18%]", render: (d) => <span className="font-medium">{d.creditor}</span> },
-                    {
-                        key: "descripcion",
-                        header: "Descripción",
-                        className: "w-[24%]",
-                        render: (d) => (
-                            <span className="text-muted-foreground">
-                                {d.description || (d.purchases ? `Compra a ${d.purchases.suppliers?.name || "proveedor"}` : "—")}
-                            </span>
-                        ),
-                    },
-                    { key: "total", header: "Total", className: "w-[13%]", render: (d) => <span className="font-bold">{formatCurrency(Number(d.total_amount))}</span> },
-                    { key: "pagado", header: "Pagado", className: "w-[13%]", render: (d) => <span className="text-green-700">{formatCurrency(saldos[d.id]?.totalPagado || 0)}</span> },
-                    {
-                        key: "saldo",
-                        header: "Saldo",
-                        className: "w-[13%]",
-                        render: (d) => (
-                            <span className={saldos[d.id]?.saldoPendiente ? "text-amber-700 font-bold" : "text-muted-foreground"}>
-                                {formatCurrency(saldos[d.id]?.saldoPendiente || 0)}
-                            </span>
-                        ),
-                    },
-                    { key: "vencimiento", header: "Vencimiento", className: "w-[12%]", render: (d) => d.due_date || "—" },
-                    {
-                        key: "estado",
-                        header: "Estado",
-                        className: "w-[7%]",
-                        render: (d) => (
-                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-tighter ${getStatusClasses(d.status)}`}>
-                                {d.status}
-                            </span>
-                        ),
-                    },
-                ]}
-                mensajeVacio="No hay deudas en esta categoría."
-                alClicFila={(d) => setDeudaVistaId(d.id)}
-                claseTabla="min-w-[850px] w-full"
-            />
-=======
             <Card className="flex flex-col justify-center max-w-sm">
                 <CardHeader className="pb-2">
                     <CardTitle>Total Por Pagar</CardTitle>
@@ -189,7 +120,6 @@ export function DeudasClient({
                     )}
                 </CardContent>
             </Card>
->>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
 
             {deudaVistaId && (
                 <VistaDeuda

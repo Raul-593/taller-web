@@ -2,20 +2,12 @@
 
 import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
-<<<<<<< HEAD
-import { PageHeader } from "@/componentes/ui/PageHeader"
-import { TablaConBusqueda } from "@/componentes/ui/TablaConBusqueda"
-import { FiltroEstadoTabs } from "@/componentes/ui/FiltroEstadoTabs"
-import { AgregarNotaCredito } from "@/componentes/(interno)/finanzas/nota-credito/AgregarNotaCredito"
-import { VistaNotaCredito } from "@/componentes/(interno)/finanzas/nota-credito/VistaNotaCredito"
-=======
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/componentes/ui/cards"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/componentes/ui/table"
 import { PageHeader } from "@/componentes/ui/PageHeader"
 import { useSyncState } from "@/hooks/useSyncState"
-import { AgregarNotaCredito } from "@/componentes/finanzas/nota-credito/AgregarNotaCredito"
-import { VistaNotaCredito } from "@/componentes/finanzas/nota-credito/VistaNotaCredito"
->>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
+import { AgregarNotaCredito } from "@/componentes/(interno)/finanzas/nota-credito/AgregarNotaCredito"
+import { VistaNotaCredito } from "@/componentes/(interno)/finanzas/nota-credito/VistaNotaCredito"
 import { getStatusClasses } from "@/utils/status-colors"
 import { getCreditNoteTypeLabel } from "@/lib/finanzas/labels"
 
@@ -28,11 +20,7 @@ const filtros = [
 
 export function NotasCreditoClient({ notas: initial }: { notas: any[] }) {
     const router = useRouter()
-<<<<<<< HEAD
-    const notas = initial
-=======
     const [notas] = useSyncState(initial)
->>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
     const [filtro, setFiltro] = useState("pendiente")
     const [notaVistaId, setNotaVistaId] = useState<string | null>(null)
 
@@ -49,40 +37,6 @@ export function NotasCreditoClient({ notas: initial }: { notas: any[] }) {
                 <AgregarNotaCredito onNotaAgregada={() => router.refresh()} />
             </PageHeader>
 
-<<<<<<< HEAD
-            <FiltroEstadoTabs opciones={filtros} valor={filtro} onChange={setFiltro} />
-
-            <TablaConBusqueda
-                titulo="Notas de Crédito"
-                descripcion="Devoluciones y descuentos — clic en una fila para ver el detalle"
-                items={filtradas}
-                columns={[
-                    { key: "fecha", header: "Fecha", className: "w-[15%]", render: (n) => n.credit_date },
-                    { key: "cliente", header: "Cliente", className: "w-[20%]", render: (n) => <span className="font-medium">{n.customers?.name || "—"}</span> },
-                    { key: "tipo", header: "Tipo", className: "w-[12%]", render: (n) => <span className="capitalize">{getCreditNoteTypeLabel(n.credit_type)}</span> },
-                    {
-                        key: "razon",
-                        header: "Razón",
-                        className: "w-[28%]",
-                        render: (n) => <span className="text-muted-foreground">{n.reason}</span>,
-                    },
-                    { key: "total", header: "Total", className: "w-[13%]", render: (n) => <span className="font-bold">{formatCurrency(Number(n.total))}</span> },
-                    {
-                        key: "estado",
-                        header: "Estado",
-                        className: "w-[12%]",
-                        render: (n) => (
-                            <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-tighter ${getStatusClasses(n.status)}`}>
-                                {n.status}
-                            </span>
-                        ),
-                    },
-                ]}
-                mensajeVacio="No hay notas de crédito en esta categoría."
-                alClicFila={(n) => setNotaVistaId(n.id)}
-                claseTabla="min-w-[800px] w-full"
-            />
-=======
             <div className="flex flex-wrap gap-2">
                 {filtros.map((f) => (
                     <button
@@ -139,7 +93,6 @@ export function NotasCreditoClient({ notas: initial }: { notas: any[] }) {
                     )}
                 </CardContent>
             </Card>
->>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
 
             {notaVistaId && (
                 <VistaNotaCredito
