@@ -3,7 +3,6 @@
 import Sidebar from "@/componentes/(interno)/sidebar";
 
 export default function Shell({ children }: { children: React.ReactNode }) {
-
   return (
     <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
       <Sidebar />

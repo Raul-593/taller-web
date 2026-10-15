@@ -16,21 +16,15 @@ export function Hero() {
       <div className="container relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-24 text-center flex flex-col items-center">
         {/* Badge */}
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 border border-primary/30 text-primary-foreground text-xs sm:text-sm font-medium mb-6 backdrop-blur-md">
-<<<<<<< HEAD
           <Wrench className="h-4 w-4 text-primary-foreground" />
-=======
           <Wrench className="h-4 w-4 text-primary" />
->>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
           <span>Taller Especializado en Ciclismo</span>
         </div>
 
         {/* Headline */}
         <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight max-w-4xl mb-6">
-<<<<<<< HEAD
           593 Cycling Studio
-=======
           Pasión y Precisión en Cada <span className="text-primary">Km recorrigo</span>
->>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
         </h1>
 
         {/* Subtitle */}

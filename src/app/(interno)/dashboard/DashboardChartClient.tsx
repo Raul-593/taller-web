@@ -1,11 +1,7 @@
 "use client"
 
-<<<<<<< HEAD
-import { GraficoBarrasFinanzas } from "@/componentes/ui/GraficoBarrasFinanzas"
-=======
 import { useMemo } from "react"
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts"
->>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
 
 type Props = {
     totalSales: number
@@ -33,15 +29,6 @@ export function DashboardChartClient({ totalSales, totalPurchases, month, year }
 
     const monthLabel = month ? months.find(m => m.value === month)?.label : 'Resumen'
 
-<<<<<<< HEAD
-    return (
-        <div className="h-[300px] w-full pt-4">
-            <GraficoBarrasFinanzas
-                ingresos={totalSales}
-                gastos={totalPurchases}
-                etiqueta={`${monthLabel} ${year || ''}`}
-            />
-=======
     const chartData = useMemo(() => [
         {
             name: `${monthLabel} ${year || ''}`,
@@ -68,7 +55,6 @@ export function DashboardChartClient({ totalSales, totalPurchases, month, year }
                     </BarChart>
                 </ResponsiveContainer>
             )}
->>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
         </div>
     )
 }

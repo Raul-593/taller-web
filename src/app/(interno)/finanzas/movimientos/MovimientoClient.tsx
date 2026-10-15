@@ -2,15 +2,6 @@
 
 import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
-<<<<<<< HEAD
-import { PageHeader } from "@/componentes/ui/PageHeader"
-import { DateFilter } from "@/componentes/ui/DateFilter"
-import { TablaConBusqueda } from "@/componentes/ui/TablaConBusqueda"
-import { AgregarMovimiento } from "@/componentes/(interno)/finanzas/movimientos/AgregarMovimiento"
-import { getCategoryDisplayLabel } from "@/lib/finanzas/categorias"
-import type { Category } from "@/lib/finanzas/types"
-import { TarjetaKPI } from "@/componentes/ui/TarjetaKPI"
-=======
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/componentes/ui/cards"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/componentes/ui/table"
 import { PageHeader } from "@/componentes/ui/PageHeader"
@@ -19,7 +10,6 @@ import { useSyncState } from "@/hooks/useSyncState"
 import { AgregarMovimiento } from "@/componentes/(interno)/finanzas/movimientos/AgregarMovimiento"
 import { getCategoryDisplayLabel } from "@/lib/finanzas/categorias"
 import type { Category } from "@/lib/finanzas/types"
->>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
 
 export function MovimientosClient({
     movimientos: initial,
@@ -36,11 +26,7 @@ export function MovimientosClient({
 }) {
     console.log("accounts recibidas:", accounts)
     const router = useRouter()
-<<<<<<< HEAD
-    const movimientos = initial
-=======
     const [movimientos] = useSyncState(initial)
->>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
     const [filtroCuenta, setFiltroCuenta] = useState("Todas")
     const [filtroCategoria, setFiltroCategoria] = useState("Todas")
 
@@ -79,20 +65,6 @@ export function MovimientosClient({
             </PageHeader>
 
             <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
-<<<<<<< HEAD
-                <TarjetaKPI
-                    titulo="Ingresos del Periodo"
-                    descripcion="Movimientos filtrados"
-                    valor={formatCurrency(totalIngresos)}
-                    color="green"
-                />
-                <TarjetaKPI
-                    titulo="Gastos del Periodo"
-                    descripcion="Movimientos filtrados"
-                    valor={formatCurrency(totalGastos)}
-                    color="red"
-                />
-=======
                 <Card className="flex flex-col justify-center">
                     <CardHeader className="pb-2">
                         <CardTitle>Ingresos del Periodo</CardTitle>
@@ -111,7 +83,6 @@ export function MovimientosClient({
                         <div className="text-2xl font-bold text-red-600">{formatCurrency(totalGastos)}</div>
                     </CardContent>
                 </Card>
->>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
             </div>
 
             <div className="flex flex-wrap gap-3">
@@ -138,61 +109,6 @@ export function MovimientosClient({
                 </select>
             </div>
 
-<<<<<<< HEAD
-            <TablaConBusqueda
-                titulo="Movimientos"
-                descripcion="Libro general de ingresos y gastos"
-                items={filtrados}
-                columns={[
-                    { key: "fecha", header: "Fecha", className: "w-[10%]", render: (m) => m.movement_date },
-                    { key: "cuenta", header: "Cuenta", className: "w-[15%]", render: (m) => m.accounts?.name || "—" },
-                    {
-                        key: "categoria",
-                        header: "Categoría",
-                        className: "w-[20%]",
-                        render: (m) => getCategoryDisplayLabel(m.category_id, categoriasById),
-                    },
-                    {
-                        key: "descripcion",
-                        header: "Descripción",
-                        className: "w-[25%]",
-                        render: (m) => <span className="text-muted-foreground">{m.description || "—"}</span>,
-                    },
-                    {
-                        key: "origen",
-                        header: "Origen",
-                        className: "w-[15%]",
-                        render: (m) => (
-                            m.reference_type ? (
-                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-tighter bg-zinc-100 text-zinc-600 border-zinc-200">
-                                    Automático · {m.reference_type}
-                                </span>
-                            ) : (
-                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-tighter bg-blue-100 text-blue-700 border-blue-200">
-                                    Manual
-                                </span>
-                            )
-                        ),
-                    },
-                    {
-                        key: "monto",
-                        header: "Monto",
-                        className: "w-[15%] text-right",
-                        render: (m) => {
-                            const esIngreso = categoriasById.get(m.category_id)?.category_type === "ingreso"
-                            return (
-                                <div className={`text-right font-bold ${esIngreso ? "text-green-600" : "text-red-600"}`}>
-                                    {esIngreso ? "+" : "-"}{formatCurrency(Number(m.amount))}
-                                </div>
-                            )
-                        },
-                    },
-                ]}
-                mensajeVacio="No hay movimientos en este periodo."
-                claseTabla="min-w-[900px]"
-                claseContenido="max-h-[600px] overflow-y-auto"
-            />
-=======
             <Card className="md:col-span-4 flex flex-col">
                 <CardHeader className="pb-2">
                     <CardTitle className="text-base font-semibold">Movimientos</CardTitle>
@@ -249,7 +165,6 @@ export function MovimientosClient({
                     )}
                 </CardContent>
             </Card>
->>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625
         </div>
     )
 }
