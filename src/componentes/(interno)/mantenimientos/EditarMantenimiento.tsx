@@ -107,7 +107,7 @@ export function EditarMantenimientoDialog({ mantenimiento, onMantenimientoActual
             .eq("id", mantenimiento.id)
             .select(`
                 id, service_date, description, observation, cost, status, bicycle_id, sales_type, payment_method, sale_id,
-                bicycles (id, brand, model, customers (id, name, phone, email))
+                bicycles (id, brand, model, customers (id, name, phone))
             `)
             .single()
 
