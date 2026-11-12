@@ -5,6 +5,7 @@ import { Input } from "@/componentes/ui/input"
 import { Label } from "@/componentes/ui/label"
 import { FormDialog } from "@/componentes/(interno)/FormDialog"
 import { CustomerSelect } from "@/componentes/ui/CustomerSelect"
+import { createClient } from "@/utils/supabase/clients"
 
 type BicicletaData = {
     brand: string
@@ -43,28 +44,86 @@ export function BicicletaForm({
     const [observacion, setObservacion] = useState("")
     const [customerId, setCustomerId] = useState<string | null>(null)
 
+    // Tipos de Bicicletas
+    const TIPOS_BICICLETAS=[
+        { value: "R", label: "Rutera" },
+        { value: "MTB", label: "Montañera" },
+        { value: "RE", label: "Rutera Eléctrica" },
+        { value: "MTBE", label: "Montañera Eléctrica"},
+        { value: "N", label: "Niño"},
+        { value: "B", label: "Básica"},
+        { value: "TRI", label: "Triaclón"},
+    ]
+    const [tipo, setTipo] = useState("")
+    const [numeroSerie, setNumeroSerie] = useState<number | null>(null)
+    const [loadingNumero, setLoadingNumero] = useState(false)
+
+    async function obtenerSiguienteNumero(tipoSeleccionado: string){
+        setLoadingNumero(true)
+        const supabase = createClient()
+
+        const { data, error } = await supabase 
+            .from("bicycles")
+            .select("serial_number")
+            .ilike("serial_number", `${tipoSeleccionado} -%`)
+        
+        if(error){
+            console.error("Error al calcular numero de serie: ", error)
+            setLoadingNumero(false)
+            return
+        }
+
+        let maxNumero = 0
+        data?.forEach((b) => {
+            const partes = b.serial_number?.split(" - ")
+            const n = partes?.[1] ? parseInt(partes[1], 10) : NaN
+            if (!isNaN(n) && n > maxNumero) maxNumero = n
+        })
+
+        setNumeroSerie(maxNumero + 1)
+        setLoadingNumero(false)
+    }
+
     useEffect(() => {
         if (isOpen) {
+            
+            const match = initialData?.serial_number?.match(/^(R|MTB|E) - (\d+)$/)
+            
             if (initialData) {
                 setBrand(initialData.brand || "")
                 setModel(initialData.model || "")
                 setSerialNumber(initialData.serial_number || "")
+                setTipo(match[1])
+                setNumeroSerie(parseInt(match[2], 10))
                 setObservacion(initialData.observacion || "")
                 setCustomerId(initialData.customer_id || null)
             } else {
                 setBrand("")
                 setModel("")
                 setSerialNumber("")
+                setTipo("R")
+                obtenerSiguienteNumero("R")
                 setObservacion("")
                 setCustomerId(null)
             }
         }
     }, [isOpen, initialData])
 
+    useEffect(() => {
+        if(!isOpen) return
+        
+        const match = initialData?.serial_number?.match(/^(R|MTB|E) - (\d+)$/)
+        
+        if (match && match[1] === tipo) return
+        obtenerSiguienteNumero(tipo)
+    
+    },[tipo])
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         e.stopPropagation()
-        await onSubmit({ brand, model, serial_number: serialNumber, observacion, customer_id: customerId })
+        const serialNumberFinal =  numeroSerie ? `${tipo} - ${numeroSerie}` : ""
+        await onSubmit({ brand, model, serial_number: serialNumberFinal, observacion, customer_id: customerId })
     }
 
     return (
@@ -87,10 +146,29 @@ export function BicicletaForm({
                 <Label htmlFor="model">Modelo</Label>
                 <Input id="model" value={model} onChange={e => setModel(e.target.value)} placeholder="Ej. Epic" />
             </div>
-            <div className="grid gap-2">
-                <Label htmlFor="serialNumber">Número de Serie</Label>
-                <Input id="serialNumber" value={serialNumber} onChange={e => setSerialNumber(e.target.value)} placeholder="Ej. SN-123" />
-            </div>
+            <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                    <Label htmlFor="tipo">Tipo de Bicicleta</Label>
+                    <select 
+                        id="tipo" 
+                        value={tipo} 
+                        onChange={e => setTipo(e.target.value)}
+                    >
+                        {TIPOS_BICICLETAS.map(t => (
+                            <option key={t.value} value={t.value}>{t.label}</option>
+                        ))}
+                    </select>
+                </div>
+                <div>
+                    <Label htmlFor="numeroSerie">Numero de Serie</Label>
+                    <Input 
+                        id="numeroSerie" 
+                        value={loadingNumero ? "Calculando...": numeroSerie ? `${tipo} - ${numeroSerie}` : ""} 
+                        disabled 
+                        readOnly
+                    />
+                </div> 
+            </div>   
             <div className="grid gap-2">
                 <Label htmlFor="observacion">Observación</Label>
                 <Input id="observacion" value={observacion} onChange={e => setObservacion(e.target.value)} placeholder="Ej. Rayones en el cuadro" />
