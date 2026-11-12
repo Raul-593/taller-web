@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Bicicleta de montaña, vista lateral</title>
+  <desc id="desc">Ilustración limpia de una bicicleta preparada para añadir puntos interactivos sobre sus componentes.</desc>
+  <defs>
+    <linearGradient id="frame" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#11A8A2"/>
+      <stop offset="1" stop-color="#087973"/>
+    </linearGradient>
+    <linearGradient id="fork" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#2F3C47"/>
+      <stop offset="1" stop-color="#111A22"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="15" stdDeviation="12" flood-color="#102D35" flood-opacity=".16"/>
+    </filter>
+  </defs>
+
+  <!-- sombra suave -->
+  <ellipse cx="805" cy="739" rx="585" ry="28" fill="#102D35" opacity=".12"/>
+
+  <g filter="url(#shadow)">
+    <!-- ruedas -->
+    <g fill="none">
+      <circle cx="435" cy="575" r="218" stroke="#17232C" stroke-width="34"/>
+      <circle cx="1170" cy="575" r="218" stroke="#17232C" stroke-width="34"/>
+      <circle cx="435" cy="575" r="191" stroke="#AAB8BB" stroke-width="5"/>
+      <circle cx="1170" cy="575" r="191" stroke="#AAB8BB" stroke-width="5"/>
+      <g stroke="#B9C8CB" stroke-width="3" opacity=".85">
+        <path d="M435 384v382M244 575h382M300 440l270 270M570 440L300 710M363 397l144 356M507 397L363 753M257 503l356 144M257 647l356-144"/>
+        <path d="M1170 384v382M979 575h382M1035 440l270 270M1305 440l-270 270M1098 397l144 356M1242 397l-144 356M992 503l356 144M992 647l356-144"/>
+      </g>
+      <circle cx="435" cy="575" r="17" fill="#4A5961" stroke="#E5ECEC" stroke-width="6"/>
+      <circle cx="1170" cy="575" r="17" fill="#4A5961" stroke="#E5ECEC" stroke-width="6"/>
+    </g>
+
+    <!-- cuadro -->
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M555 350L755 584L930 330L555 350L735 603L930 330" stroke="url(#frame)" stroke-width="31"/>
+      <path d="M555 350L495 260" stroke="#1A272E" stroke-width="23"/>
+      <path d="M930 330L987 220" stroke="url(#fork)" stroke-width="27"/>
+      <path d="M987 220L1073 218" stroke="#1A272E" stroke-width="19"/>
+      <path d="M1060 198L1128 198" stroke="#1A272E" stroke-width="18"/>
+      <path d="M488 251L570 251" stroke="#1A272E" stroke-width="24"/>
+      <path d="M490 263L487 306" stroke="#1A272E" stroke-width="13"/>
+      <path d="M930 330L1160 575" stroke="url(#fork)" stroke-width="27"/>
+      <path d="M960 320L1180 575" stroke="#D4DEDD" stroke-width="10"/>
+      <path d="M925 339L1145 580" stroke="#D4DEDD" stroke-width="10"/>
+      <path d="M735 603L435 575" stroke="#1F2D34" stroke-width="15"/>
+      <path d="M755 584L435 575" stroke="#1F2D34" stroke-width="15"/>
+      <path d="M555 350L435 575" stroke="#1F2D34" stroke-width="15"/>
+    </g>
+
+    <!-- sillín -->
+    <path d="M450 244C455 221 478 209 516 210H574C594 211 603 222 598 238C592 254 570 263 535 264H473C456 263 447 255 450 244Z" fill="#1A232A"/>
+    <path d="M465 246C490 231 550 229 583 237" fill="none" stroke="#40515A" stroke-width="7" stroke-linecap="round"/>
+
+    <!-- transmisión -->
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="735" cy="603" r="61" fill="#28363D" stroke="#10191F" stroke-width="10"/>
+      <circle cx="735" cy="603" r="39" stroke="#C5D1D0" stroke-width="8"/>
+      <circle cx="735" cy="603" r="9" fill="#0D161B"/>
+      <path d="M735 603L790 659" stroke="#222F36" stroke-width="15"/>
+      <circle cx="803" cy="672" r="17" fill="#27353C" stroke="#111A20" stroke-width="7"/>
+      <circle cx="435" cy="575" r="61" stroke="#6D7B80" stroke-width="9"/>
+      <circle cx="1170" cy="575" r="61" stroke="#6D7B80" stroke-width="9"/>
+      <path d="M734 543C835 540 912 529 1036 536C1090 539 1111 550 1120 563" stroke="#343E43" stroke-width="9"/>
+      <path d="M735 663C835 668 950 650 1060 618C1095 608 1109 596 1120 586" stroke="#343E43" stroke-width="9"/>
+      <path d="M1119 563L1132 594L1108 618" stroke="#202C31" stroke-width="18"/>
+    </g>
+
+    <!-- frenos -->
+    <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M943 355C1021 401 1090 463 1148 529" stroke="#27353B" stroke-width="8"/>
+      <path d="M556 364C518 422 484 483 461 539" stroke="#27353B" stroke-width="8"/>
+      <path d="M1142 531L1160 548" stroke="#F2A64A" stroke-width="13"/>
+      <path d="M452 539L472 550" stroke="#F2A64A" stroke-width="13"/>
+    </g>
+
+    <!-- detalles -->
+    <circle cx="555" cy="350" r="12" fill="#DFF6F3"/>
+    <circle cx="930" cy="330" r="12" fill="#DFF6F3"/>
+    <circle cx="735" cy="603" r="8" fill="#E9FFFF"/>
+  </g>
+</svg>

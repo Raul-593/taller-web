@@ -67,12 +67,12 @@ Este documento establece las directrices técnicas, arquitectónicas y de conven
 - Verifica con un `npm run build` si el codigo es correcto y si no hay ningun error.
 
 ## Planificación y Referencias
-- Ver [PLAN.md](./PLAN.md) para los detalles y tareas específicas del **Creación de componentes para no repetir código**.
+- Ver [PLAN.md](./PLAN.md) para los detalles y tareas específicas del **Creacion de la Bicicleta Interactiva**.
 - Ver [MEMORY.md](./MEMORY.md) para conocer el estado actual del proyecto y las decisiones tomadas.
 =======
 ---
 
 ## 📋 Planificación & Referencias
 
-- Ver [PLAN.md](./PLAN.md) para los detalles y tareas específicas del **Landing Page**.
+- Ver [PLAN.md](./PLAN.md) para los detalles y tareas específicas del **Bicicelta Interactiva**.
 >>>>>>> cf4fd0c206cb5ece792e994eae31e387ecfc1625

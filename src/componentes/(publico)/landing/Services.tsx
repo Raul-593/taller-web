@@ -1,40 +1,37 @@
-import React from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/componentes/ui/cards"
-import { Wrench, Gauge, Sparkles, Settings, Disc, ShieldAlert } from "lucide-react"
+import React from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/componentes/ui/cards";
+import { Wrench, Settings, ShieldAlert } from "lucide-react";
 
 export function Services() {
   const servicesList = [
     {
-      title: "Mantenimiento General / Básico",
-      description: "Ajuste de cambios y frenos, lubricación de transmisión, revisión general, engrase de ejes y rodamientos.",
+      title: "Puesta a Punto",
+      description:
+        "Ajuste de frenos, Ajuste de cambios, lubricación, Presión del aire.",
       icon: Wrench,
     },
     {
-      title: "Mantenimiento Pro",
-      description: "Todo lo del Básico + mantenimiento especializado, mantenimiento de frenos, mantenimiento de suspensión.",
+      title: "Mantenimiento Preventivo",
+      description:
+        "Todo lo del Puesta a Punto +, Limpieza profunda, Engrasado de Ejes, Limpieza de Cassette",
+      destacado: "Incluye servicio de Transporte sin costo adicional",
       icon: Settings,
     },
     {
-      title: "Servicio de Suspensiones",
-      description: "Mantenimiento preventivo y correctivo de horquillas y amortiguadores con cambio de retenes y aceite original.",
-      icon: Gauge,
-    },
-    {
-      title: "Lavado Detallado",
-      description: "Limpieza profunda con productos biodegradables que cuidan la pintura y componentes, desengrasado y protección.",
-      icon: Sparkles,
-    },
-    {
-      title: "Purgado y Frenos Hidráulicos",
-      description: "Optimización de la potencia de frenado, purgado de líneas, cambio de líquido de frenos y revisión de pastillas/discos.",
-      icon: Disc,
-    },
-    {
-      title: "Diagnóstico y Ajustes Rápidos",
-      description: "Evaluación de fallas, centrado de rines, alineación de patilla de cambio y correcciones express para tu salida.",
+      title: "Mantenimiento Completo",
+      description:
+        "Todo lo de Puesta a Punto y Mantenimiento Preventivo +, Desarmado 100%, Lubricación Completa, Purgado de Frenos, Engrasado Completo, Calibración Completa, Limpieza de cadena",
+      destacado: "Incluye servicio de Transporte sin costo adicional",
       icon: ShieldAlert,
     },
-  ]
+  ];
 
   return (
     <section id="servicios" className="py-24 bg-primary dark:bg-zinc-900/50">
@@ -49,32 +46,52 @@ export function Services() {
             Soluciones integrales para el rendimiento de tu bicicleta
           </h2>
           <p className="text-muted-foreground text-base sm:text-lg text-primary-foreground">
-            Contamos con personal altamente calificado y herramientas de vanguardia para asegurar que cada kilómetro sea seguro y eficiente.
+            Contamos con personal altamente calificado y herramientas de
+            vanguardia para asegurar que cada kilómetro sea seguro y eficiente.
           </p>
         </div>
 
         {/* Grid of Services */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {servicesList.map((service, index) => {
-            const IconComponent = service.icon
+            const IconComponent = service.icon;
             return (
-              <Card key={index} className="bg-secondary border border-border shadow-sm hover:shadow-lg hover:scale-105 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+              <Card
+                key={index}
+                className="bg-secondary border border-border shadow-sm hover:shadow-lg hover:scale-105 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
+              >
                 <CardHeader className="flex flex-col gap-4">
                   <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
                     <IconComponent className="h-6 w-6" />
                   </div>
                   <div>
-                    <CardTitle className="text-xl font-bold mb-2">{service.title}</CardTitle>
+                    <CardTitle className="text-xl font-bold mb-2">
+                      {service.title}
+                    </CardTitle>
                     <CardDescription className="text-muted-foreground text-sm leading-relaxed">
-                      {service.description}
+                      {service.description
+                        .split(",")
+                        .map((item, index, arr) => (
+                          <span key={index} className="block">
+                            {item.trim()}
+                            {index < arr.length - 1 ? "" : ""}
+                          </span>
+                        ))}
                     </CardDescription>
                   </div>
                 </CardHeader>
+                {service.destacado && (
+                  <CardFooter className="mt=auto pt-0">
+                    <span className="block text-sm font-bold text-foreground">
+                      {service.destacado}
+                    </span>
+                  </CardFooter>
+                )}
               </Card>
-            )
+            );
           })}
         </div>
       </div>
     </section>
-  )
+  );
 }
