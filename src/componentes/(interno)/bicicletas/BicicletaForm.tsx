@@ -38,22 +38,24 @@ export function BicicletaForm({
     isSubmitting,
     trigger 
 }: Props) {
+
     const [brand, setBrand] = useState("")
     const [model, setModel] = useState("")
-    const [serialNumber, setSerialNumber] = useState("")
+    //const [serialNumber, setSerialNumber] = useState("")
     const [observacion, setObservacion] = useState("")
     const [customerId, setCustomerId] = useState<string | null>(null)
 
     // Tipos de Bicicletas
     const TIPOS_BICICLETAS=[
-        { value: "R", label: "Rutera" },
-        { value: "MTB", label: "Montañera" },
-        { value: "RE", label: "Rutera Eléctrica" },
-        { value: "MTBE", label: "Montañera Eléctrica"},
         { value: "N", label: "Niño"},
         { value: "B", label: "Básica"},
+        { value: "R", label: "Rutera" },
+        { value: "RE", label: "Rutera Eléctrica" },
+        { value: "MTB", label: "Montañera" },
+        { value: "MTBE", label: "Montañera Eléctrica"},
         { value: "TRI", label: "Triaclón"},
     ]
+
     const [tipo, setTipo] = useState("")
     const [numeroSerie, setNumeroSerie] = useState<number | null>(null)
     const [loadingNumero, setLoadingNumero] = useState(false)
@@ -87,43 +89,59 @@ export function BicicletaForm({
     useEffect(() => {
         if (isOpen) {
             
-            const match = initialData?.serial_number?.match(/^(R|MTB|E) - (\d+)$/)
+            const match = initialData?.serial_number?.match(/^(N|B|R|RE|MTB|MTBE|TRI) - (\d+)$/)
             
             if (initialData) {
                 setBrand(initialData.brand || "")
                 setModel(initialData.model || "")
-                setSerialNumber(initialData.serial_number || "")
-                setTipo(match[1])
-                setNumeroSerie(parseInt(match[2], 10))
+                //setSerialNumber(initialData.serial_number || "")
                 setObservacion(initialData.observacion || "")
                 setCustomerId(initialData.customer_id || null)
+                if(match){
+                    setTipo(match[1])
+                    setNumeroSerie(parseInt(match[2], 10))
+                } else{
+                    setTipo("R")
+                    setNumeroSerie(null)
+                }
             } else {
                 setBrand("")
                 setModel("")
-                setSerialNumber("")
-                setTipo("R")
-                obtenerSiguienteNumero("R")
+                //setSerialNumber("")
                 setObservacion("")
                 setCustomerId(null)
+                setTipo("R")
             }
         }
     }, [isOpen, initialData])
 
     useEffect(() => {
-        if(!isOpen) return
+        if(!isOpen || !tipo) return
         
-        const match = initialData?.serial_number?.match(/^(R|MTB|E) - (\d+)$/)
+        const match = initialData?.serial_number?.match(/^(N|B|R|RE|MTB|MTBE|TRI) - (\d+)$/)
         
-        if (match && match[1] === tipo) return
+        if (match && match[1] === tipo) {
+            setNumeroSerie(parseInt(match[2], 10))
+            return
+        }
         obtenerSiguienteNumero(tipo)
     
-    },[tipo])
+    },[isOpen, tipo, initialData])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         e.stopPropagation()
+        
+        if(loadingNumero) return // Evitar submit mientra calculas el nuevo numero
+        
         const serialNumberFinal =  numeroSerie ? `${tipo} - ${numeroSerie}` : ""
-        await onSubmit({ brand, model, serial_number: serialNumberFinal, observacion, customer_id: customerId })
+        await onSubmit({ 
+            brand, 
+            model, 
+            serial_number: serialNumberFinal, 
+            observacion, 
+            customer_id: customerId 
+        })
     }
 
     return (
@@ -153,19 +171,21 @@ export function BicicletaForm({
                         id="tipo" 
                         value={tipo} 
                         onChange={e => setTipo(e.target.value)}
+                        className="w-full bg-background border border-input rounded-md px-3 py-2 text-sm  focus:ring-2"
                     >
                         {TIPOS_BICICLETAS.map(t => (
                             <option key={t.value} value={t.value}>{t.label}</option>
                         ))}
                     </select>
                 </div>
-                <div>
+                <div className="grid gap-2">
                     <Label htmlFor="numeroSerie">Numero de Serie</Label>
                     <Input 
                         id="numeroSerie" 
                         value={loadingNumero ? "Calculando...": numeroSerie ? `${tipo} - ${numeroSerie}` : ""} 
                         disabled 
                         readOnly
+                        className="w-full bg-background"
                     />
                 </div> 
             </div>   
