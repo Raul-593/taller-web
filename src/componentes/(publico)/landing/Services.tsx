@@ -14,7 +14,7 @@ export function Services() {
     {
       title: "Puesta a Punto",
       description:
-        "Ajuste de frenos, Ajuste de cambios, lubricación, Presión del aire.",
+        "Ajuste de frenos, Ajuste de cambios, Lubricación, Presión del aire.",
       icon: Wrench,
     },
     {

@@ -3,7 +3,7 @@ Memoria del proyecto entre sesiones. Máximo 50 líneas: resume o elimina lo que
 
 ## Estado actual
 - v1 funcionando: registrar clientes, bicicletas, mantenimientos, ingresos, egresos.
-- Landing page: en construcción.
+- Landing page: Hero, About, Services, Bicicleta Interactiva y Contacto.
 - Fases 1 y 2 completadas. Fase 3 completada (alcance reducido: tabs y gráfico).
 
 ## Decisiones
@@ -12,6 +12,7 @@ Memoria del proyecto entre sesiones. Máximo 50 líneas: resume o elimina lo que
 - Se usan React Hooks para el manejo de estados.
 - Componentes reutilizables en `src/componentes/ui/` para genéricos y `src/componentes/(interno)/` para dominio.
 - Fase 2 evita sobre-arquitectura: los componentes nuevos son presentacionales o con estado local mínimo; la lógica de Supabase queda en cada caso de uso.
+- Sección "Explora tu Bicicleta": datos en `src/lib/landing/bike-hotspots.ts` y coordenadas en % sobre `public/bicicleta-servicios.svg` (16:9).
 
 ## Componentes creados (Fase 2)
 - `<TablaConBusqueda>`: tarjeta con tabla genérica y búsqueda interna opcional; usa `SearchBar` y `EstadoVacio`.
@@ -34,10 +35,12 @@ Memoria del proyecto entre sesiones. Máximo 50 líneas: resume o elimina lo que
 - El error de ESLint `eslint-config-next/core-web-vitals` es preexistente y no afecta al build.
 - `updateItem` varía por caso (gastos usan `cost`, mantenimientos usan `price` + `item_type`); por eso el componente de ítems expone `alSeleccionarProducto` y `crearItemVacio`.
 - Sincronizar el estado local `setMantenimientos` en los callbacks de edición para reflejar cambios (como tipo de venta o método de pago) al instante sin esperar o forzar recarga de página.
+- El asset real es `public/bicicleta-servicios.svg` (el PLAN mencionaba `bicicleta-service.svg`).
 
 ## Componentes creados (Fase 3)
 - `<FiltroEstadoTabs>`: pestañas de filtro por estado con conteos opcionales; usado en deudas, nota-crédito y mantenimientos.
 - `<GraficoBarrasFinanzas>`: barras de ingresos vs gastos con estado vacío; el padre define la altura; `conLeyenda` solo en finanzas (sin `Tooltip`, como antes).
+- `<BicicletaInteractiva>`: cliente; 6 hotspots accesibles sobre la imagen con panel de detalle responsive. El estado activo se alterna con clic y el panel usa `aria-live`.
 - Descartados: `<DialogoConfirmacion>` (`FormDialog` ya cubre esos diálogos) y `<FormularioBasico>` (campos heterogéneos; sería sobre-arquitectura).
 
 ## Próximos pasos

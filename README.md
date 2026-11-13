@@ -12,13 +12,13 @@ La aplicación permite registrar clientes y sus bicicletas, crear órdenes de tr
 ## 📸 Vista Previa
 
 <div align="center">
-  <img src="./public/2_dashboard_finanzas.png" alt="Pantalla Principal" width="80%" />
+  <img src="./public/readme/2_dashboard_finanzas.png" alt="Pantalla Principal" width="80%" />
 </div>
 <br>
 <div align="center">
-  <img src="./public/8_mantenimientos.png" alt="Funcionalidad 1" width="45%" />
+  <img src="./public/readme/8_mantenimientos.png" alt="Funcionalidad 1" width="45%" />
   &nbsp;&nbsp;
-  <img src="./public/11_finanzas.png" alt="Funcionalidad 2" width="45%" />
+  <img src="./public/readme/11_finanzas.png" alt="Funcionalidad 2" width="45%" />
 </div>
 
 --- 

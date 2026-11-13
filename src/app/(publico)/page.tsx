@@ -2,6 +2,7 @@ import { Navbar } from "@/componentes/(publico)/landing/Navbar";
 import { Hero } from "@/componentes/(publico)/landing/Hero";
 import { About } from "@/componentes/(publico)/landing/About";
 import { Services } from "@/componentes/(publico)/landing/Services";
+import { BicicletaInteractiva } from "@/componentes/(publico)/landing/BicicletaInteractiva";
 import { Contact } from "@/componentes/(publico)/landing/Contact";
 import { Footer } from "@/componentes/(publico)/landing/Footer";
 import { Analytics } from "@vercel/analytics/next";
@@ -15,6 +16,7 @@ export default function Home() {
         <Hero />
         <About />
         <Services />
+        <BicicletaInteractiva />
         <Contact />
        </main>
       <Footer />
